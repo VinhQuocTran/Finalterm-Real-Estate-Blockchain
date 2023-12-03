@@ -1,0 +1,8 @@
+{
+  "channelName": "mychannel",
+  "chaincodeName": "basic",
+  "mspOrg1": "Org1MSP",
+  "walletPath": "/wallet",
+  "org1UserId": "javascriptAppUser",
+  "caUrl": "ca.org1.example.com"
+}
