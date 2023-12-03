@@ -1,8 +1,8 @@
 'use strict';
 const { Gateway, Wallets } = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
-const { buildCAClient, registerAndEnrollUser, enrollAdmin } = require('../../test-application/javascript/CAUtil.js');
-const { buildCCPOrg1, buildWallet } = require('../../test-application/javascript/AppUtil.js');
+const { buildCAClient, registerAndEnrollUser, enrollAdmin } = require('../../../../test-application/javascript/CAUtil.js');
+const { buildCCPOrg1, buildWallet } = require('../../../../test-application/javascript/AppUtil.js');
 const path = require("path");
 const fs = require("fs");
 

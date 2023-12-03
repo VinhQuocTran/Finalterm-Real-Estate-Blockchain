@@ -1,32 +1,30 @@
 'use strict';
-const HyperLedgerService = require('./hyperLedgerService');
+require('dotenv').config();
+const express = require('express');
+const globalErrorHandler = require('./controllers/errorController');
+const chainRoute = require('./routes/chainRoute');
+const accountRoute = require('./routes/accountRoute');
+const propertyRoute = require('./routes/propertyRoute');
+const submitListingPropertyRoute = require('./routes/submitListingPropertyRoute');
+const propertyManagerRoute = require('./routes/propertyManagerRoute');
+const listingPropertyRoute = require('./routes/listingPropertyRoute');
+const AppError = require('./utils/appError');
 
-function prettyJSONString(inputString) {
-    return JSON.stringify(JSON.parse(inputString), null, 2);
-}
-const http = require('http');
+const app = express();
 
-const hostname = 'localhost';
-const port = 3000;
-const fabricService = new HyperLedgerService();
-const server = http.createServer(async (req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    try {
-        await fabricService.initialize();
-        await fabricService.connect();
-        // await fabricService.submitTransaction("createUser","user2",1000,0);
-        let result = await fabricService.evaluateTransaction("queryUser","user2");
-        console.log(prettyJSONString(result));
-        res.write(prettyJSONString(result));
-    } catch (error) {
-        console.error(`Failed to start the application: ${error}`);
-    } finally {
-        await fabricService.disconnect();
-    }
+// blockchain
+app.use('/api/chains', chainRoute);
 
-    res.end('Hello, World!');
+// non-blockchain
+app.use('/api/accounts', accountRoute);
+app.use('/api/properties', propertyRoute);
+app.use('/api/submitListingProperty', submitListingPropertyRoute);
+app.use('/api/propertyManagers', propertyManagerRoute);
+app.use('/api/listingProperty', listingPropertyRoute);
+
+app.use('*', (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+app.use(globalErrorHandler);
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}`);
-});
+module.exports = app;
