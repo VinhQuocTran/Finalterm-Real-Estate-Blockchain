@@ -12,3 +12,5 @@ package-lock.json
 
 wallet
 !wallet/.gitkeep
+
+.env
