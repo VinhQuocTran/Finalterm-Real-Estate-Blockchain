@@ -4,8 +4,23 @@ const { Contract } = require('fabric-contract-api');
 class RealEstateTransfer extends Contract {
 
     async initLedger(ctx) {
-        // This function initializes the ledger with some sample data if needed.
-        // You can implement it as per your requirement.
+        // Create some sample users
+        await this.createUser(ctx, 'user1', 1000, 500*50);
+        await this.createUser(ctx, 'user2', 500, 6000*50);
+        await this.createUser(ctx, 'user3', 2000, 8000*50);
+
+        // Create some sample tokens
+        await this.createToken(ctx, 'token1','property1',500, 50);
+        await this.createToken(ctx, 'token2', 'property2',6000, 50);
+        await this.createToken(ctx, 'token3', 'property3',8000, 50);
+
+        // Assign tokens to users
+        await this.createPropertyTokenOwner(ctx, 'owner1', 500, 'token1', 'user1');
+        await this.createPropertyTokenOwner(ctx, 'owner2', 6000, 'token2', 'user2');
+        await this.createPropertyTokenOwner(ctx, 'owner3', 8000, 'token3', 'user3');
+        await this.createBuyerRequest(ctx, 'request1', 'user1', 50,49,'token2');
+        await this.createSellerRequest(ctx, 'request2', 'user2', 50,49,'token2');
+        // await this.createTokenTransaction(ctx, 'transaction1', 1000, 'user2', 'user1', '2023-01-01', 'token2');
     }
 
     async createUser(ctx, id, cash_balance, token_balance) {
@@ -27,10 +42,11 @@ class RealEstateTransfer extends Contract {
         await ctx.stub.putState(`propertyTokenOwner:${id}`, Buffer.from(JSON.stringify(propertyTokenOwner)));
     }
 
-    async createToken(ctx, id, listing_property_id, token_price) {
+    async createToken(ctx, id, listing_property_id, quantity, token_price) {
         const token = {
             id,
             listing_property_id,
+            quantity,
             token_price
         };
         await ctx.stub.putState(`token:${id}`, Buffer.from(JSON.stringify(token)));
@@ -47,29 +63,34 @@ class RealEstateTransfer extends Contract {
         };
         await ctx.stub.putState(`tokenTransaction:${id}`, Buffer.from(JSON.stringify(tokenTransaction)));
     }
-    async createBuyerRequest(ctx, requestId, userId, tokenId) {
+    async createBuyerRequest(ctx, requestId, userId,quantity,at_price, tokenId) {
         const buyerRequest = {
             id: requestId,
             buyer_id: userId,
             token_id: tokenId,
+            quantity: quantity,
+            at_price: at_price,
             status: 'pending',  // You can use 'pending', 'approved', 'rejected', etc.
         };
         await ctx.stub.putState(`buyerRequest:${requestId}`, Buffer.from(JSON.stringify(buyerRequest)));
     }
 
-    async createSellerRequest(ctx, requestId, userId, tokenId) {
+    async createSellerRequest(ctx, requestId, userId, quantity, at_price, tokenId) {
         const sellerRequest = {
             id: requestId,
             seller_id: userId,
             token_id: tokenId,
+            quantity: quantity,
+            at_price: at_price,
             status: 'pending',  // You can use 'pending', 'approved', 'rejected', etc.
         };
         await ctx.stub.putState(`sellerRequest:${requestId}`, Buffer.from(JSON.stringify(sellerRequest)));
     }
     async findMatchingSeller(ctx, buyerRequestId) {
-        // Query seller requests that match the buyer request
+        // Query buyer request
         const buyerRequest = await this.queryBuyerRequest(ctx, buyerRequestId);
 
+        // Query seller requests that match the buyer request
         const sellerRequestIterator = await ctx.stub.getStateByPartialCompositeKey('sellerRequest', ['pending']);
         let sellerRequest = await sellerRequestIterator.next();
 
@@ -81,7 +102,9 @@ class RealEstateTransfer extends Contract {
             if (
                 sellerRequestObj.status === 'pending' &&
                 sellerRequestObj.token_id === buyerRequest.token_id &&
-                sellerRequestObj.buyer_id === buyerRequest.buyer_id
+                sellerRequestObj.buyer_id === buyerRequest.buyer_id &&
+                sellerRequestObj.quantity === buyerRequest.quantity &&
+                sellerRequestObj.at_price === buyerRequest.at_price
             ) {
                 return sellerRequestId;
             }
@@ -98,11 +121,17 @@ class RealEstateTransfer extends Contract {
 
         while (hasValidRequests) {
             const buyerRequestIterator = await ctx.stub.getStateByPartialCompositeKey('buyerRequest', ['pending']);
+
+            if (!buyerRequestIterator || !buyerRequestIterator.hasOwnProperty('next')) {
+                // Handle the case where the iterator is not valid
+                break;
+            }
+
             let buyerRequest = await buyerRequestIterator.next();
 
             hasValidRequests = false;
 
-            while (!buyerRequest.done) {
+            while (buyerRequest && !buyerRequest.done) {
                 const buyerRequestId = buyerRequest.value.key.split(':')[1];
                 const sellerRequestId = await this.findMatchingSeller(ctx, buyerRequestId);
 
@@ -131,7 +160,7 @@ class RealEstateTransfer extends Contract {
             sellerRequest.status = 'approved';
 
             // Transfer the token
-            await this.transferToken(ctx, buyerRequest.id, buyerRequest.buyer_id, sellerRequest.seller_id, buyerRequest.token_id);
+            await this.transferToken(ctx,"transaction1",buyerRequest.id, buyerRequest.buyer_id, sellerRequest.seller_id, buyerRequest.token_id);
 
             // Update the request status
             await ctx.stub.putState(`buyerRequest:${buyerRequestId}`, Buffer.from(JSON.stringify(buyerRequest)));
