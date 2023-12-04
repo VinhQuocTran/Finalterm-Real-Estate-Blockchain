@@ -8,4 +8,14 @@ const createPropertyManager = (req, res, next) => {
     })
 };
 
-module.exports = { createPropertyManager };
+const getAllPropertyManagers = catchAsync(async (req, res) => {
+    const propertyManagers = await PropertyManager.findAll();
+
+    res.status(200).json({
+        status: 'success',
+        length: propertyManagers.length,
+        data: propertyManagers
+    })
+});
+
+module.exports = { createPropertyManager, getAllPropertyManagers };

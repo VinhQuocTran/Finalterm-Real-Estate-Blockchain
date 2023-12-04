@@ -8,4 +8,15 @@ const createSubmitListingProperty = (req, res, next) => {
     })
 };
 
-module.exports = { createSubmitListingProperty };
+const getAllSubmitListingProperties = catchAsync(async (req, res) => {
+    const submitListingProperties = await SubmitListingProperty.findAll();
+
+    res.status(200).json({
+        status: 'success',
+        length: submitListingProperties.length,
+        data: submitListingProperties
+    })
+});
+
+
+module.exports = { createSubmitListingProperty, getAllSubmitListingProperties };

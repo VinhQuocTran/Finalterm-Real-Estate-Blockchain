@@ -8,4 +8,14 @@ const createAccount = (req, res, next) => {
     })
 };
 
-module.exports = { createAccount };
+const getAllAccounts = catchAsync(async (req, res, next) => {
+    const accounts = await Account.findAll();
+
+    res.status(200).json({
+        status: 'success',
+        length: accounts.length,
+        data: accounts
+    })
+});
+
+module.exports = { createAccount, getAllAccounts };
