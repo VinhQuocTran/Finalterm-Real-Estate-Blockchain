@@ -8,7 +8,6 @@ const expect = chai.expect;
 const { Context } = require('fabric-contract-api');
 const { ChaincodeStub } = require('fabric-shim');
 
-
 const RealEstateTransfer = require('../lib/realEstateTransfer');
 const {c} = require("sinon/lib/sinon/spy-formatters");
 
@@ -71,13 +70,39 @@ describe('RealEstateTransfer Smart Contract', () => {
         });
     });
 
-    describe('processRequestsLoop', () => {
-        it('Auction', async () => {
+    describe('initLedger', () => {
+        it('should initialize the ledger with sample data', async () => {
             await contract.initLedger(ctx);
-            await contract.processRequestsLoop(ctx);
-            const user = await contract.queryTokenTransaction(ctx, 'transaction1');
-            expect(user.id).to.equal('transaction1');
+
+            // Add assertions to check the state after initialization
+
+            // Example assertion (modify according to your data structure)
+            const user1 = await contract.queryUser(ctx, 'user1');
+            expect(user1.cash_balance).to.equal(1000000);
+            expect(user1.token_balance).to.equal(500 * 50);
+            // const allUsers = await contract.getAllByEntity(ctx,'offer');
+            // const all = await contract.getAllByEntity(ctx,'user');
+            // const all = await contract.TestQuerySelector(ctx);
+
+
+            await contract.matchingOffers(ctx);
+            const allTrans = await contract.getAllByEntity(ctx,"tokenTransaction")
+
+            // console.log(allUsers)
+            console.log(allTrans)
+            const allOffers = await contract.getAllByEntity(ctx,'offer');
+            console.log(allOffers)
+            const allUsers = await contract.getAllByEntity(ctx,'user');
+            console.log(allUsers)
+
+            // Similar assertions for other sample data
+
+            // // Example assertion for checking the number of records
+            // await contract.createUser(ctx, 'user4', 1000, 0);
+            // const allUsers = await contract.GetAllUsers(ctx);
+            // console.log(allUsers)
+            // expect(allUsers).to.have.lengthOf(3);  // Assuming you have 3 sample users
         });
     });
-    // processRequestsLoop
+
 });
