@@ -2,7 +2,6 @@
 
 const { Contract } = require('fabric-contract-api');
 class RealEstateTransfer extends Contract {
-
     async initLedger(ctx) {
         // Create some sample users
         await this.createUser(ctx, 'user1', 1000000, 500*50);
@@ -20,10 +19,10 @@ class RealEstateTransfer extends Contract {
         await this.createPropertyTokenOwner(ctx, 'owner3', 8000, 'token3', 'user3');
 
         // Assign tokens to offers
-        await this.CreateOffer(ctx, 'offer1', 'user1', 'token1', 50, 50, false);
-        await this.CreateOffer(ctx, 'offer2', 'user3', 'token2', 40, 50, false);
-        await this.CreateOffer(ctx, 'offer3', 'user1', 'token2', 40, 50, true);
-        await this.CreateOffer(ctx, 'offer4', 'user2', 'token2', 40, 50, false);
+        await this.createOffer(ctx, 'offer1', 'user1', 'token1', 50, 50, false);
+        await this.createOffer(ctx, 'offer2', 'user3', 'token2', 40, 50, false);
+        await this.createOffer(ctx, 'offer3', 'user1', 'token2', 40, 50, true);
+        await this.createOffer(ctx, 'offer4', 'user2', 'token2', 40, 50, false);
     }
 
     async createUser(ctx, id, cash_balance, token_balance) {
@@ -72,7 +71,7 @@ class RealEstateTransfer extends Contract {
         };
         await ctx.stub.putState(`tokenTransaction:${id}`, Buffer.from(JSON.stringify(tokenTransaction)));
     }
-    async CreateOffer(ctx, id, userID, tokenID, quantity, at_price, isBuy) {
+    async createOffer(ctx, id, userID, tokenID, quantity, at_price, isBuy) {
         const offer = {
             docType:"offer",
             id,
@@ -118,14 +117,27 @@ class RealEstateTransfer extends Contract {
         await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
     }
 
-    async getDeposit(ctx,user_id,money){
+    async getDepositByUserId(ctx,user_id,money){
         let user = await this.queryUser(ctx, user_id);
         user.cash_balance += money;
         await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
     }
-
-
-    async getWithDraw(ctx,user_id,money){
+    async getOwnPropertyTokenByUserId(ctx,user_id){
+        const query = {
+            docType:"propertyTokenOwner",
+            user_id
+        }
+        let property = await this.getQueryResult(ctx,query);
+        if (property.length === 0) {
+            throw new Error(`No property token owner found for user ID ${userId}`);
+        }
+        for (let element of property) {
+            let token = await this.queryToken(ctx,element.token_id);
+            element.token_price = token.token_price;
+        }
+        return property;
+    }
+    async getWithDrawByUserId(ctx,user_id,money){
         let user = await this.queryUser(ctx, user_id);
         if(money>user.cash_balance){
             throw new Error(`User with ID ${user_id} does not have enough cash balance to withdraw ${money}`);
@@ -283,7 +295,6 @@ class RealEstateTransfer extends Contract {
             }
             result = await iterator.next();
         }
-
         return allEntity;
     }
     async getQueryResult(ctx,query) {
