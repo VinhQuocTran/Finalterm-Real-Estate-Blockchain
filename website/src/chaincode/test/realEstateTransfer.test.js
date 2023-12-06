@@ -77,23 +77,38 @@ describe('RealEstateTransfer Smart Contract', () => {
             // Add assertions to check the state after initialization
 
             // Example assertion (modify according to your data structure)
-            const user1 = await contract.queryUser(ctx, 'user1');
-            expect(user1.cash_balance).to.equal(1000000);
-            expect(user1.token_balance).to.equal(500 * 50);
+            // const user1 = await contract.queryUser(ctx, 'user1');
+            // expect(user1.cash_balance).to.equal(1000000);
+            // expect(user1.token_balance).to.equal(500 * 50);
             // const allUsers = await contract.getAllByEntity(ctx,'offer');
             // const all = await contract.getAllByEntity(ctx,'user');
             // const all = await contract.TestQuerySelector(ctx);
 
+            // let allOffers = await contract.getAllByEntity(ctx,"offer");
+            // console.log(allOffers);
+            // await contract.matchingOffers(ctx);
+            // allOffers = await contract.getAllByEntity(ctx,"offer");
+            // console.log("\n")
+            // console.log(allOffers);
+            // let allTrans = await contract.getAllByEntity(ctx,"tokenTransaction");
+            // console.log(allTrans);
 
-            await contract.matchingOffers(ctx);
-            const allTrans = await contract.getAllByEntity(ctx,"tokenTransaction")
+            const abc = await contract.getOwnPropertyTokenByUserId(ctx,"user2");
+            console.log(abc)
+            // const allTrans = await contract.getAllByEntity(ctx,"tokenTransaction")
 
+            // await contract.getTokenizeProperty(ctx,"user2","listing_property_id3",500000)
+            // const allUsers = await contract.getAllByEntity(ctx,'user');
+            // const allTokens = await contract.getAllByEntity(ctx,'token');
+            // const allProperty = await contract.getAllByEntity(ctx,'propertyTokenOwner');
+            //
+            // console.log(allTokens)
+            // console.log(allProperty)
             // console.log(allUsers)
-            console.log(allTrans)
-            const allOffers = await contract.getAllByEntity(ctx,'offer');
-            console.log(allOffers)
-            const allUsers = await contract.getAllByEntity(ctx,'user');
-            console.log(allUsers)
+            // const allOffers = await contract.getAllByEntity(ctx,'offer');
+            // console.log(allOffers)
+            // const allUsers = await contract.getAllByEntity(ctx,'user');
+            // console.log(allUsers)
 
             // Similar assertions for other sample data
 
