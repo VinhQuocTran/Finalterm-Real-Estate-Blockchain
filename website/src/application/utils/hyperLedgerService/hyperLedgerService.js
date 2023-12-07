@@ -16,7 +16,6 @@ class HyperledgerService {
         this.chaincodeName = config.chaincodeName;
         this.mspOrg1 = config.mspOrg1;
         this.walletPath = path.join(__dirname, config.walletPath);
-        console.log(this.walletPath);
         this.org1UserId = config.org1UserId;
         this.ccp = buildCCPOrg1();
         this.caClient = buildCAClient(FabricCAServices, this.ccp, config.caUrl);
