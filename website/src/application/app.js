@@ -9,9 +9,11 @@ const submitListingPropertyRoute = require('./routes/submitListingPropertyRoute'
 const propertyManagerRoute = require('./routes/propertyManagerRoute');
 const listingPropertyRoute = require('./routes/listingPropertyRoute');
 const AppError = require('./utils/appError');
-
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./docs/swagger.json');
 const app = express();
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // blockchain
 app.use('/api/chains', chainRoute);
 
