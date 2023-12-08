@@ -1,13 +1,13 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
-const {c} = require("sinon/lib/sinon/spy-formatters");
 class RealEstateTransfer extends Contract {
     async initLedger(ctx) {
         // Create some sample users
         await this.createUser(ctx, 'user1', 1000000, 500*50);
         await this.createUser(ctx, 'user2', 50000, 6000*50);
         await this.createUser(ctx, 'user3', 2000, 8000*50);
+
 
         // Create some sample tokens
         await this.createToken(ctx, 'token1','property1',500);
@@ -115,6 +115,21 @@ class RealEstateTransfer extends Contract {
         let user = await this.queryUser(ctx, user_id);
         user.token_balance += propertyTokenOwner.own_number * tokenPriceInit;
         await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
+    }
+    async getOwnPropertyTokenByUserId(ctx,user_id){
+        const query = {
+            docType:"propertyTokenOwner",
+            user_id
+        }
+        let property = await this.getQueryResult(ctx,query);
+        if (property.length === 0) {
+            throw new Error(`No property token owner found for user ID ${userId}`);
+        }
+        for (let element of property) {
+            let token = await this.queryToken(ctx,element.token_id);
+            element.token_price = token.token_price;
+        }
+        return property;
     }
 
     async getDepositByUserId(ctx,user_id,money){
@@ -288,18 +303,6 @@ class RealEstateTransfer extends Contract {
             throw new Error(`User with ID ${id} does not exist`);
         }
         return JSON.parse(userAsBytes.toString());
-    }
-
-    async findPropertyTokenOwnerByUserId(ctx, userId) {
-        const query = {
-                docType: 'propertyTokenOwner',
-                user_id: userId,
-        };
-        const propertyTokenOwners = await this.getQueryResult(ctx,query);
-        if (propertyTokenOwners.length === 0) {
-            throw new Error(`No property token owner found for user ID ${userId}`);
-        }
-        return propertyTokenOwners;
     }
 
 

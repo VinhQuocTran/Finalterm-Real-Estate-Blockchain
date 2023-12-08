@@ -12,11 +12,12 @@ const AppError = require('./utils/appError');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
 const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // blockchain
 app.use('/api/chains', chainRoute);
-
 // non-blockchain
 app.use('/api/accounts', accountRoute);
 app.use('/api/properties', propertyRoute);

@@ -2,9 +2,9 @@ const router = require('express').Router();
 const chainController = require('../controllers/chainController');
 
 router.get('/', chainController.getChain);
-router.get('/user', chainController.getAllUsers);
-// router.post('/user', chainController.createUser);
-// router.get('/user/${id}', chainController.findUserById);
-router.get('/offer', chainController.getAllOffers);
+router.get('/users', chainController.getAllUsers);
+router.post('/users', chainController.createUser);
+router.get('/users/:id', chainController.getUserById);
 
+router.get('/offers', chainController.getAllOffers);
 module.exports = router;
