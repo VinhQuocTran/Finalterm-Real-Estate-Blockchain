@@ -1,35 +1,79 @@
-const { Sequelize } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/database');
 const Account = require('../models/Account');
 
-const Property = sequelize.define('property', {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-    created_date: {
-        type: Sequelize.DATE,
+const Property = sequelize.define('', {
+    description: {
+        type: DataTypes.STRING(1024),
         allowNull: false,
     },
-    room_number: {
-        type: Sequelize.INTEGER,
+    numOfBedroom: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    numOfWc: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    totalFloor: {
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     area: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     address: {
-        type: Sequelize.STRING(256),
+        type: DataTypes.STRING(256),
         allowNull: false,
     },
-    account_id: {
-        type: Sequelize.INTEGER,
+    propertyImageUrl: {
+        type: DataTypes.STRING(256),
         allowNull: false,
     },
+    propertyDocumentUrl: {
+        type: DataTypes.STRING(256),
+        allowNull: false,
+    },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    },
+    accountId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+    },
+    createdAt: {
+        type: DataTypes.DATE
+    },
+    updatedAt: {
+        type: DataTypes.DATE
+    }
+}, {
+    tableName: 'Properties',
+    timestamps: true,
+    underscored: true,
 });
 
+// Associates
 Property.belongsTo(Account, { foreignKey: 'account_id' });
+
+// Hooks
+Property.addHook('beforeCreate', async (property, options) => {
+    // Generate a custom ID like "PROPERTY_0001", "PROPERTY_0002", ...
+    const latestProperty = await Property.findOne({
+        order: [['id', 'DESC']],
+        attributes: ['id'],
+    });
+
+    let counter = 1;
+    if (latestProperty) {
+        const lastPropertyId = parseInt(latestProperty.id.split('_')[1], 10);
+        counter = lastPropertyId + 1;
+    }
+
+    const propertyId = `PROPERTY_${counter.toString().padStart(4, '0')}`;
+    property.id = propertyId;
+});
 
 module.exports = Property;

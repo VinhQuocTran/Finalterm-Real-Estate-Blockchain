@@ -1,3 +1,10 @@
+const handleSequelizeUniqueConstraintError = err => {
+    const value = err.errors.map(el => el.message);
+
+    const message = `Duplicate field value: ${value.join(", ")}. Please use another value!`;
+    return new AppError(message, 400);
+};
+
 const sendErrorDev = async (err, req, res) => {
     // A) API
     if (req.originalUrl.startsWith("/api")) {
@@ -67,6 +74,8 @@ module.exports = globalErrorHandler = (err, req, res, next) => {
     } else if (process.env.NODE_ENV === "production") {
         let error = { ...err };
         error.message = err.message;
+
+        if (error.name === 'SequelizeUniqueConstraintError') error = handleSequelizeUniqueConstraintError(error);
 
         sendErrorProd(error, req, res);
     }
