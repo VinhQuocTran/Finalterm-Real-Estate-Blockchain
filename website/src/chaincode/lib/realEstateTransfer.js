@@ -1,6 +1,7 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
+const {c} = require("sinon/lib/sinon/spy-formatters");
 class RealEstateTransfer extends Contract {
     async initLedger(ctx) {
         // Create some sample users
@@ -9,9 +10,9 @@ class RealEstateTransfer extends Contract {
         await this.createUser(ctx, 'user3', 2000, 8000*50);
 
         // Create some sample tokens
-        await this.createToken(ctx, 'token1','property1',500,100);
-        await this.createToken(ctx, 'token2', 'property2',6000,250);
-        await this.createToken(ctx, 'token3', 'property3',8000,300);
+        await this.createToken(ctx, 'token1','property1',500);
+        await this.createToken(ctx, 'token2', 'property2',6000);
+        await this.createToken(ctx, 'token3', 'property3',8000);
         //
         // Assign tokens to users
         await this.createPropertyTokenOwner(ctx, 'owner1', 500, 'token1', 'user1');
@@ -20,8 +21,8 @@ class RealEstateTransfer extends Contract {
 
         // Assign tokens to offers
         await this.createOffer(ctx, 'offer1', 'user1', 'token1', 50, 50, false);
-        await this.createOffer(ctx, 'offer2', 'user3', 'token2', 40, 50, false);
-        await this.createOffer(ctx, 'offer3', 'user1', 'token2', 40, 50, true);
+        await this.createOffer(ctx, 'offer2', 'user3', 'token3', 40, 50, false);
+        await this.createOffer(ctx, 'offer3', 'user1', 'token3', 40, 50, true);
         await this.createOffer(ctx, 'offer4', 'user2', 'token2', 40, 50, false);
     }
 
@@ -46,13 +47,12 @@ class RealEstateTransfer extends Contract {
         await ctx.stub.putState(`propertyTokenOwner:${id}`, Buffer.from(JSON.stringify(propertyTokenOwner)));
     }
 
-    async createToken(ctx, id, listing_property_id, quantity, money_daily_rent) {
+    async createToken(ctx, id, listing_property_id, quantity) {
         const token = {
             docType: "token",
             id,
             listing_property_id,
             quantity,
-            money_daily_rent,
             token_price: 50
         };
         await ctx.stub.putState(`token:${id}`, Buffer.from(JSON.stringify(token)));
@@ -121,21 +121,7 @@ class RealEstateTransfer extends Contract {
         let user = await this.queryUser(ctx, user_id);
         user.cash_balance += money;
         await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
-    }
-    async getOwnPropertyTokenByUserId(ctx,user_id){
-        const query = {
-            docType:"propertyTokenOwner",
-            user_id
-        }
-        let property = await this.getQueryResult(ctx,query);
-        if (property.length === 0) {
-            throw new Error(`No property token owner found for user ID ${userId}`);
-        }
-        for (let element of property) {
-            let token = await this.queryToken(ctx,element.token_id);
-            element.token_price = token.token_price;
-        }
-        return property;
+        return user;
     }
     async getWithDrawByUserId(ctx,user_id,money){
         let user = await this.queryUser(ctx, user_id);
@@ -144,9 +130,37 @@ class RealEstateTransfer extends Contract {
         }
         user.cash_balance -= money;
         await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
+        return user;
+    }
+    async getPaymentRentDaily(ctx,listing_property_id,monthly_rent){
+        const daily_rent = monthly_rent/30.0;
+       // query find token by listing_property_id
+        let query = {
+            docType:"token",
+            listing_property_id
+        }
+        const tokens = await this.getQueryResult(ctx,query);
+        if(tokens.length===0){
+            throw new Error(`Token with listing_property_id ${listing_property_id} not found `);
+        }
+        const token = tokens[0];
+        // query find all propertyTokenOwner by token_id
+        query = {
+            docType:"propertyTokenOwner",
+            token_id:token.id
+        }
+        const propertyTokenOwner = await this.getQueryResult(ctx,query);
+        // payment rent daily
+        for (const property of propertyTokenOwner){
+            let user = await this.queryUser(ctx, property.user_id)
+            user.cash_balance = parseFloat(user.cash_balance) +
+                ((daily_rent * property.own_number) / token.quantity).toFixed(2);
+            await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
+        }
+        console.log(`Payment daily rent for list property have ID: ${listing_property_id} successful`)
     }
 
-    async matchingOffers(ctx) {
+        async matchingOffers(ctx) {
         // Query all active buy offers
         let query = {
             docType:"offer",
@@ -203,6 +217,7 @@ class RealEstateTransfer extends Contract {
         const token = await this.queryToken(ctx, tokenId);
         let buyer = await this.queryUser(ctx, buyerId);
         let seller = await this.queryUser(ctx, sellerId);
+
         const totalPrice = token.token_price * atPrice
         // Check if the buyer has enough cash balance
         if (buyer.cash_balance < totalPrice) {
@@ -217,21 +232,35 @@ class RealEstateTransfer extends Contract {
         seller.cash_balance += totalPrice;
         seller.token_balance -= totalPrice;
         // Update token ownership
-        let sellerProperty = await this.findPropertyTokenOwnerByUserId(ctx,sellerId);
+        let query = {
+            docType: 'propertyTokenOwner',
+            user_id: sellerId,
+            token_id:tokenId
+        };
+        const sellerProperties = await this.getQueryResult(ctx,query);
+        let sellerProperty = sellerProperties[0]
         sellerProperty.own_number -=quantity;
         await ctx.stub.putState(sellerProperty.id, Buffer.from(JSON.stringify(sellerProperty)));
-        try {
-            let buyerProperty = await this.findPropertyTokenOwnerByUserId(ctx,buyerId);
-            buyerProperty.own_number +=quantity;
-            await ctx.stub.putState(buyerProperty.id, Buffer.from(JSON.stringify(buyerProperty)));
-        } catch (error) {
-            const propertyId = await this.generateId("prop_"+buyerId)
-            await ctx.stub.putState(`propertyTokenOwner:${propertyId}`, Buffer.from(JSON.stringify({
-                id: propertyId,
-                own_number: quantity,
-                token_id: tokenId,
+             query = {
+                docType: 'propertyTokenOwner',
                 user_id: buyerId,
-            })));
+                token_id:tokenId
+            };
+            const buyerProperties = await this.getQueryResult(ctx,query);
+            if(buyerProperties.length!==0){
+                let buyerProperty = buyerProperties[0];
+                buyerProperty.own_number +=quantity;
+                await ctx.stub.putState(buyerProperty.id, Buffer.from(JSON.stringify(buyerProperty)));
+            }
+            else {
+                const propertyId = await this.generateId("prop_"+buyerId)
+                await ctx.stub.putState(`propertyTokenOwner:${propertyId}`, Buffer.from(JSON.stringify({
+                    docType: 'propertyTokenOwner',
+                    id: propertyId,
+                    own_number: quantity,
+                    token_id: tokenId,
+                    user_id: buyerId,
+                })));
         }
 
         // Update buyer and seller information
