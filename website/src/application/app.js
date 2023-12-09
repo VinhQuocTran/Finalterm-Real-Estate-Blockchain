@@ -5,7 +5,7 @@ const express = require('express');
 const globalErrorHandler = require('./controllers/errorController');
 const chainRoute = require('./routes/chainRoute');
 const accountRoute = require('./routes/accountRoute');
-// const propertyRoute = require('./routes/propertyRoute');
+const propertyRoute = require('./routes/propertyRoute');
 // const submitListingPropertyRoute = require('./routes/submitListingPropertyRoute');
 // const propertyManagerRoute = require('./routes/propertyManagerRoute');
 // const listingPropertyRoute = require('./routes/listingPropertyRoute');
@@ -25,7 +25,7 @@ app.use('/api/chains', chainRoute);
 
 // non-blockchain
 app.use('/api/accounts', accountRoute);
-// app.use('/api/properties', propertyRoute);
+app.use('/api/properties', propertyRoute);
 // app.use('/api/submitListingProperty', submitListingPropertyRoute);
 // app.use('/api/propertyManagers', propertyManagerRoute);
 // app.use('/api/listingProperty', listingPropertyRoute);

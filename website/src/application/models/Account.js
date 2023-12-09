@@ -4,11 +4,6 @@ const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../utils/database');
 
 const Account = sequelize.define('', {
-    id: {
-        type: DataTypes.UUID,
-        // defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-    },
     email: {
         type: DataTypes.STRING(128),
         allowNull: false,
