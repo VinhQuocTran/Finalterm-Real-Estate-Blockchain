@@ -1,7 +1,6 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
-const {c} = require("sinon/lib/sinon/spy-formatters");
 class RealEstateTransfer extends Contract {
     async initLedger(ctx) {
         // Create some sample users
