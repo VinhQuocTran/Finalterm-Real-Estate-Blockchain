@@ -1,0 +1,39 @@
+@import "../../mixins.scss";
+
+.footer {
+  padding: 60px 0;
+  background-color: var(--dark);
+
+  .contentWrapper {
+    display: flex;
+    flex-direction: column;
+
+    @include lg {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .logo {
+    cursor: pointer;
+
+    img {
+      width: 140px;
+    }
+  }
+
+  .navItems {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    span {
+      color: #fff;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      letter-spacing: .05em;
+      margin: 0 4px;
+    }
+  }
+}
