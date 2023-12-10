@@ -5,8 +5,8 @@ class RealEstateTransfer extends Contract {
     async initLedger(ctx) {
         // Create some sample users
         await this.createUser(ctx, 'user1', 1000000, 500*50);
-        await this.createUser(ctx, 'user2', 50000, 6000*50);
-        await this.createUser(ctx, 'user3', 2000, 8000*50);
+        await this.createUser(ctx, 'user2', 500000, 6000*50);
+        await this.createUser(ctx, 'user3', 200000, 8000*50);
 
 
         // Create some sample tokens
@@ -21,9 +21,12 @@ class RealEstateTransfer extends Contract {
 
         // Assign tokens to offers
         await this.createOffer(ctx, 'offer1', 'user1', 'token1', 50, 50, false);
-        await this.createOffer(ctx, 'offer2', 'user3', 'token3', 40, 50, false);
-        await this.createOffer(ctx, 'offer3', 'user1', 'token3', 40, 50, true);
-        await this.createOffer(ctx, 'offer4', 'user2', 'token2', 40, 50, false);
+        await this.createOffer(ctx, 'offer2', 'user1', 'token3', 50, 50, true);
+        await this.createOffer(ctx, 'offer3', 'user3', 'token3', 50, 50, false);
+        await this.createOffer(ctx, 'offer5', 'user2', 'token2', 50, 50, false);
+        await this.createOffer(ctx, 'offer4', 'user3', 'token2', 50, 50, true);
+        await this.createOffer(ctx, 'offer6', 'user3', 'token1', 50, 50, true);
+        await this.createOffer(ctx, 'offer7', 'user3', 'token3', 50, 50, false);
     }
 
     async createUser(ctx, id, cash_balance, token_balance) {
@@ -136,7 +139,6 @@ class RealEstateTransfer extends Contract {
         let user = await this.queryUser(ctx, user_id);
         user.cash_balance += money;
         await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
-        return user;
     }
     async getWithDrawByUserId(ctx,user_id,money){
         let user = await this.queryUser(ctx, user_id);
@@ -145,7 +147,6 @@ class RealEstateTransfer extends Contract {
         }
         user.cash_balance -= money;
         await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
-        return user;
     }
     async getPaymentRentDaily(ctx,listing_property_id,monthly_rent){
         const daily_rent = monthly_rent/30.0;
@@ -175,58 +176,57 @@ class RealEstateTransfer extends Contract {
         console.log(`Payment daily rent for list property have ID: ${listing_property_id} successful`)
     }
 
-        async matchingOffers(ctx) {
-        // Query all active buy offers
-        let query = {
-            docType:"offer",
-            is_buy:true,
-            is_active:true,
-            is_finished:false
-        }
-        const buyOffers = await this.getQueryResult(ctx,query);
+    async matchingOffers(ctx) {
+    // Query all active buy offers
+    let query = {
+        docType:"offer",
+        is_buy:true,
+        is_active:true,
+        is_finished:false
+    }
+    const buyOffers = await this.getQueryResult(ctx,query);
 
-        // Convert the iterator to an array and sort by offer_time in descending order
-        const sortedBuyOffersDesc = await buyOffers.sort((a, b) => {
-            const offerA = JSON.parse(a.value.toString());
-            const offerB = JSON.parse(b.value.toString());
-            return offerB.offer_time - offerA.offer_time;
-        });
-        // Iterate through buy offers
-        for await (let buyOffer of sortedBuyOffersDesc) {
-            // Query matching active sell offers
-            query = {
-                docType:"offer",
-                is_buy:false,
-                is_active:true,
-                is_finished:false,
-                token_id:buyOffer.token_id,
-                quantity:buyOffer.quantity
-            }
-            const sellOffers = await this.getQueryResult(ctx,query);
-            // Iterate through sell offers
-            for await (let sellOffer of sellOffers) {
-                if (sellOffer.user_id!==buyOffer.user_id
-                    && sellOffer.at_price<= buyOffer.at_price
-                ) {
-                    let transactionId = await this.generateId("trans_"+sellOffer.user_id+"_"+buyOffer.user_id);
-                    try {
-                        await this.transferToken(ctx, transactionId, buyOffer.user_id, sellOffer.user_id, sellOffer.token_id, sellOffer.quantity, sellOffer.at_price);
-                        buyOffer.is_finished = true;
-                        buyOffer.is_active = false;
-                        sellOffer.is_finished = true;
-                        sellOffer.is_active = false;
-                        // Update the ledger with the modified buy and sell offers
-                        await ctx.stub.putState(buyOffer.id, Buffer.from(JSON.stringify(buyOffer)));
-                        await ctx.stub.putState(sellOffer.id, Buffer.from(JSON.stringify(sellOffer)));
-                        console.log(`Token transfer successful for transaction ID: ${transactionId}`);
-                        break;
-                    } catch (error) {
-                        console.error(`Error transferring tokens for transaction ID ${transactionId}: ${error.message}`);
-                    }
+    // Convert the iterator to an array and sort by offer_time in descending order
+    const sortedBuyOffersDesc = await buyOffers.sort((offerA, offerB) => {
+        return offerB.offer_time - offerA.offer_time;
+    });
+    // Iterate through buy offers
+    for await (let buyOffer of sortedBuyOffersDesc) {
+        // Query matching active sell offers
+        query = {
+            docType:"offer",
+            is_buy:false,
+            is_active:true,
+            is_finished:false,
+            token_id:buyOffer.token_id,
+            quantity:buyOffer.quantity
+        }
+        const sellOffers = await this.getQueryResult(ctx,query);
+        // Iterate through sell offers
+        for await (let sellOffer of sellOffers) {
+            if (sellOffer.user_id!==buyOffer.user_id
+                && sellOffer.at_price<= buyOffer.at_price
+            ) {
+                let transactionId = await this.generateId("trans_"+sellOffer.user_id+"_"+buyOffer.user_id);
+                try {
+                    await this.transferToken(ctx, transactionId, buyOffer.user_id, sellOffer.user_id, sellOffer.token_id, sellOffer.quantity, sellOffer.at_price);
+                    buyOffer.is_finished = true;
+                    buyOffer.is_active = false;
+                    sellOffer.is_finished = true;
+                    sellOffer.is_active = false;
+                    // Update the ledger with the modified buy and sell offers
+                    await ctx.stub.putState(buyOffer.id, Buffer.from(JSON.stringify(buyOffer)));
+                    await ctx.stub.putState(sellOffer.id, Buffer.from(JSON.stringify(sellOffer)));
+                    console.log(`Token transfer successful for transaction ID: ${transactionId}`);
+                    break;
+                } catch (error) {
+                    console.error(`Error transferring tokens for transaction ID ${transactionId}: ${error.message}`);
                 }
             }
         }
     }
+    }
+
     async transferToken(ctx, transactionId, buyerId, sellerId, tokenId, quantity,atPrice) {
         // Get information about the token and buyer/seller
         const token = await this.queryToken(ctx, tokenId);
@@ -285,6 +285,7 @@ class RealEstateTransfer extends Contract {
         // Record the token transaction
         await this.createTokenTransaction(ctx,transactionId,quantity,token.at_price,sellerId,buyerId,tokenId);
     }
+
     async generateId(key) {
         const currentDate = new Date();
         const dd = String(currentDate.getDate()).padStart(2, '0');
@@ -313,6 +314,7 @@ class RealEstateTransfer extends Contract {
         }
         return JSON.parse(tokenAsBytes.toString());
     }
+
     async getAllByEntity(ctx,entity) {
         const iterator = await ctx.stub.getStateByRange('','');
         const allEntity = [];
@@ -329,6 +331,7 @@ class RealEstateTransfer extends Contract {
         }
         return allEntity;
     }
+
     async getQueryResult(ctx,query) {
         const allEntity = await this.getAllByEntity(ctx,query.docType);
         return allEntity.filter(obj => {
