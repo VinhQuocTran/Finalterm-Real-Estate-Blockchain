@@ -2,8 +2,13 @@
 
 .filterSection {
   background-color: #fff;
-  padding-top: 48px;
-  padding-bottom: 16px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-top: 30px;
+
+  @include sm {
+    margin-top: 0;
+  }
 
   .filterContainer {
     display: flex;

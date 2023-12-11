@@ -7,7 +7,10 @@ const DetailedHouse = () => {
   return (
     <div className="detailedHouse">
       <div className="imgContainer">
-        <img src="https://images.lofty.ai/images/01FYWQCYEFQFTYDWH1YY5D0DR8/01H9S5B7DH9AMX9PP2QT937E0G.webp" alt="" />
+        <img
+          src="https://images.lofty.ai/images/01FYWQCYEFQFTYDWH1YY5D0DR8/01H9S5B7DH9AMX9PP2QT937E0G.webp"
+          alt=""
+        />
       </div>
       <ContentWrapper>
         <div className="textContainer">
@@ -19,8 +22,12 @@ const DetailedHouse = () => {
             <span>Eldridge, IA 52748</span>
           </div>
           <ul className="navItems">
-            <li><span>Details</span></li>
-            <li><span>Documents</span></li>
+            <li>
+              <span>Details</span>
+            </li>
+            <li>
+              <span>Documents</span>
+            </li>
           </ul>
           <div className="line"></div>
           <div className="infoItems">
@@ -36,24 +43,52 @@ const DetailedHouse = () => {
             <div className="line"></div>
             <div className="content">
               <p>
-                Located in the Quad Cities Metro area, this is a 4-unit retail building built in 2010. The tenants include McDonalds, Domino's, US Cellular, and a Real Estate Office. All tenants are on multi-year triple-net leases (NNN). This means that the tenants pay all the expenses of the property including real estate taxes, building insurance, and maintenance.
-                Near new Amazon project
-                Amazon is building a 2.9M square foot robotics fulfillment center just a 12 minute drive from this strip mall. The warehouse is expected to open summer of 2024 and create a minimum annual economic impact of $148M to the region.
+                Located in the Quad Cities Metro area, this is a 4-unit retail
+                building built in 2010. The tenants include McDonalds, Dominos,
+                US Cellular, and a Real Estate Office. All tenants are on
+                multi-year triple-net leases (NNN). This means that the tenants
+                pay all the expenses of the property including real estate
+                taxes, building insurance, and maintenance. Near new Amazon
+                project Amazon is building a 2.9M square foot robotics
+                fulfillment center just a 12 minute drive from this strip mall.
+                The warehouse is expected to open summer of 2024 and create a
+                minimum annual economic impact of $148M to the region.
               </p>
               <p>
-                Located in the Quad Cities Metro area, this is a 4-unit retail building built in 2010. The tenants include McDonalds, Domino's, US Cellular, and a Real Estate Office. All tenants are on multi-year triple-net leases (NNN). This means that the tenants pay all the expenses of the property including real estate taxes, building insurance, and maintenance.
-                Near new Amazon project
-                Amazon is building a 2.9M square foot robotics fulfillment center just a 12 minute drive from this strip mall. The warehouse is expected to open summer of 2024 and create a minimum annual economic impact of $148M to the region.
+                Located in the Quad Cities Metro area, this is a 4-unit retail
+                building built in 2010. The tenants include McDonalds, Dominos,
+                US Cellular, and a Real Estate Office. All tenants are on
+                multi-year triple-net leases (NNN). This means that the tenants
+                pay all the expenses of the property including real estate
+                taxes, building insurance, and maintenance. Near new Amazon
+                project Amazon is building a 2.9M square foot robotics
+                fulfillment center just a 12 minute drive from this strip mall.
+                The warehouse is expected to open summer of 2024 and create a
+                minimum annual economic impact of $148M to the region.
               </p>
               <p>
-                Located in the Quad Cities Metro area, this is a 4-unit retail building built in 2010. The tenants include McDonalds, Domino's, US Cellular, and a Real Estate Office. All tenants are on multi-year triple-net leases (NNN). This means that the tenants pay all the expenses of the property including real estate taxes, building insurance, and maintenance.
-                Near new Amazon project
-                Amazon is building a 2.9M square foot robotics fulfillment center just a 12 minute drive from this strip mall. The warehouse is expected to open summer of 2024 and create a minimum annual economic impact of $148M to the region.
+                Located in the Quad Cities Metro area, this is a 4-unit retail
+                building built in 2010. The tenants include McDonalds, Dominos,
+                US Cellular, and a Real Estate Office. All tenants are on
+                multi-year triple-net leases (NNN). This means that the tenants
+                pay all the expenses of the property including real estate
+                taxes, building insurance, and maintenance. Near new Amazon
+                project Amazon is building a 2.9M square foot robotics
+                fulfillment center just a 12 minute drive from this strip mall.
+                The warehouse is expected to open summer of 2024 and create a
+                minimum annual economic impact of $148M to the region.
               </p>
               <p>
-                Located in the Quad Cities Metro area, this is a 4-unit retail building built in 2010. The tenants include McDonalds, Domino's, US Cellular, and a Real Estate Office. All tenants are on multi-year triple-net leases (NNN). This means that the tenants pay all the expenses of the property including real estate taxes, building insurance, and maintenance.
-                Near new Amazon project
-                Amazon is building a 2.9M square foot robotics fulfillment center just a 12 minute drive from this strip mall. The warehouse is expected to open summer of 2024 and create a minimum annual economic impact of $148M to the region.
+                Located in the Quad Cities Metro area, this is a 4-unit retail
+                building built in 2010. The tenants include McDonalds, Dominos,
+                US Cellular, and a Real Estate Office. All tenants are on
+                multi-year triple-net leases (NNN). This means that the tenants
+                pay all the expenses of the property including real estate
+                taxes, building insurance, and maintenance. Near new Amazon
+                project Amazon is building a 2.9M square foot robotics
+                fulfillment center just a 12 minute drive from this strip mall.
+                The warehouse is expected to open summer of 2024 and create a
+                minimum annual economic impact of $148M to the region.
               </p>
             </div>
           </div>
@@ -114,7 +149,7 @@ const DetailedHouse = () => {
         </div>
       </ContentWrapper>
     </div>
-  )
-}
+  );
+};
 
-export default DetailedHouse
+export default DetailedHouse;

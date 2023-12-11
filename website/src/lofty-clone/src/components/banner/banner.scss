@@ -35,6 +35,11 @@
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-align: center;
+
+      @include sm {
+        text-align: unset;
+      }
 
       @include lg {
         font-size: 3rem;

@@ -1,17 +1,25 @@
-import './App.scss'
-// import Home from './pages/home/Home'
-import Header from './components/header/Header'
-import Footer from './components/footer/Footer'
-import DetailedHouse from './pages/detailedHouse/DetailedHouse'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.scss";
+import { Header, Footer } from "./components/imports";
+import { Home, DetailedHouse, Signup, Signin, MyProperty, TokenOwnership } from "./pages/imports";
 
 function App() {
   return (
     <>
-      <Header />
-      <DetailedHouse />
-      <Footer />
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/:propertyId" element={<DetailedHouse />} />
+          <Route path="/my-property" element={<MyProperty />} />
+          <Route path="/token-ownership" element={<TokenOwnership />} />
+          <Route path="/sign-up" element={<Signup />} />
+          <Route path="/sign-in" element={<Signin />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
