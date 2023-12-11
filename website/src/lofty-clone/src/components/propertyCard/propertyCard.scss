@@ -1,0 +1,97 @@
+@import "../../mixins.scss";
+
+.propertyCard {
+  margin: 0 0 16px;
+  width: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+
+  @include sm {
+    width: calc(50% - 16px);
+    margin: 0 8px 16px;
+  }
+
+  @include md {
+    width: calc(33.333% - 16px);
+  }
+
+  @include lg {
+    width: calc(25% - 16px);
+  }
+
+  .boxTop {
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .boxBody {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+
+    .title {
+      color: var(--dark-blue);
+      font-weight: 600;
+      font-size: 1.2rem;
+      line-height: 1.5;
+    }
+
+    .details {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1%;
+      justify-content: space-between;
+
+      .detail {
+        margin-bottom: 4px;
+        width: 49%;
+        font-size: 0.875rem;
+        color: var(--dark-blue);
+        opacity: 0.4;
+      }
+    }
+
+    p {
+      margin-top: 8px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
+  }
+
+  .boxBottom {
+    padding: 0 16px 16px;
+
+    .checkBoxes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .checkBox {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        input:checked + label {
+          color: green;
+          opacity: 1;
+        }
+
+        label {
+          font-size: 0.785rem;
+          color: var(--dark-blue);
+          opacity: 0.4;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
