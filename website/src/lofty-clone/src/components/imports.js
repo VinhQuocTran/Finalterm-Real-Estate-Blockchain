@@ -5,6 +5,7 @@ import Footer from "./footer/Footer";
 import Header from "./header/Header";
 import HouseCard from "./houseCard/HouseCard";
 import PropertyCard from "./propertyCard/PropertyCard";
+import TokenCard from "./tokenCard/TokenCard";
 
 export {
   Banner,
@@ -13,5 +14,6 @@ export {
   Footer,
   Header,
   HouseCard,
-  PropertyCard
+  PropertyCard,
+  TokenCard
 }
