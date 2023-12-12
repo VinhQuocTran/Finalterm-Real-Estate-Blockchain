@@ -6,8 +6,8 @@ import {
   MdPerson,
   MdHome,
   MdLock,
-  MdOutlineShoppingCart,
-  MdPeople
+  MdPeople,
+  MdHouse
 } from "react-icons/md";
 
 // Admin Imports
@@ -15,6 +15,7 @@ import MainDashboard from "views/admin/default";
 import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
 import User from "views/admin/user";
+import ListingProperty from "views/admin/listingProperty";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
@@ -33,6 +34,13 @@ const routes = [
     icon: <Icon as={MdPeople} width='20px' height='20px' color='inherit' />,
     path: "/user",
     component: User,
+  },
+  {
+    name: "Listing Property",
+    layout: "/admin",
+    icon: <Icon as={MdHouse} width='20px' height='20px' color='inherit' />,
+    path: "/listing-property",
+    component: ListingProperty,
   },
   {
     name: "Data Tables",

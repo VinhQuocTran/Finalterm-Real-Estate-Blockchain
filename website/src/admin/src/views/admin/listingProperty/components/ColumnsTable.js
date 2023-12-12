@@ -1,5 +1,6 @@
 import {
-  Flex,
+  Button,
+  Flex, Grid,
   Table,
   Tbody,
   Td,
@@ -47,6 +48,16 @@ export default function ColumnsTable(props) {
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+  function handleDeleteClick(id) {
+    console.log(id);
+  }
+  function handleDetailsClick(id) {
+    console.log(id);
+  }
+
+  function handleUpdateClick(id) {
+    console.log(id);
+  }
   return (
     <Card
       direction='column'
@@ -59,7 +70,7 @@ export default function ColumnsTable(props) {
           fontSize='22px'
           fontWeight='700'
           lineHeight='100%'>
-          Table User
+          Table Listing Property
         </Text>
       </Flex>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
@@ -80,6 +91,7 @@ export default function ColumnsTable(props) {
                     {column.render("Header")}
                   </Flex>
                 </Th>
+
               ))}
             </Tr>
           ))}
@@ -90,12 +102,54 @@ export default function ColumnsTable(props) {
             return (
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
+                  console.log(cell.value);
                   let data = "";
-                  data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                  );
+                  // Render the button for the 'actions' column
+                  if (cell.column.id === 'actions') {
+                    data = (
+                    <Grid
+                        templateColumns={{
+                          base: "1fr",
+                        }}
+                        templateRows={{
+                          base: "repeat(3, 1fr)",
+                        }}
+                    >
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <Button
+                            onClick={() => handleDeleteClick(row.original.id)}
+                            colorScheme="blue"
+                            size="sm"
+                        >
+                          Delete
+                        </Button>
+                        <Button
+                            onClick={() => handleDetailsClick(row.original.id)}
+                            colorScheme="teal"
+                            size="sm"
+                            marginLeft="1"  // Add margin between the buttons
+                        >
+                          Details
+                        </Button>
+                        <Button
+                            onClick={() => handleUpdateClick(row.original.id)}
+                            colorScheme="green"
+                            size="sm"
+                            marginLeft="1"  // Add margin between the buttons
+                        >
+                          Update
+                        </Button>
+                      </Flex>
+                    </Grid>
+                    )
+                  }
+                  else {
+                    data = (
+                        <Text color={textColor} fontSize='sm' fontWeight='700'>
+                          {cell.value}
+                        </Text>
+                    );
+                  }
                   return (
                     <Td
                       {...cell.getCellProps()}
