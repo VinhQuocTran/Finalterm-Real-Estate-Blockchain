@@ -126,10 +126,6 @@
           flex-direction: row;
           align-items: center;
         }
-
-        @include xl {
-          width: 50%;
-        }
       }
 
       .infoRight {
@@ -137,13 +133,9 @@
         flex-direction: column;
 
         @include lg {
-          width: 40%;
+          width: 50%;
           flex-direction: row;
           align-items: center;
-        }
-
-        @include xl {
-          width: 50%;
         }
       }
 

@@ -50,47 +50,8 @@
       line-height: 1.5rem;
     }
 
-    .formInput {
-      display: flex;
-      flex-direction: column;
-      margin-top: 32px;
-
-      label {
-        font-size: 1rem;
-        line-height: 1.25rem;
-        font-weight: 600;
-        color: var(--blue-dark-medium);
-        opacity: 0.6;
-
-        @include md {
-          font-size: 1.25rem;
-          line-height: 1.75rem;
-        }
-      }
-
-      input {
-        border-radius: 0.5rem;
-        outline: none;
-        border: 1px solid #cbd5e1;
-        margin-top: 8px;
-        padding: 16px;
-        font-size: 1rem;
-        line-height: 1.5rem;
-        color: var(--blue-dark-medium);
-
-        @include md {
-          font-size: 1.5rem;
-          line-height: 2rem;
-        }
-
-        &:focus {
-          border: 2.5px solid var(--blue-dark);
-        }
-      }
-    }
-
     button {
-      margin-top: 48px;
+      margin-top: 24px!important;
       outline: none;
       border: none;
       padding: 16px 28px;
