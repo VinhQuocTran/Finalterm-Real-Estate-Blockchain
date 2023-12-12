@@ -37,6 +37,16 @@ class RealEstateTransfer extends Contract {
             token_balance
         };
         await ctx.stub.putState(`user:${id}`, Buffer.from(JSON.stringify(user)));
+        await this.createRentalIncomeWallet(ctx,id);
+    }
+
+    async createRentalIncomeWallet(ctx, user_id) {
+        const rentalIncomeWallet = {
+            docType: "rentalIncomeWallet",
+            user_id,
+            total_current_balance:0
+        };
+        await ctx.stub.putState(`rentalIncomeWallet:${user_id}`, Buffer.from(JSON.stringify(rentalIncomeWallet)));
     }
 
     async createPropertyTokenOwner(ctx, id, own_number, token_id, user_id) {
@@ -168,10 +178,11 @@ class RealEstateTransfer extends Contract {
         const propertyTokenOwner = await this.getQueryResult(ctx,query);
         // payment rent daily
         for (const property of propertyTokenOwner){
-            let user = await this.queryUser(ctx, property.user_id)
-            user.cash_balance = parseFloat(user.cash_balance) +
-                ((daily_rent * property.own_number) / token.quantity).toFixed(2);
-            await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
+            let rentalIncomeWallet = await this.queryRentalIncomeWallet(ctx, property.user_id)
+            rentalIncomeWallet.total_current_balance = parseFloat(rentalIncomeWallet.total_current_balance) +
+                ((daily_rent * property.own_number) / token.quantity);
+            rentalIncomeWallet.total_current_balance = rentalIncomeWallet.total_current_balance.toFixed(2);
+            await ctx.stub.putState(`rentalIncomeWallet:${rentalIncomeWallet.user_id}`, Buffer.from(JSON.stringify(rentalIncomeWallet)));
         }
         console.log(`Payment daily rent for list property have ID: ${listing_property_id} successful`)
     }
@@ -255,7 +266,7 @@ class RealEstateTransfer extends Contract {
         const sellerProperties = await this.getQueryResult(ctx,query);
         let sellerProperty = sellerProperties[0]
         sellerProperty.own_number -=quantity;
-        await ctx.stub.putState(sellerProperty.id, Buffer.from(JSON.stringify(sellerProperty)));
+        await ctx.stub.putState(`propertyTokenOwner:${sellerProperty.id}`, Buffer.from(JSON.stringify(sellerProperty)));
              query = {
                 docType: 'propertyTokenOwner',
                 user_id: buyerId,
@@ -265,7 +276,7 @@ class RealEstateTransfer extends Contract {
             if(buyerProperties.length!==0){
                 let buyerProperty = buyerProperties[0];
                 buyerProperty.own_number +=quantity;
-                await ctx.stub.putState(buyerProperty.id, Buffer.from(JSON.stringify(buyerProperty)));
+                await ctx.stub.putState(`propertyTokenOwner:${buyerProperty.id}`, Buffer.from(JSON.stringify(buyerProperty)));
             }
             else {
                 const propertyId = await this.generateId("prop_"+buyerId)
@@ -302,6 +313,13 @@ class RealEstateTransfer extends Contract {
         const userAsBytes = await ctx.stub.getState(`user:${id}`);
         if (!userAsBytes || userAsBytes.length === 0) {
             throw new Error(`User with ID ${id} does not exist`);
+        }
+        return JSON.parse(userAsBytes.toString());
+    }
+    async queryRentalIncomeWallet(ctx, user_id) {
+        const userAsBytes = await ctx.stub.getState(`rentalIncomeWallet:${user_id}`);
+        if (!userAsBytes || userAsBytes.length === 0) {
+            throw new Error(`User with ID ${user_id} does not exist`);
         }
         return JSON.parse(userAsBytes.toString());
     }
