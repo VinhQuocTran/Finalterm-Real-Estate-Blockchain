@@ -74,8 +74,8 @@ describe('RealEstateTransfer Smart Contract', () => {
         it('should initialize the ledger with sample data', async () => {
             await contract.initLedger(ctx);
             await contract.matchingOffers(ctx);
-            await  contract.getPaymentRentDaily(ctx,'property3',3000)
-            let users = await contract.getAllByEntity(ctx,"user");
+            await contract.getPaymentRentDaily(ctx,'property3',3000)
+            let users = await contract.getAllByEntity(ctx,"rentalIncomeWallet");
             console.log(users);
         });
     });
