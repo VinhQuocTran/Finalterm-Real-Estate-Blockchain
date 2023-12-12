@@ -1,8 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { AuthFormInput } from "../../components/imports";
+import { BASE_URL } from "../../utils/api";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./signup.scss";
@@ -11,6 +12,9 @@ const Signup = () => {
   const [values, setValues] = useState({
     username: "",
     email: "",
+    address: "",
+    phoneNumber: "",
+    residentId: "",
     password: "",
     passwordConfirm: "",
   });
@@ -37,6 +41,33 @@ const Signup = () => {
     },
     {
       id: 3,
+      name: "address",
+      type: "text",
+      label: "Address",
+      placeholder: "61 Main Street, California",
+      errorMessage: "Address should not be empty",
+      required: true
+    },
+    {
+      id: 4,
+      name: "phoneNumber",
+      type: "phone",
+      label: "Phone number",
+      placeholder: "0123456789",
+      errorMessage: "Phone number should not be empty",
+      required: true
+    },
+    {
+      id: 5,
+      name: "residentId",
+      type: "text",
+      label: "Resident ID",
+      placeholder: "0087462839",
+      errorMessage: "Resident ID should not be empty",
+      required: true
+    },
+    {
+      id: 6,
       name: "password",
       type: "password",
       label: "Password",
@@ -46,7 +77,7 @@ const Signup = () => {
       required: true
     },
     {
-      id: 4,
+      id: 7,
       name: "passwordConfirm",
       type: "password",
       label: "Confirm password",
@@ -61,10 +92,35 @@ const Signup = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const data = new FormData(e.target);
-    console.log(Object.fromEntries(data));
+    const response = await axios.post(BASE_URL + "/accounts/signup", Object.fromEntries(data));
+
+    if (response.status === "success") {
+      toast('Sign up successfully', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } else {
+      toast.error('Internal Server Error!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
   };
 
   return (
