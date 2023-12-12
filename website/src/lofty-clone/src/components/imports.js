@@ -6,6 +6,7 @@ import Header from "./header/Header";
 import HouseCard from "./houseCard/HouseCard";
 import PropertyCard from "./propertyCard/PropertyCard";
 import TokenCard from "./tokenCard/TokenCard";
+import AuthFormInput from "./authFormInput/AuthFormInput";
 
 export {
   Banner,
@@ -15,5 +16,6 @@ export {
   Header,
   HouseCard,
   PropertyCard,
-  TokenCard
+  TokenCard,
+  AuthFormInput
 }
