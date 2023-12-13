@@ -15,7 +15,7 @@ import MainDashboard from "views/admin/default";
 import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
 import User from "views/admin/user";
-import ListingProperty from "views/admin/listingProperty";
+import Property from "views/admin/property";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
@@ -36,11 +36,11 @@ const routes = [
     component: User,
   },
   {
-    name: "Listing Property",
+    name: "Property",
     layout: "/admin",
     icon: <Icon as={MdHouse} width='20px' height='20px' color='inherit' />,
-    path: "/listing-property",
-    component: ListingProperty,
+    path: "/property",
+    component: Property,
   },
   {
     name: "Data Tables",
