@@ -3,43 +3,45 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("PropertyInspectionService", {
+    await queryInterface.createTable("MonthlyPropertyValuations", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.DataTypes.UUID,
         defaultValue: Sequelize.DataTypes.UUIDV4
       },
-      name: {
-        type: Sequelize.DataTypes.STRING(64),
+      valuationDate: {
+        field: 'valuation_date',
+        type: Sequelize.DataTypes.DATE,
         allowNull: false
       },
-      address: {
-        type: Sequelize.DataTypes.STRING(256),
-        allowNull: false
-      },
-      phoneNumber: {
-        field: 'phone_number',
-        type: Sequelize.DataTypes.STRING(16),
-        allowNull: false
-      },
-      feePerTime: {
-        field: 'fee_per_time',
+      valuationAmount: {
+        field: 'valuation_amount',
         type: Sequelize.DataTypes.INTEGER,
         allowNull: false
       },
+      listingPropertyId: {
+        field: 'listing_property_id',
+        type: Sequelize.DataTypes.UUID,
+        allowNull: false
+      },
+      propertyValuationServiceId: {
+        field: 'property_valuation_service_id',
+        type: Sequelize.DataTypes.UUID,
+        allowNull: false
+      },
       createdAt: {
-        field:  'created_at',
+        field: 'created_at',
         type: Sequelize.DataTypes.DATE
       },
       updatedAt: {
         field: 'updated_at',
         type: Sequelize.DataTypes.DATE
-      }      
+      }
     });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('PropertyInspectionService');
+    await queryInterface.dropTable('MonthlyPropertyValuations');
   }
 };

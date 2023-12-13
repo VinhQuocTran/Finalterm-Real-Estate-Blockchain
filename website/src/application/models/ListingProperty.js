@@ -50,7 +50,7 @@ ListingProperty.addHook('beforeCreate', async (listingProperty, options) => {
 
     let counter = 1;
     if (latestListingProperty) {
-        const lastListingPropertyId = parseInt(latestListingProperty.id.split('_').pop(), 10);
+        const lastListingPropertyId = parseInt(latestListingProperty.id.split('_')[1], 10);
         counter = lastListingPropertyId + 1;
     }
 

@@ -1,9 +1,9 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/database');
-const BackgroundCheckService = require('../models/BackgroundCheckService');
+const PropertyInspectionService = require('../models/PropertyInspectionService');
 const SubmitListingProperty = require('../models/SubmitListingProperty');
 
-const ListingBackgroundCheck = sequelize.define('', {
+const ListingPropertyInspection = sequelize.define('', {
     name: {
         type: DataTypes.STRING(64),
         allowNull: false
@@ -20,7 +20,7 @@ const ListingBackgroundCheck = sequelize.define('', {
         type: DataTypes.DATE,
         allowNull: false
     },
-    backgroundCheckServiceId: {        
+    propertyInspectionServiceId: {        
         type: DataTypes.UUID,
         allowNull: false
     },
@@ -35,31 +35,31 @@ const ListingBackgroundCheck = sequelize.define('', {
         type: DataTypes.DATE
     }
 }, {
-    tableName: 'ListingBackgroundChecks',
+    tableName: 'ListingPropertyInspections',
     timestamps: true,
     underscored: true,
 });
 
 // Associates
-ListingBackgroundCheck.belongsTo(BackgroundCheckService, { foreignKey: 'background_check_service_id' });
-ListingBackgroundCheck.belongsTo(SubmitListingProperty, { foreignKey: 'submit_listing_property_id' });
+ListingPropertyInspection.belongsTo(PropertyInspectionService, { foreignKey: 'property_inspection_service_id' });
+ListingPropertyInspection.belongsTo(SubmitListingProperty, { foreignKey: 'submit_listing_property_id' });
 
 // Hooks
-ListingBackgroundCheck.addHook('beforeCreate', async (listingBackgroundCheck, options) => {
+ListingPropertyInspection.addHook('beforeCreate', async (listingPropertyInspection, options) => {
     // Generate a custom ID like "LBC_0001", "LBC_0002", ...
-    const latestListingBackgroundCheck = await ListingBackgroundCheck.findOne({
+    const latestListingPropertyInspection = await ListingPropertyInspection.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
     });
 
     let counter = 1;
-    if (latestListingBackgroundCheck) {
-        const lastListingBackgroundId = parseInt(latestListingBackgroundCheck.id.split('_')[1], 10);
-        counter = lastListingBackgroundId + 1;
+    if (latestListingPropertyInspection) {
+        const lastListingPropertyInspectionId = parseInt(latestListingPropertyInspection.id.split('_')[1], 10);
+        counter = lastListingPropertyInspectionId + 1;
     }
 
-    const listingBackgroundId = `LBC_${counter.toString().padStart(4, '0')}`;
-    listingBackgroundCheck.id = listingBackgroundId;
+    const listingPropertyInspectionId = `LBC_${counter.toString().padStart(4, '0')}`;
+    listingPropertyInspection.id = listingPropertyInspectionId;
 });
 
-module.exports = ListingBackgroundCheck;
+module.exports = ListingPropertyInspection;

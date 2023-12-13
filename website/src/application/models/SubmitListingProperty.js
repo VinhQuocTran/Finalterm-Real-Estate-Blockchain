@@ -44,7 +44,7 @@ SubmitListingProperty.addHook('beforeCreate', async (submitListingProperty, opti
 
     let counter = 1;
     if (latestSubmitListingProperty) {
-        const lastSubmitListingPropertyId = parseInt(latestSubmitListingProperty.id.split('_').pop(), 10);
+        const lastSubmitListingPropertyId = parseInt(latestSubmitListingProperty.id.split('_')[1], 10);
         counter = lastSubmitListingPropertyId + 1;
     }
 

@@ -44,7 +44,7 @@ PropertyVerification.addHook('beforeCreate', async (propertyVerification, option
 
     let counter = 1;
     if (latestPropertVerification) {
-        const lastPropertyVerificationId = parseInt(latestPropertVerification.id.split('_').pop(), 10);
+        const lastPropertyVerificationId = parseInt(latestPropertVerification.id.split('_')[1], 10);
         counter = lastPropertyVerificationId + 1;
     }
 
