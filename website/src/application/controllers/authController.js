@@ -37,15 +37,11 @@ const createSendToken = (account, statusCode, req, res) => {
 
 module.exports = {
     signup: catchAsync(async (req, res, next) => {
-        // console.log(req.body);
-        // return res.json('TEST CONNECTION');
         const newAccount = await Account.create({
             email: req.body.email,
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,
             residentId: req.body.residentId,
-            cashBalance: req.body.cashBalance,
-            tokenBalance: req.body.tokenBalance,
             username: req.body.username,
             password: req.body.password,
             passwordConfirm: req.body.passwordConfirm

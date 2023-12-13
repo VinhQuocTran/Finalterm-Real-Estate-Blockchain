@@ -8,7 +8,7 @@ module.exports = {
     createProperty: factory.createOne(Property),
     getAllProperties: factory.getAll(Property),
     updateProperty: factory.updateOne(Property),
-    uploadPropertyPhoto: fileUploader.array('files', 10),
+    uploadPropertyPhoto: fileUploader.single('file', 1),
     resizePropertyPhoto: catchAsync(async (req, res, next) => {
         if (!req.files) return next();
 
@@ -21,5 +21,6 @@ module.exports = {
             .toFile(`public/images/properties/${req.file.filename}`);
 
         next();
-    })
+    }),
+    deleteProperty: factory.deleteOne(Property)
 };
