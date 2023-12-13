@@ -37,7 +37,7 @@ const BackgroundCheckService = sequelize.define('', {
 // Hooks
 BackgroundCheckService.addHook('beforeCreate', async (backgroundCheckService, options) => {
     // Generate a custom ID like "BCS_0001", "BCS_0002", ...
-    const latestBackgroundCheckService = await Account.findOne({
+    const latestBackgroundCheckService = await BackgroundCheckService.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
     });
