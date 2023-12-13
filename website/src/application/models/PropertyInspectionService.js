@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/database');
 
-const BackgroundCheckService = sequelize.define('', {
+const PropertyInspectionService = sequelize.define('', {
     name: {
         type: DataTypes.STRING(64),
         allowNull: false
@@ -29,27 +29,27 @@ const BackgroundCheckService = sequelize.define('', {
         type: DataTypes.DATE
     }
 }, {
-    tableName: 'BackgroundCheckServices',
+    tableName: 'PropertyInspectionServices',
     timestamps: true,
     underscored: true,
 });
 
 // Hooks
-BackgroundCheckService.addHook('beforeCreate', async (backgroundCheckService, options) => {
-    // Generate a custom ID like "BCS_0001", "BCS_0002", ...
-    const latestBackgroundCheckService = await Account.findOne({
+PropertyInspectionService.addHook('beforeCreate', async (propertyInspectionService, options) => {
+    // Generate a custom ID like "PIS_0001", "PIS_0002", ...
+    const latestPropertyInspectionService = await PropertyInspectionService.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
     });
 
     let counter = 1;
-    if (latestBackgroundCheckService) {
-        const lastBackgroundCheckServiceId = parseInt(latestBackgroundCheckService.id.split('_')[1], 10);
-        counter = lastBackgroundCheckServiceId + 1;
+    if (latestPropertyInspectionService) {
+        const lastPropertyInspectionId = parseInt(latestPropertyInspectionService.id.split('_')[1], 10);
+        counter = lastPropertyInspectionId + 1;
     }
 
-    const backgroundCheckServiceId = `BCS_${counter.toString().padStart(4, '0')}`;
-    backgroundCheckService.id = backgroundCheckServiceId;
+    const propertyInspectionServiceId = `PIS_${counter.toString().padStart(4, '0')}`;
+    propertyInspectionService.id = propertyInspectionServiceId;
 });
 
-module.exports = BackgroundCheckService;
+module.exports = PropertyInspectionService;

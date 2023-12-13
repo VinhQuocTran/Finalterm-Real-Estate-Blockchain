@@ -32,7 +32,7 @@ PropertyManager.addHook('beforeCreate', async (propertyManager, options) => {
 
     let counter = 1;
     if (latestPropertyManager) {
-        const lastPropertyManagerId = parseInt(latestPropertyManager.id.split('_').pop(), 10);
+        const lastPropertyManagerId = parseInt(latestPropertyManager.id.split('_')[1], 10);
         counter = lastPropertyManagerId + 1;
     }
 
