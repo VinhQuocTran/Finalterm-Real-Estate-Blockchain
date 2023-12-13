@@ -1,12 +1,18 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { BASE_URL } from "../../utils/api";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { AuthFormInput } from "../../components/imports";
-import { BASE_URL } from "../../utils/api";
+import { loginFailure, loginStart, loginSuccess } from "../../redux/userSlice";
 import "./signin.scss";
 
 const Signin = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] = useState({
     email: "",
     password: ""
@@ -38,24 +44,17 @@ const Signin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData(e.target);
+    dispatch(loginStart());
+    setIsLoading(true);
     try {
+      const data = new FormData(e.target);
       const response = await axios.post(BASE_URL + "/accounts/signin", Object.fromEntries(data));
-      if (response.data.status === "success") {
-      } else {
-        toast.warn('Internal Server Error!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
-      }
+      dispatch(loginSuccess(response.data));
+      setIsLoading(false);
+      navigate("/");
     } catch (err) {
-      toast.warn('Internal Server Error!', {
+      dispatch(loginFailure());
+      toast.error('Internal Server Error!', {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -75,7 +74,7 @@ const Signin = () => {
           <h1>Sign In</h1>
           <span>Invest in new properties and manage your current investments</span>
           {inputs.map((item) => <AuthFormInput key={item.id} {...item} value={values[item.name]} onChange={onChange} />)}
-          <button type="submit">Continue</button>
+          <button type="submit" disabled={isLoading}>Continue</button>
           <p>Don&#8217;t have an account? <a href="/sign-up">Sign up for free</a></p>
           <p>Forgot password? <a href="/forgot-password">Click here</a></p>
         </form>
