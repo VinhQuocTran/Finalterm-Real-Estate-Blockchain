@@ -8,6 +8,10 @@ const columnsDataListingProperty = [
     accessor: "accountId",
   },
   {
+    Header: "Dístrict",
+    accessor: "district",
+  },
+  {
     Header: "Address",
     accessor: "address",
   },

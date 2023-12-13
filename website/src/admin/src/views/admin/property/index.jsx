@@ -8,13 +8,14 @@ import {
 import config from '../../../config.json';
 import ColumnsTable from "./components/ColumnsTable";
 function fetchPropertiesData() {
-    return fetch(config.API_URL+"properties/")
+    return fetch(config.API_URL+"properties")
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             return response.json();
         })
+
         .then((data) => {
             console.log('Properties data:', data);
             return data;
