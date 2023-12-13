@@ -52,7 +52,7 @@ function fetchPropertyByIdData(id) {
 }
 
 
-export default function ColumnsTable(props) {
+export default function PropertiesTable(props) {
   const { columnsData, tableData } = props;
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);

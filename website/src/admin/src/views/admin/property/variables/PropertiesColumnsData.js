@@ -1,4 +1,4 @@
-const columnsDataListingProperty = [
+const columnsDataProperty = [
   {
     Header: "ID",
     accessor: "id",
@@ -49,4 +49,4 @@ const columnsDataListingProperty = [
   },
 ];
 
-export { columnsDataListingProperty };
+export { columnsDataProperty };

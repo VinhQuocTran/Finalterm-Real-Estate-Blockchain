@@ -3,10 +3,10 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
-    columnsDataListingProperty
-} from "./variables/columnsData";
+    columnsDataProperty
+} from "./variables/PropertiesColumnsData";
 import config from '../../../config.json';
-import ColumnsTable from "./components/ColumnsTable";
+import PropertiesTable from "./components/PropertiesTable";
 function fetchPropertiesData() {
     return fetch(config.API_URL+"properties")
         .then((response) => {
@@ -20,7 +20,7 @@ function fetchPropertiesData() {
             console.log('Properties data:', data);
             return data;
         })
-        .catch((error) => {
+        .catch((error) => {f
             console.error('Error fetching properties data:', error);
             throw error;
         });
@@ -50,8 +50,8 @@ export default function ListingProperty() {
         mb='20px'
         columns={{ sm: 0, md: 0 }}
         spacing={{ base: "20px", xl: "20px" }}>
-        <ColumnsTable
-          columnsData={columnsDataListingProperty}
+        <PropertiesTable
+          columnsData={columnsDataProperty}
           tableData={propertyData}
         />
       </SimpleGrid>
