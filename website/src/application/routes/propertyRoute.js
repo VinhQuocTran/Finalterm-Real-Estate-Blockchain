@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const propertyController = require('../controllers/propertyController');
-const { protect } = require('../controllers/authController');
+const { protect, restrictTo } = require('../controllers/authController');
 
 router.get('/', propertyController.getAllProperties);
+router.get('/:id', propertyController.getProperty);
 
 // Protect all routes after this middleware
 router.use(protect);

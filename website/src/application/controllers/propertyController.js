@@ -6,6 +6,7 @@ const catchAsync = require('../utils/catchAsync');
 
 module.exports = {
     createProperty: factory.createOne(Property),
+    getProperty: factory.getOne(Property),
     getAllProperties: factory.getAll(Property),
     updateProperty: factory.updateOne(Property),
     uploadPropertyPhoto: fileUploader.single('file', 1),
