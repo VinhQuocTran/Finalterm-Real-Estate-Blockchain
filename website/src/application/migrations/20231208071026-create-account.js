@@ -84,9 +84,8 @@ module.exports = {
       passwordConfirm: {
         field: 'password_confirm',
         type: Sequelize.DataTypes.STRING(128),
-        allowNull: false,
+        allowNull: true,
         validate: {
-          notNull: { msg: 'Please confirm your password' },
           customValidator(value) {
             if (value !== this.password) {
               throw new Error('Passwords are not the same!');

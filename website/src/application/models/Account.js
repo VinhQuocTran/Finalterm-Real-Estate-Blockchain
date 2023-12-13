@@ -75,9 +75,8 @@ const Account = sequelize.define('', {
     },
     passwordConfirm: {
         type: DataTypes.STRING(128),
-        allowNull: false,
+        allowNull: true,
         validate: {
-            notNull: { msg: 'Please confirm your password' },
             customValidator(value) {
                 console.log('value:', value);
                 console.log('this.password:', this.password);
@@ -127,6 +126,8 @@ Account.addHook('beforeCreate', async (user, options) => {
 
     // Hash the password with cost of 12
     user.password = await bcrypt.hash(user.password, 12);
+
+    user.passwordConfirm = null;
 });
 
 Account.addHook('beforeUpdate', async (user, options) => {
