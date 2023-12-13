@@ -36,8 +36,8 @@ const Property = sequelize.define('', {
         allowNull: false,
     },
     isVerified: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
+        type: DataTypes.ENUM('-1', '0', '1'),
+        defaultValue: '-1'
     },
     accountId: {
         type: DataTypes.UUID,

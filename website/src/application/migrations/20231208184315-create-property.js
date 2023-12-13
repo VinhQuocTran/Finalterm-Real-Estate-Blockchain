@@ -49,8 +49,8 @@ module.exports = {
       },
       isVerified: {
         field: 'is_verified',
-        type: Sequelize.DataTypes.BOOLEAN,
-        allowNull: false
+        type: Sequelize.DataTypes.ENUM('-1', '0', '1'),
+        defaultValue: '-1'
       },
       accountId: {
         field: 'account_id',

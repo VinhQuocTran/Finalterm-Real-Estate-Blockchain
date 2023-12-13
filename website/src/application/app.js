@@ -1,5 +1,6 @@
 'use strict';
 require('dotenv').config();
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const globalErrorHandler = require('./controllers/errorController');
@@ -13,8 +14,12 @@ const AppError = require('./utils/appError');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
 const app = express();
-const bodyParser = require('body-parser');
-app.use(bodyParser.json());
+
+// const bodyParser = require('body-parser');
+// app.use(bodyParser.json());
+
+// Allow every domain can access to this API
+app.use(cors());
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: "10kb" }));

@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+
 class APIFeatures {
     constructor(model, queryString) {
         this.model = model;
@@ -14,15 +16,34 @@ class APIFeatures {
         let where = {};
         for (let key in queryObj) {
             if (queryObj.hasOwnProperty(key)) {
-                // Convert filtering keys to Sequelize operators
-                const attr = key.match(/\b(gte|gt|lte|lt)\b/) ? `$${key}` : key;
-                where[attr] = queryObj[key];
+                const customOperatorKeys = ['gte', 'gt', 'lte', 'lt'];
+
+                if (customOperatorKeys.some(operator => queryObj[key][operator] !== undefined)) {
+                    // If any custom operators are present, create conditions object
+                    const conditionObject = {};
+                    for (const customOperatorKey of customOperatorKeys) {
+                        if (queryObj[key][customOperatorKey] !== undefined) {
+                            conditionObject[Op[customOperatorKey]] = queryObj[key][customOperatorKey];
+                        }
+                    }
+
+                    where[key] = conditionObject;
+                } else {
+                    // If no custom operators, default to Op.eq
+                    where[key] = {
+                        [Op.eq]: queryObj[key],
+                    };
+                }
+
+                console.log('key:', key);
+                console.log('conditions:', where[key]);
             }
         }
 
         this.queryOptions.where = where;
         return this;
     }
+
 
     sort() {
         if (this.queryString.sort) {
