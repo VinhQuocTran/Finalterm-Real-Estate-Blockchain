@@ -1,6 +1,7 @@
 import "./propertyCard.scss";
 
-const PropertyCard = () => {
+const PropertyCard = (props) => {
+
   return (
     <div className="propertyCard">
       <div className="boxTop">
@@ -37,7 +38,7 @@ const PropertyCard = () => {
       <div className="boxBottom">
         <div className="checkBoxes">
           <div className="checkBox">
-            <input type="checkbox" checked disabled />
+            <input type="checkbox" disabled />
             <label>Is verified </label>
           </div>
           <div className="checkBox">
@@ -45,7 +46,11 @@ const PropertyCard = () => {
             <label>Is listed </label>
           </div>
         </div>
-      </div>
+        <div className="buttons">
+          <button type="button" onClick={props.onClick}>Verify Property</button>
+          <button type="button">Listing Property</button>
+        </div>
+      </div>      
     </div>
   );
 };

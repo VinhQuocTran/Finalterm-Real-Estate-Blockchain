@@ -68,6 +68,9 @@
   }
 
   .boxBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 0 16px 16px;
 
     .checkBoxes {
@@ -93,5 +96,27 @@
         }
       }
     }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      button {
+        font-size: 0.625rem;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 10px;
+        background-color: green;
+
+        &:disabled {
+          background-color: gray;
+          cursor: unset;
+          opacity: 0.4;
+        }
+      }
+      
+    }
   }
+
 }

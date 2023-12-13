@@ -6,37 +6,46 @@ import "./myproperty.scss";
 
 const MyProperty = () => {
   const newPropertyModalRef = useRef();
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const verifyPropertyModalRef = useRef();
+  const [isNewPropertyModalOpened, setIsNewPropertyModalOpened] = useState(false);
+  const [isVerifyPropertyModalOpened, setIsVerifyPropertyModalOpened] = useState(false);
 
-  const handleOpenModal = (e) => {
-    newPropertyModalRef.current.style.visibility = !isOpenModal ? 'visible' : 'hidden';
-    newPropertyModalRef.current.style.opacity = !isOpenModal ? 1 : 0;
-    if (isOpenModal) e.stopPropagation();
-    setIsOpenModal(!isOpenModal);
+  const handleNewPropertyModalClick = (e) => {
+    newPropertyModalRef.current.style.visibility = !isNewPropertyModalOpened ? 'visible' : 'hidden';
+    newPropertyModalRef.current.style.opacity = !isNewPropertyModalOpened ? 1 : 0;
+    if (isNewPropertyModalOpened) e.stopPropagation();
+    setIsNewPropertyModalOpened(!isNewPropertyModalOpened);
+  };
+
+  const handleVerifyPropertyClick = (e) => {
+    verifyPropertyModalRef.current.style.visibility = !isVerifyPropertyModalOpened ? 'visible' : 'hidden';
+    verifyPropertyModalRef.current.style.opacity = !isVerifyPropertyModalOpened ? 1 : 0;
+    if (isVerifyPropertyModalOpened) e.stopPropagation();
+    setIsVerifyPropertyModalOpened(!isVerifyPropertyModalOpened);
   };
 
   return (
     <div className="myProperty">
       <ContentWrapper>
-        <div className="buttons" onClick={handleOpenModal}>
+        <div className="buttons" onClick={handleNewPropertyModalClick}>
           <button type="button">Create new property</button>
         </div>
         <div className="line"></div>
         <div className="propertyContainer">
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
-          <PropertyCard />
+          <PropertyCard onClick={handleVerifyPropertyClick} />
+          <PropertyCard onClick={handleVerifyPropertyClick} />
+          <PropertyCard onClick={handleVerifyPropertyClick} />
+          <PropertyCard onClick={handleVerifyPropertyClick} />
+          <PropertyCard onClick={handleVerifyPropertyClick} />
+          <PropertyCard onClick={handleVerifyPropertyClick} />
+          <PropertyCard onClick={handleVerifyPropertyClick} />
         </div>
       </ContentWrapper>
-      <div className="newPropertyModal" ref={newPropertyModalRef} onClick={handleOpenModal}>
+      <div className="newPropertyModal" ref={newPropertyModalRef} onClick={handleNewPropertyModalClick}>
         <div className="modalContent" onClick={(e) => e.stopPropagation()}>
           <div className="contentTop">
             <h1>New property</h1>
-            <IoMdClose onClick={handleOpenModal} />
+            <IoMdClose onClick={handleNewPropertyModalClick} />
           </div>
           <div className="inputForm">
             <label htmlFor="address">Address</label>
@@ -72,6 +81,20 @@ const MyProperty = () => {
           </div>
           <div className="submitBtn">
             <button type="button">Submit</button>
+          </div>
+        </div>
+      </div>
+      <div className="verifyPropertyModal" ref={verifyPropertyModalRef} onClick={handleVerifyPropertyClick}>
+        <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+          <div className="contentTop">
+            <IoMdClose onClick={handleVerifyPropertyClick} />
+          </div>
+          <div className="line"></div>
+          <h4>Do you understand that all of your provided information about the property will be used for verification process?</h4>
+          <div className="line"></div>
+          <div className="submitBtn">
+            <button type="button">Accept</button>
+            <button type="button" onClick={handleVerifyPropertyClick}>No</button>
           </div>
         </div>
       </div>
