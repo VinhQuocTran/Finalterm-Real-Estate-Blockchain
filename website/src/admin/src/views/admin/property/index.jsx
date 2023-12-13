@@ -1,12 +1,13 @@
 // Chakra imports
+
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
     columnsDataListingProperty
-} from "views/admin/listingProperty/variables/columnsData";
+} from "./variables/columnsData";
 import config from '../../../config.json';
 import ColumnsTable from "./components/ColumnsTable";
-function fetchListingPropertiesData() {
+function fetchPropertiesData() {
     return fetch(config.API_URL+"properties/")
         .then((response) => {
             if (!response.ok) {
@@ -23,42 +24,16 @@ function fetchListingPropertiesData() {
             throw error;
         });
 }
-const listingPropertyModel = {
-    id: 0,
-    monthly_rent: 0,
-    listed_date: new Date(),
-    property_valuation: 0,
-    property_manager_id: 0,
-    submit_listing_property_id: 0,
-    propertyManager: {
-        id: 0,
-    },
-    submitListingProperty: {
-        id: 0,
-    },
-};
 
+export default function ListingProperty() {
+    let [propertyData, setPropertyData] = useState([{
 
-export default function Settings() {
-    let [listingPropertyData, setListingPropertyData] = useState([{
-        id: 0,
-        monthly_rent: 0,
-        listed_date: "",
-        property_valuation: 0,
-        property_manager_id: 0,
-        submit_listing_property_id: 0,
-        propertyManager: {
-            id: 0,
-        },
-        submitListingProperty: {
-            id: 0,
-        }
     }]);
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await fetchListingPropertiesData();
-                // setListingPropertyData(data.data);
+                const data = await fetchPropertiesData();
+                setPropertyData(data.data);
                 console.log(data)
             } catch (error) {
                 console.error('Error in component:', error);
@@ -67,7 +42,7 @@ export default function Settings() {
 
         fetchData();
     }, []);
-    console.log(listingPropertyData)
+    console.log(propertyData)
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
@@ -76,7 +51,7 @@ export default function Settings() {
         spacing={{ base: "20px", xl: "20px" }}>
         <ColumnsTable
           columnsData={columnsDataListingProperty}
-          tableData={listingPropertyData}
+          tableData={propertyData}
         />
       </SimpleGrid>
     </Box>
