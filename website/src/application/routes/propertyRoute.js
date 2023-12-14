@@ -13,12 +13,7 @@ router.get('/:id', propertyController.getProperty);
 router.patch('/:id/updateIsVerified', restrictTo('admin'), propertyController.updateIsVerified);
 
 router.post('/', restrictTo('user'), propertyController.createProperty);
-router.patch('/:id/uploadPhoto', 
-    restrictTo('user'), 
-    propertyController.uploadPropertyPhoto,
-    propertyController.resizePropertyPhoto,
-    propertyController.updateProperty
-);
+router.post('/uploadImage', propertyController.uploadSingleFile, propertyController.uploadImage);
 router.patch('/:id', restrictTo('user'), propertyController.updateProperty);
 router.delete('/:id', restrictTo('user'), propertyController.deleteProperty);
 

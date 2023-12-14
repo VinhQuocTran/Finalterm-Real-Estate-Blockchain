@@ -1,7 +1,9 @@
 import { useRef, useState } from "react";
+import Select from 'react-select'
 import { IoMdClose } from "react-icons/io";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { PropertyCard } from "../../components/imports";
+import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPropertyFormInput";
 import "./myproperty.scss";
 
 const MyProperty = () => {
@@ -9,6 +11,105 @@ const MyProperty = () => {
   const verifyPropertyModalRef = useRef();
   const [isNewPropertyModalOpened, setIsNewPropertyModalOpened] = useState(false);
   const [isVerifyPropertyModalOpened, setIsVerifyPropertyModalOpened] = useState(false);
+  const [values, setValues] = useState({
+    address: "",
+    district: "",
+    numOfBedroom: "",
+    numOfWc: "",
+    totalFloor: "",
+    area: "",
+    propertyImageUrl: "",
+    propertyDocumentUrl: ""
+  });
+
+  const inputs = [
+    {
+      id: 1,
+      name: "address",
+      type: "text",
+      label: "Address",
+      errorMessage: "Address is required",
+      required: true
+    },
+    {
+      id: 3,
+      name: "numOfBedroom",
+      type: "number",
+      min: "1",
+      label: "Num of bedroom",
+      errorMessage: "Num of bedroom is required",
+      required: true
+    },
+    {
+      id: 4,
+      name: "numOfWc",
+      type: "number",
+      min: "1",
+      label: "Num of WC",
+      errorMessage: "Num of WC is required",
+      required: true
+    },
+    {
+      id: 5,
+      name: "totalFloor",
+      type: "number",
+      min: "1",
+      label: "Total of floor",
+      errorMessage: "Total of floor is required",
+      required: true
+    },
+    {
+      id: 6,
+      name: "Area",
+      type: "number",
+      min: "1",
+      label: "Area (m&sup2;)",
+      errorMessage: "Area is required",
+      required: true
+    },
+    {
+      id: 7,
+      name: "propertyImageUrl",
+      type: "file",
+      label: "Property image (jpeg,jpg,png)",
+      errorMessage: "Property image is required",
+      required: true
+    },
+    {
+      id: 8,
+      name: "propertyDocumentUrl",
+      type: "file",
+      label: "Property document (pdf)",
+      errorMessage: "Property document is required",
+      required: true
+    }
+  ];
+
+  const districtOptions = [
+    { value: '1', label: '1' },
+    { value: '2', label: '2' },
+    { value: '3', label: '3' },
+    { value: '4', label: '4' },
+    { value: '5', label: '5' },
+    { value: '6', label: '6' },
+    { value: '7', label: '7' },
+    { value: '8', label: '8' },
+    { value: '9', label: '9' },
+    { value: '10', label: '10' },
+    { value: '11', label: '11' },
+    { value: '12', label: '12' },
+    { value: 'Binh Thanh', label: 'Binh Thanh' },
+    { value: 'Thu Duc', label: 'Thu Duc' },
+    { value: 'Go Vap', label: 'Go Vap' },
+    { value: 'Phu Nhuan', label: 'Phu Nhuan' },
+    { value: 'Tan Binh', label: 'Tan Binh' },
+    { value: 'Tan Phu', label: 'Tan Phu' },
+    { value: 'Binh Tan', label: 'Binh Tan' }
+  ]
+
+  const onChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
 
   const handleNewPropertyModalClick = (e) => {
     newPropertyModalRef.current.style.visibility = !isNewPropertyModalOpened ? 'visible' : 'hidden';
@@ -48,37 +149,10 @@ const MyProperty = () => {
             <IoMdClose onClick={handleNewPropertyModalClick} />
           </div>
           <div className="inputForm">
-            <label htmlFor="address">Address</label>
-            <input id="address" type="text" />
-          </div>
-          <div className="inputForm">
-            <label htmlFor="numBedroom">Num of bedroom</label>
-            <input id="numBedroom" type="number" min={1} />
-          </div>
-          <div className="inputForm">
-            <label htmlFor="numWC">Num of wc</label>
-            <input id="numWC" type="number" min={1} />
-          </div>
-          <div className="inputForm">
-            <label htmlFor="numFloor">Total floor</label>
-            <input id="numFloor" type="number" min={0} />
-          </div>
-          <div className="inputForm">
-            <label htmlFor="area">Area (m&sup2;)</label>
-            <input id="area" type="number" min={1} />
-          </div>
-          <div className="inputForm">
-            <label htmlFor="image">Image (jpg,jpeg,png)</label>
-            <input id="image" type="file" />
-          </div>
-          <div className="inputForm">
-            <label htmlFor="docFile">Document (pdf)</label>
-            <input id="docFile" type="text" />
-          </div>
-          <div className="inputForm">
             <label htmlFor="district">District</label>
-            <input id="district" type="text" />
+            <Select options={districtOptions} />
           </div>
+          {inputs.map((item) => <NewPropertyFormInput key={item.id} {...item} value={values[item.name]} onChange={onChange} />)}
           <div className="submitBtn">
             <button type="button">Submit</button>
           </div>

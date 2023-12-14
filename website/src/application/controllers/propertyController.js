@@ -3,6 +3,7 @@ const factory = require('./handlerFactory');
 const fileUploader = require('../utils/fileUploader');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const {uploadFile} = require('../utils/cloudinaryStorage');
 
 module.exports = {
     updateIsVerified: catchAsync(async (req, res) => {
@@ -21,11 +22,19 @@ module.exports = {
         });
 
     }),
+    uploadImage: catchAsync(async (req, res) => {
+        if (!req.file) return next(new AppError('There is no image file to upload.', 400));
+        const data = await uploadFile(req.file, {folder: 'properties'});
+        console.log('----- TEST -----');
+        console.log(data);
+        console.log('----- TEST -----');
+        res.json('TEST');
+    }),
+    uploadSingleFile: fileUploader.single('file', 1),
     createProperty: factory.createOne(Property),
     getProperty: factory.getOne(Property),
     getAllProperties: factory.getAll(Property),
     updateProperty: factory.updateOne(Property),
-    uploadPropertyPhoto: fileUploader.single('file', 1),
     resizePropertyPhoto: catchAsync(async (req, res, next) => {
         if (!req.files) return next();
 
