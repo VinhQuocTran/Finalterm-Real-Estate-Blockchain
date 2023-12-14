@@ -36,7 +36,7 @@ SubmitListingProperty.belongsTo(Property, { foreignKey: 'property_id' });
 
 // Hooks
 SubmitListingProperty.addHook('beforeCreate', async (submitListingProperty, options) => {
-    // Generate a custom ID like "SLP_0001", "PSLP_0002", ...
+    // Generate a custom ID like "SLP_0001", "SLP_0002", ...
     const latestSubmitListingProperty = await SubmitListingProperty.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
@@ -44,7 +44,7 @@ SubmitListingProperty.addHook('beforeCreate', async (submitListingProperty, opti
 
     let counter = 1;
     if (latestSubmitListingProperty) {
-        const lastSubmitListingPropertyId = parseInt(latestSubmitListingProperty.id.split('_').pop(), 10);
+        const lastSubmitListingPropertyId = parseInt(latestSubmitListingProperty.id.split('_')[1], 10);
         counter = lastSubmitListingPropertyId + 1;
     }
 

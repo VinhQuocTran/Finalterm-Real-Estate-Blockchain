@@ -111,7 +111,7 @@ module.exports = {
         select: false
       },
       createdAt: {
-        field:  'created_at',
+        field: 'created_at',
         type: Sequelize.DataTypes.DATE
       },
       updatedAt: {

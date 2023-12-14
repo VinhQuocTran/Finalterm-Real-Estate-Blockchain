@@ -1,14 +1,17 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
+import { BASE_URL } from "../../utils/api";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { AuthFormInput } from "../../components/imports";
-import { BASE_URL } from "../../utils/api";
-
+import { loginFailure, loginStart, loginSuccess } from "../../redux/userSlice";
 import "react-toastify/dist/ReactToastify.css";
 import "./signup.scss";
 
 const Signup = () => {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] = useState({
     username: "",
     email: "",
@@ -95,11 +98,14 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData(e.target);
-    const response = await axios.post(BASE_URL + "/accounts/signup", Object.fromEntries(data));
-
-    if (response.status === "success") {
-      toast('Sign up successfully', {
+    dispatch(loginStart());
+    setIsLoading(true);
+    try {
+      const data = new FormData(e.target);
+      await axios.post(BASE_URL + "/accounts/signup", Object.fromEntries(data));
+      dispatch(loginSuccess(response.data));
+      setIsLoading(false);
+      toast.success('Sign up successfully', {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -107,9 +113,10 @@ const Signup = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark",
+        theme: "colored",
       });
-    } else {
+    } catch (err) {
+      dispatch(loginFailure());
       toast.error('Internal Server Error!', {
         position: "top-right",
         autoClose: 5000,
@@ -137,9 +144,7 @@ const Signup = () => {
               onChange={onChange}
             />
           ))}
-          <button type="submit">
-            Continue
-          </button>
+          <button type="submit" disabled={isLoading}>Continue</button>
           <p>
             Already have an account? <a href="/sign-in">Sign in</a>
           </p>

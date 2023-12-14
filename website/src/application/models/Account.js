@@ -1,11 +1,11 @@
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
-const { DataTypes, Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const sequelize = require('../utils/database');
 
 const Account = sequelize.define('', {
     email: {
-        type: DataTypes.STRING(128),
+        type: Sequelize.DataTypes.STRING(128),
         allowNull: false,
         unique: true,
         validate: {
@@ -17,45 +17,45 @@ const Account = sequelize.define('', {
         }
     },
     address: {
-        type: DataTypes.STRING(256),
+        type: Sequelize.DataTypes.STRING(256),
         allowNull: false,
         validate: {
             notNull: { msg: 'Please provide your address.' }
         }
     },
     phoneNumber: {
-        type: DataTypes.STRING(16),
+        type: Sequelize.DataTypes.STRING(16),
         allowNull: false,
         validate: {
             notNull: { msg: 'Please provide your phone number.' }
         }
     },
     residentId: {
-        type: DataTypes.STRING(32),
+        type: Sequelize.DataTypes.STRING(32),
         allowNull: false,
         validate: {
             notNull: { msg: 'Please provide your resident identity number.' }
         }
     },
     cashBalance: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: Sequelize.DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0
     },
     tokenBalance: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: Sequelize.DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0
     },
     username: {
-        type: DataTypes.STRING(128),
+        type: Sequelize.DataTypes.STRING(128),
         allowNull: false,
         validate: {
             notNull: { msg: 'Please tell us your name' }
         }
     },
     role: {
-        type: DataTypes.STRING(56),
+        type: Sequelize.DataTypes.STRING(56),
         defaultValue: 'user',
         validate: {
             isIn: {
@@ -65,7 +65,7 @@ const Account = sequelize.define('', {
         }
     },
     password: {
-        type: DataTypes.STRING(128),
+        type: Sequelize.DataTypes.STRING(128),
         allowNull: false,
         validate: {
             notNull: { msg: 'Please provide a password' },
@@ -74,7 +74,7 @@ const Account = sequelize.define('', {
         select: false
     },
     passwordConfirm: {
-        type: DataTypes.STRING(128),
+        type: Sequelize.DataTypes.STRING(128),
         allowNull: true,
         validate: {
             customValidator(value) {
@@ -87,11 +87,11 @@ const Account = sequelize.define('', {
         },
         select: false
     },
-    passwordChangedAt: DataTypes.DATE,
-    passwordResetToken: DataTypes.STRING(64),
-    passwordResetExpires: DataTypes.DATE,
+    passwordChangedAt: Sequelize.DataTypes.DATE,
+    passwordResetToken: Sequelize.DataTypes.STRING(64),
+    passwordResetExpires: Sequelize.DataTypes.DATE,
     active: {
-        type: DataTypes.BOOLEAN,
+        type: Sequelize.DataTypes.BOOLEAN,
         defaultValue: true,
         select: false
     }
@@ -105,49 +105,48 @@ const Account = sequelize.define('', {
 });
 
 // Hooks
-Account.addHook('beforeCreate', async (user, options) => {
-    // Generate a custom ID like "USER_0001", "USER_0002", ...
-    const latestUser = await Account.findOne({
+Account.addHook('beforeCreate', async (account, options) => {
+    // Generate a custom ID like "ACCOUNT_0001", "ACCOUNT_0002", ...
+    const latestAccount = await Account.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
     });
 
     let counter = 1;
-    if (latestUser) {
-        const lastUserId = parseInt(latestUser.id.split('_')[1], 10);
-        counter = lastUserId + 1;
+    if (latestAccount) {
+        const lastAccountId = parseInt(latestAccount.id.split('_')[1], 10);
+        counter = lastAccountId + 1;
     }
 
-    const customId = `USER_${counter.toString().padStart(4, '0')}`;
-    user.id = customId;
+    const accountId = `ACCOUNT_${counter.toString().padStart(4, '0')}`;
+    account.id = accountId;
 
-    // Only run this following code if password was actually modified
-    if (!user.changed('password')) return;
+    // Only run this following code if the password was actually modified
+    if (!account.changed('password')) return;
 
-    // Hash the password with cost of 12
-    user.password = await bcrypt.hash(user.password, 12);
+    // Hash the password with a cost of 12
+    account.password = await bcrypt.hash(account.password, 12);
 
-    user.passwordConfirm = null;
+    account.passwordConfirm = null;
 });
 
-Account.addHook('beforeUpdate', async (user, options) => {
+Account.addHook('beforeUpdate', async (account, options) => {
     // Only run this function if password was actually modified
-    if (!user.changed('password')) return;
+    if (!account.changed('password')) return;
 
     // Hash the password with cost of 12
-    user.password = await bcrypt.hash(user.password, 12);
+    account.password = await bcrypt.hash(account.password, 12);
 
     // Set passwordChangedAt field
-    user.passwordChangedAt = new Date(Date.now() - 1000);
+    account.passwordChangedAt = new Date(Date.now() - 1000);
 });
 
-Account.addHook('beforeFind', (options) => {
+Account.addHook('beforeFind', (options) => {  
     if (!options.where) {
-        options.where = {};
+      options.where = {};
     }
     options.where.active = { [Op.ne]: false };
-});
-
+  });
 
 // Instance methods
 Account.prototype.correctPassword = async function (candidatePassword) {

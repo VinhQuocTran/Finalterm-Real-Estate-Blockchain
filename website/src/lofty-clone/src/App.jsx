@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "./App.scss";
 import { Header, Footer } from "./components/imports";
 import { Home, DetailedHouse, Signup, Signin, MyProperty, TokenOwnership } from "./pages/imports";
+import "./App.scss";
 
 function App() {
   return (

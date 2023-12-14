@@ -3,43 +3,40 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("PropertyInspectionService", {
+    await queryInterface.createTable("RepairTransactions", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.DataTypes.UUID,
         defaultValue: Sequelize.DataTypes.UUIDV4
       },
-      name: {
-        type: Sequelize.DataTypes.STRING(64),
+      isReplenished: {
+        field: 'is_replenished',
+        type: Sequelize.DataTypes.BOOLEAN,
         allowNull: false
       },
-      address: {
-        type: Sequelize.DataTypes.STRING(256),
+      transactionDate: {
+        field: 'transaction_date',
+        type: Sequelize.DataTypes.DATE,
         allowNull: false
       },
-      phoneNumber: {
-        field: 'phone_number',
-        type: Sequelize.DataTypes.STRING(16),
-        allowNull: false
-      },
-      feePerTime: {
-        field: 'fee_per_time',
-        type: Sequelize.DataTypes.INTEGER,
+      proposalRepairId: {
+        field: 'proposal_repair_id',
+        type: Sequelize.DataTypes.UUID,
         allowNull: false
       },
       createdAt: {
-        field:  'created_at',
+        field: 'created_at',
         type: Sequelize.DataTypes.DATE
       },
       updatedAt: {
         field: 'updated_at',
         type: Sequelize.DataTypes.DATE
-      }      
+      }
     });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('PropertyInspectionService');
+    await queryInterface.dropTable('RepairTransactions');
   }
 };
