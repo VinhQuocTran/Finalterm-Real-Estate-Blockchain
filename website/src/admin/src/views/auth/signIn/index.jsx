@@ -22,6 +22,11 @@ import DefaultAuth from "layouts/auth/Default";
 import illustration from "assets/img/auth/auth.png";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import config from"../../../config.json"
+import {useHistory} from "react-router-dom";
+
 
 function SignIn() {
   // Chakra color mode
@@ -29,28 +34,58 @@ function SignIn() {
   const textColorSecondary = "gray.400";
   const brandStars = useColorModeValue("brand.500", "brand.400");
   const [show, setShow] = React.useState(false);
+  const history = useHistory();
 
   const [formData, setFormData] = React.useState({
-    username: '',
     password: '',
-    rememberMe: false,
+    email: '',
   });
+  if(localStorage.getItem("jwt")){
+    history.push("/admin");
+  }
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
-    const inputValue = type === 'checkbox' ? checked : value;
+    const { name, value} = event.target;
 
     setFormData({
       ...formData,
-      [name]: inputValue,
+      [name]: value,
     });
   };
   const handleClick = () => setShow(!show);
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
-
-    console.log(formData)
+    try {
+      const response = await axios.post(config.API_URL + "accounts/signin",formData);
+      if (response.data.status === "success") {
+        localStorage.setItem("jwt",response.data.token)
+      } else {
+        toast.warn('Internal Server Error!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
+    } catch (err) {
+      toast.warn('Internal Server Error!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      console.log(err)
+    }
   };
+
   return (
     <DefaultAuth illustrationBackground={illustration} image={illustration}>
       <Flex
@@ -104,21 +139,21 @@ function SignIn() {
                   fontWeight='500'
                   color={textColor}
                   mb='8px'>
-                Username<Text color={brandStars}>*</Text>
+                Email<Text color={brandStars}>*</Text>
               </FormLabel>
               <Input
                   isRequired={true}
                   variant='auth'
                   fontSize='sm'
                   ms={{ base: "0px", md: "0px" }}
-                  type='text'
-                  placeholder='username'
+                  type='email'
+                  placeholder='email'
                   mb='24px'
                   fontWeight='500'
                   size='lg'
-                  name={"username"}
+                  name={"email"}
                   onChange={handleInputChange}
-                  value={formData.username}
+                  value={formData.email}
               />
               <FormLabel
                   ms='4px'

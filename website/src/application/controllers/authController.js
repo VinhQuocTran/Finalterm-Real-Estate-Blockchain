@@ -51,7 +51,6 @@ module.exports = {
     }),
     signin: catchAsync(async (req, res, next) => {
         const { email, password } = req.body;
-
         // Check if email and password exist
         if (!email || !password) {
             return next(new AppError("Please provide email and password!", 400));

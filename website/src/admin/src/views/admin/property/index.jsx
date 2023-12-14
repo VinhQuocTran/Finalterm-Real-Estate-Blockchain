@@ -20,7 +20,7 @@ function fetchPropertiesData() {
             console.log('Properties data:', data);
             return data;
         })
-        .catch((error) => {f
+        .catch((error) => {
             console.error('Error fetching properties data:', error);
             throw error;
         });
