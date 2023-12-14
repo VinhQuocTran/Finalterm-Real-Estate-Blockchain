@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Flex, Grid, Icon, Image, Link, Select,
+  Flex, Grid, Icon, IconButton, Image, Input, Link, Select,
   Table,
   Tbody,
   Td,
@@ -32,6 +32,7 @@ import {
 } from '@chakra-ui/react'
 import config from "../../../../config.json";
 import axios from 'axios';
+import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
 
 function fetchPropertyByIdData(id) {
   return fetch(config.API_URL+"properties/"+id)
@@ -53,18 +54,19 @@ function fetchPropertyByIdData(id) {
 
 
 export default function PropertiesTable(props) {
-  const { columnsData, tableData } = props;
+  const { columnsData, tableData, reloadParent } = props;
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
 
   const tableInstance = useTable(
-    {
-      columns,
-      data,
-    },
-    useGlobalFilter,
-    useSortBy,
-    usePagination
+      {
+        columns,
+        data,
+        initialState: { pageIndex: 0, pageSize: 10 }, // Initial page and page size
+      },
+      useGlobalFilter,
+      useSortBy,
+      usePagination
   );
 
   const {
@@ -73,10 +75,18 @@ export default function PropertiesTable(props) {
     headerGroups,
     page,
     prepareRow,
-    initialState,
-  } = tableInstance;
-  initialState.pageSize = 5;
+    state,
+    nextPage,
+    previousPage,
+    canNextPage,
+    canPreviousPage,
+    setGlobalFilter
 
+  } = tableInstance;
+
+  const { pageIndex, pageSize } = state;
+
+  const { globalFilter } = state;
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   const [size, setSize] = React.useState('full')
@@ -125,22 +135,26 @@ export default function PropertiesTable(props) {
   };
 
   const handleModalAction = async () => {
-   if (modalAction === 'update') {
+    if (modalAction === 'update') {
       console.log('Update action with data:', selectedOption);
-      let prop = propertyData;
-      prop.isVerified = selectedOption;
-      console.log(prop)
-       try {
-         await axios.patch(config.API_URL+`properties/`+propertyData.id, prop);
-         console.log('Property updated successfully!');
-         window.location.reload();
-       } catch (error) {
-         console.error('Error updating property:', error);
-       }
-     }
-    onClose();
+      try {
+        const jwtToken = localStorage.getItem("jwt");
+        let prop = propertyData;
+        prop.isVerified = selectedOption;
+        await axios.patch(config.API_URL + `properties/` + propertyData.id, prop, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwtToken}`,
+          },
+        });
+        console.log('Property updated successfully!');
+        reloadParent();
+      } catch (error) {
+        console.error('Error updating property:', error);
+      }
+      onClose();
+    }
   };
-
 
   return (
     <Card
@@ -148,15 +162,25 @@ export default function PropertiesTable(props) {
       w='100%'
       px='0px'
       overflowX={{ sm: "scroll", lg: "hidden" }}>
-      <Flex px='25px' justify='space-between' mb='20px' align='center'>
-        <Text
-          color={textColor}
-          fontSize='22px'
-          fontWeight='700'
-          lineHeight='100%'>
+      <Grid templateColumns={{ sm: '1fr', md: '1fr', lg: '10fr 2fr' }} mb='20px'>
+        {/* Left column */}
+        <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%'>
           Table Property
         </Text>
-      </Flex>
+
+        <Flex justify='flex-end'>
+          {/* Search input for global filtering */}
+          <Input
+              type='text'
+              placeholder='Search...'
+              fontSize={{ sm: "10px", lg: "12px" }}
+              color='gray.400'
+              fontWeight='700'
+              value={globalFilter || ''}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+          />
+        </Flex>
+      </Grid>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
         <Thead>
           {headerGroups.map((headerGroup, index) => (
@@ -175,7 +199,6 @@ export default function PropertiesTable(props) {
                     {column.render("Header")}
                   </Flex>
                 </Th>
-
               ))}
             </Tr>
           ))}
@@ -365,6 +388,29 @@ export default function PropertiesTable(props) {
           })}
         </Tbody>
       </Table>
+      <Flex justify="space-between" align="center" mt="4">
+        <Text color={textColor} fontSize="sm">
+          Showing {pageIndex * pageSize + 1} - {Math.min((pageIndex + 1) * pageSize, data.length)} of {data.length}
+        </Text>
+        <Flex align="center">
+          <IconButton
+              icon={<ChevronLeftIcon />}
+              onClick={previousPage}
+              isDisabled={!canPreviousPage}
+              aria-label="Previous Page"
+          />
+          <Text color={textColor} fontSize="sm" mx="2">
+            Page {pageIndex + 1}
+          </Text>
+          <IconButton
+              icon={<ChevronRightIcon />}
+              onClick={nextPage}
+              isDisabled={!canNextPage}
+              aria-label="Next Page"
+          />
+        </Flex>
+      </Flex>
+
     </Card>
   );
 }
