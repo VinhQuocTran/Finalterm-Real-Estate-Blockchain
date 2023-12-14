@@ -23,7 +23,7 @@ import illustration from "assets/img/auth/auth.png";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import config from"../../../config.json"
 import {useHistory} from "react-router-dom";
 
@@ -59,6 +59,7 @@ function SignIn() {
       const response = await axios.post(config.API_URL + "accounts/signin",formData);
       if (response.data.status === "success") {
         localStorage.setItem("jwt",response.data.token)
+        window.location.reload();
       } else {
         toast.warn('Internal Server Error!', {
           position: "top-right",

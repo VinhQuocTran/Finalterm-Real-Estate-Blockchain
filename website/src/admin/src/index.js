@@ -11,7 +11,6 @@ import { ThemeEditorProvider } from '@hypertheme-editor/chakra-ui';
 
 const App = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
-
 	useEffect(() => {
 		// Check if the user is authenticated (e.g., by checking for the presence of a JWT)
 		const jwt = localStorage.getItem('jwt'); // Adjust this based on your authentication setup
