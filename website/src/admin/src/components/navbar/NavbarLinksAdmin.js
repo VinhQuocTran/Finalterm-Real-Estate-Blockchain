@@ -25,6 +25,7 @@ import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import { FaEthereum } from 'react-icons/fa';
 import routes from 'routes.js';
 import { ThemeEditor } from './ThemeEditor';
+import {useHistory} from "react-router-dom";
 export default function HeaderLinks(props) {
 	const { secondary } = props;
 	// Chakra Color Mode
@@ -41,6 +42,12 @@ export default function HeaderLinks(props) {
 		'14px 17px 40px 4px rgba(112, 144, 176, 0.06)'
 	);
 	const borderButton = useColorModeValue('secondaryGray.500', 'whiteAlpha.200');
+
+	const handleLogout = () => {
+		localStorage.removeItem('jwt');
+		console.log('Logout clicked!');
+		window.location.reload();
+	};
 	return (
 		<Flex
 			w={{ sm: '100%', md: 'auto' }}
@@ -205,6 +212,7 @@ export default function HeaderLinks(props) {
 							_focus={{ bg: 'none' }}
 							color="red.400"
 							borderRadius="8px"
+							onClick={handleLogout}
 							px="14px">
 							<Text fontSize="sm">Log out</Text>
 						</MenuItem>

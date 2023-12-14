@@ -1,6 +1,7 @@
 import {
+  Box,
   Button,
-  Flex, Grid, Icon, Image, Link,
+  Flex, Grid, Icon, Image, Link, Select,
   Table,
   Tbody,
   Td,
@@ -30,6 +31,7 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import config from "../../../../config.json";
+import axios from 'axios';
 
 function fetchPropertyByIdData(id) {
   return fetch(config.API_URL+"properties/"+id)
@@ -50,7 +52,7 @@ function fetchPropertyByIdData(id) {
 }
 
 
-export default function ColumnsTable(props) {
+export default function PropertiesTable(props) {
   const { columnsData, tableData } = props;
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -81,49 +83,64 @@ export default function ColumnsTable(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalAction, setModalAction] = useState(null);
   const [modalData, setModalData] = useState(null);
-  const [listingPropertyData, setListingPropertyData] = useState({});
+  const [propertyData, setPropertyData] = useState({});
+  const [selectedOption, setSelectedOption] = useState("");
+  const options = [
+    { value: 1, label: "Success" },
+    { value: 0, label: "In Progress" },
+    { value: -1, label: "Failed" },
+  ];
   useEffect(() => {
-    if (modalAction === 'details') {
+    if (modalAction === 'details'|| modalAction==="update") {
       const fetchData = async () => {
         try {
           const data = await fetchPropertyByIdData(modalData.id);
-          setListingPropertyData(data.data);
-          console.log(data);
+          setPropertyData(data.data);
+          setSelectedOption(propertyData.isVerified);
         } catch (error) {
           console.error('Error in component:', error);
         }
       };
       fetchData();
     }
-  }, [modalAction, modalData]);
+  }, [modalAction, modalData,propertyData.isVerified]);
 
   const onOpen = (action, dataInput) => {
     setModalAction(action);
     setModalData(dataInput);
-    setIsOpen(true);
+    if (action === 'update') {
+      setSize('xl');
+    }
+    else {
+      setSize('full');
+    }
+      setIsOpen(true);
   };
 
   const onClose = () => {
     setIsOpen(false);
     setModalAction(null);
     setModalData(null);
+    setSelectedOption(null);
   };
-  const handleModalAction = () => {
-    // Perform different actions based on the modalAction value
-    if (modalAction === 'details') {
-      // Handle details action with modalData
-      console.log('Details action with data:', modalData);
-      const id = modalData && modalData.id;
-      // Handle details action with the id
-      console.log('Details action with id:', id);
-    } else if (modalAction === 'update') {
-      // Handle update action with modalData
-      console.log('Update action with data:', modalData);
-    }
 
-    // Close the modal
+  const handleModalAction = async () => {
+   if (modalAction === 'update') {
+      console.log('Update action with data:', selectedOption);
+      let prop = propertyData;
+      prop.isVerified = selectedOption;
+      console.log(prop)
+       try {
+         await axios.patch(config.API_URL+`properties/`+propertyData.id, prop);
+         console.log('Property updated successfully!');
+         window.location.reload();
+       } catch (error) {
+         console.error('Error updating property:', error);
+       }
+     }
     onClose();
   };
+
 
   return (
     <Card
@@ -188,27 +205,96 @@ export default function ColumnsTable(props) {
                         <Modal isOpen={isOpen} size={size} onClose={onClose}>
                           <ModalOverlay />
                           <ModalContent>
-                            <ModalHeader>{modalAction === 'details' ? 'Details' : 'Update'}</ModalHeader>
+                            <ModalHeader>{modalAction === 'details' ? 'Details Property' : 'Verify Property'}</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody>
-                              <div> 123</div>
+                              {/* Conditionally render content based on modalAction and modalData */}
+                              {modalAction === 'details' && modalData && (
+                                  <Card>
+                                    <Box>
+                                      {Object.entries(propertyData).map(([key, value]) => (
+                                          key === 'propertyImageUrl' ? (
+                                              <Box key={key} display="flex" flexDirection="row" mb={2}>
+                                                <Text fontWeight="bold" flex="0 0 30%" pr={2}>
+                                                  {key}
+                                                </Text>
+                                                <Image src={value} height={'200px'}></Image>
+                                              </Box>
+                                          ) : key === 'isVerified' ? (
+                                              // Additional condition for 'someOtherKey'
+                                              <Box key={key} display="flex" flexDirection="row" mb={2}>
+                                                <Text fontWeight="bold" flex="0 0 30%" pr={2}>
+                                                  {key}
+                                                </Text>
+                                                <Flex align='center'>
+                                                  <Icon
+                                                      w='24px'
+                                                      h='24px'
+                                                      me='5px'
+                                                      color={
+                                                        value === '1'
+                                                            ? "green.500"
+                                                            : value === '-1'
+                                                                ? "red.500"
+                                                                : value === '0'
+                                                                    ? "orange.500"
+                                                                    : null
+                                                      }
+                                                      as={
+                                                        value === '1'
+                                                            ? MdCheckCircle
+                                                            : value === '-1'
+                                                                ? MdCancel
+                                                                : value === '0'
+                                                                    ? MdOutlineError
+                                                                    : null
+                                                      }
+                                                  />
+                                                </Flex>
+                                              </Box>
+                                          ):(
+                                              // Additional condition for 'someOtherKey'
+                                              <Box key={key} display="flex" flexDirection="row" mb={2}>
+                                                <Text fontWeight="bold" flex="0 0 30%" pr={2}>
+                                                  {key}
+                                                </Text>
+                                                <Text flex="1">{value}</Text>
+                                              </Box>
+                                          )
+                                      ))}
+                                    </Box>
+                                  </Card>
+                              )}
+                              {/* Other content for different modalAction or no modalData */}
+                              {modalAction === 'update' && (
+                                  <Select
+                                      placeholder="Select an option"
+                                      value={selectedOption}
+                                      onChange={(e) => setSelectedOption(e.target.value)}
+                                      defaultValue={parseInt(propertyData.isVerified)}>
+                                    {options.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                          {option.label}
+                                        </option>
+                                    ))}
+                                  </Select>
+                              )}
+
+                              {modalAction === 'details' && !propertyData && <p>Loading...</p>}
                             </ModalBody>
                             <ModalFooter>
-                              <Button colorScheme='blue' mr={3} onClick={handleModalAction}>
+                              <Button colorScheme='blue' mr={3} onClick={onClose}>
                                 Close
                               </Button>
+
                               <Button variant='ghost' onClick={handleModalAction}>
-                                {modalAction === 'details' ? 'Details Action' : 'Update Action'}
+                                {modalAction === 'details' ? 'Details Action' : 'Verify Action'}
                               </Button>
                             </ModalFooter>
                           </ModalContent>
                         </Modal>
-                        <Button
-                            onClick={onOpen}
-                            colorScheme="green"
-                            size="sm"
-                            marginLeft="1">
-                          Update
+                        <Button onClick={() => onOpen('update', {id:row.original.id})} colorScheme="green" size="sm" marginLeft="1">
+                          Verify
                         </Button>
                       </Flex>
                     </Grid>
@@ -234,20 +320,20 @@ export default function ColumnsTable(props) {
                               h='24px'
                               me='5px'
                               color={
-                                cell.value === 1
+                                cell.value === '1'
                                     ? "green.500"
-                                    : cell.value === -1
+                                    : cell.value === '-1'
                                         ? "red.500"
-                                        : cell.value === 0
+                                        : cell.value === '0'
                                             ? "orange.500"
                                             : null
                               }
                               as={
-                                cell.value === 1
+                                cell.value === '1'
                                     ? MdCheckCircle
-                                    : cell.value === -1
+                                    : cell.value === '-1'
                                         ? MdCancel
-                                        : cell.value === 0
+                                        : cell.value === '0'
                                             ? MdOutlineError
                                             : null
                               }

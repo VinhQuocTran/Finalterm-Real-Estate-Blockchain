@@ -1,4 +1,4 @@
-const columnsDataListingProperty = [
+const columnsDataProperty = [
   {
     Header: "ID",
     accessor: "id",
@@ -6,6 +6,10 @@ const columnsDataListingProperty = [
   {
     Header: "Account ID",
     accessor: "accountId",
+  },
+  {
+    Header: "Dístrict",
+    accessor: "district",
   },
   {
     Header: "Address",
@@ -45,4 +49,4 @@ const columnsDataListingProperty = [
   },
 ];
 
-export { columnsDataListingProperty };
+export { columnsDataProperty };
