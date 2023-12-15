@@ -21,9 +21,22 @@ const userPropertiesSlice = createSlice({
     },
     updateUserProperties: (state, action) => {
       state.userProperties.unshift(action.payload);
-    }
+    },
+    updateVerifiedPropertyStatus: (state, action) => {
+      const index = state.userProperties.findIndex(item => item.id === action.payload);
+      if (index !== -1) {
+        state.userProperties[index] = { ...state.userProperties[index], ...{isVerified: "0"} };
+      }
+    },
   }
 });
 
-export const { fetchUserPropertiesStart, fetchUserPropertiesSuccess, fetchUserPropertiesFailure, updateUserProperties } = userPropertiesSlice.actions;
+export const { 
+  fetchUserPropertiesStart, 
+  fetchUserPropertiesSuccess, 
+  fetchUserPropertiesFailure, 
+  updateUserProperties, 
+  updateVerifiedPropertyStatus 
+} = userPropertiesSlice.actions;
+
 export default userPropertiesSlice.reducer;

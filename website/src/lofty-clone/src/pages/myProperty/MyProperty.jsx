@@ -7,15 +7,15 @@ import { IoMdClose } from "react-icons/io";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { PropertyCard } from "../../components/imports";
 import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPropertyFormInput";
-import "./myproperty.scss";
 import { BASE_URL } from "../../utils/api";
-import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties } from "../../redux/userPropertiesSlice";
+import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus } from "../../redux/userPropertiesSlice";
+import "./myproperty.scss";
 
 const MyProperty = () => {
+  const [verifyPropertyId, setVerifyPropertyId] = useState(null);
   const currentUser = useSelector((state) => state.user);
   const currentUserProperties = useSelector((state) => state.userProperties);
   const dispatch = useDispatch();
-  // const [userProperties, setUserProperties] = useState(null);
   const newPropertyModalRef = useRef();
   const verifyPropertyModalRef = useRef();
   const [isNewPropertyModalOpened, setIsNewPropertyModalOpened] = useState(false);
@@ -141,6 +141,7 @@ const MyProperty = () => {
     verifyPropertyModalRef.current.style.opacity = !isVerifyPropertyModalOpened ? 1 : 0;
     if (isVerifyPropertyModalOpened) e.stopPropagation();
     setIsVerifyPropertyModalOpened(!isVerifyPropertyModalOpened);
+    setVerifyPropertyId(e.target.dataset.id);
   };
 
   const handleNewPropertySubmit = async (e) => {
@@ -156,7 +157,7 @@ const MyProperty = () => {
           Authorization: `Bearer ${currentUser.token}`
         }
       });
-      
+
       dispatch(updateUserProperties(response.data.data));
       toast.success('Create new property successfully', {
         position: "top-right",
@@ -183,6 +184,24 @@ const MyProperty = () => {
     }
   };
 
+  const handleAcceptBtnClick = async () => {
+    try {
+      await axios.get(BASE_URL + `/properties/${verifyPropertyId}/requestVerify`, {
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`
+        }
+      });
+      setVerifyPropertyId(null);
+
+      // close verify property modal
+      verifyPropertyModalRef.current.style.visibility = 'hidden';
+      verifyPropertyModalRef.current.style.opacity = 0;
+      setIsVerifyPropertyModalOpened(false);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(() => {
     const fetchCurrentUserProperties = async () => {
       dispatch(fetchUserPropertiesStart());
@@ -197,8 +216,6 @@ const MyProperty = () => {
 
     fetchCurrentUserProperties();
   }, [currentUser]);
-
-  console.log('currentUserProperties', currentUserProperties);
 
   return (
     <div className="myProperty">
@@ -243,7 +260,7 @@ const MyProperty = () => {
           <h4>Do you understand that all of your provided information about the property will be used for verification process?</h4>
           <div className="line"></div>
           <div className="submitBtn">
-            <button type="button">Accept</button>
+            <button type="button" onClick={handleAcceptBtnClick}>Accept</button>
             <button type="button" onClick={handleVerifyPropertyClick}>No</button>
           </div>
         </div>
