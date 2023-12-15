@@ -2,20 +2,22 @@ import React from "react";
 
 import { Icon } from "@chakra-ui/react";
 import {
-  MdBarChart,
   MdPerson,
   MdHome,
   MdLock,
   MdPeople,
-  MdHouse
+  MdHouse,
+  MdManageAccounts,
+  MdList
 } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
 import Profile from "views/admin/profile";
-import DataTables from "views/admin/dataTables";
 import User from "views/admin/user";
 import Property from "views/admin/property";
+import PropertyManager from "views/admin/propertyManager";
+import ListingProperty from "views/admin/listingProperty";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
@@ -36,6 +38,13 @@ const routes = [
     component: User,
   },
   {
+    name: "Property Manager",
+    layout: "/admin",
+    icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
+    path: "/manager-property",
+    component: PropertyManager,
+  },
+  {
     name: "Property",
     layout: "/admin",
     icon: <Icon as={MdHouse} width='20px' height='20px' color='inherit' />,
@@ -43,11 +52,11 @@ const routes = [
     component: Property,
   },
   {
-    name: "Data Tables",
+    name: "Listing Property",
     layout: "/admin",
-    icon: <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />,
-    path: "/data-tables",
-    component: DataTables,
+    icon: <Icon as={MdList} width='20px' height='20px' color='inherit' />,
+    path: "/listing-property",
+    component: ListingProperty,
   },
   {
     name: "Profile",
