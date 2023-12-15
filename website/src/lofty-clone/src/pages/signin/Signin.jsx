@@ -48,8 +48,13 @@ const Signin = () => {
     setIsLoading(true);
     try {
       const data = new FormData(e.target);
-      const response = await axios.post(BASE_URL + "/accounts/signin", Object.fromEntries(data));
-      dispatch(loginSuccess(response.data));
+      const response = await axios.post(BASE_URL + "/accounts/signin", Object.fromEntries(data));      
+      dispatch(loginSuccess({
+        user: response.data.data.account,
+        token: response.data.token
+      }));
+      localStorage.setItem('user', JSON.stringify(response.data.data.account));
+      document.cookie = `authToken=${response.data.token}; path=/`;
       setIsLoading(false);
       navigate("/");
     } catch (err) {

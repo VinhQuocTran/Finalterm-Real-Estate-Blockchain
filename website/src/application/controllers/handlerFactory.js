@@ -20,18 +20,18 @@ const deleteOne = Model =>
 
 const updateOne = Model =>
     catchAsync(async (req, res, next) => {
-        const [updatedRowsCount, updatedRows] = await Model.update(req.body, {
+        const [_, updatedRow] = await Model.update(req.body, {
             where: { id: req.params.id },
             returning: true // Get the updated rows
         });
 
-        if (updatedRowsCount === 0) {
+        if (!updatedRow) {
             return next(new AppError("No data found with that ID", 404));
         }
 
         res.status(200).json({
             status: "success",
-            data: updatedRows
+            data: updatedRow
         });
     });
 
