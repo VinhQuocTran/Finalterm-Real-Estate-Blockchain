@@ -28,8 +28,14 @@ class APIFeatures {
                     }
 
                     where[key] = conditionObject;
+                } else if (queryObj[key].includes(',')) {
+                    // If the value contains a comma, treat it as a list of values
+                    const values = queryObj[key].split(',').map(val => val.trim());
+                    where[key] = {
+                        [Op.in]: values,
+                    };
                 } else {
-                    // If no custom operators, default to Op.eq
+                    // If no custom operators and no comma, default to Op.eq
                     where[key] = {
                         [Op.eq]: queryObj[key],
                     };

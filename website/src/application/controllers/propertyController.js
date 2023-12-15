@@ -3,28 +3,28 @@ const factory = require('./handlerFactory');
 const fileUploader = require('../utils/fileUploader');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const {uploadFile} = require('../utils/cloudinaryStorage');
+const { uploadFile } = require('../utils/cloudinaryStorage');
 
 module.exports = {
     updateIsVerified: catchAsync(async (req, res) => {
-        const [updatedRowsCount, updatedRows] = await Model.update({ isVerified: req.body.isVerified }, {
+        const [_, updatedRow] = await Property.update({ isVerified: req.body.isVerified }, {
             where: { id: req.params.id },
             returning: true // Get the updated rows
         });
 
-        if (updatedRowsCount === 0) {
+        if (!updatedRow) {
             return next(new AppError("No data found with that ID", 404));
         }
 
         res.status(200).json({
             status: "success",
-            data: updatedRows
+            data: updatedRow
         });
 
     }),
     uploadImage: catchAsync(async (req, res) => {
         if (!req.file) return next(new AppError('There is no image file to upload.', 400));
-        const data = await uploadFile(req.file, {folder: 'properties'});
+        const data = await uploadFile(req.file, { folder: 'properties' });
         console.log('----- TEST -----');
         console.log(data);
         console.log('----- TEST -----');
