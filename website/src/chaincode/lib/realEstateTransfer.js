@@ -4,29 +4,14 @@ const { Contract } = require('fabric-contract-api');
 class RealEstateTransfer extends Contract {
     async initLedger(ctx) {
         // Create some sample users
-        await this.createUser(ctx, 'user1', 1000000, 500*50);
-        await this.createUser(ctx, 'user2', 500000, 6000*50);
-        await this.createUser(ctx, 'user3', 200000, 8000*50);
 
-
-        // Create some sample tokens
-        await this.createToken(ctx, 'token1','property1',500);
-        await this.createToken(ctx, 'token2', 'property2',6000);
-        await this.createToken(ctx, 'token3', 'property3',8000);
-        //
-        // Assign tokens to users
-        await this.createPropertyTokenOwner(ctx, 'owner1', 500, 'token1', 'user1');
-        await this.createPropertyTokenOwner(ctx, 'owner2', 6000, 'token2', 'user2');
-        await this.createPropertyTokenOwner(ctx, 'owner3', 8000, 'token3', 'user3');
-
-        // Assign tokens to offers
-        await this.createOffer(ctx, 'offer1', 'user1', 'token1', 50, 50, false);
-        await this.createOffer(ctx, 'offer2', 'user1', 'token3', 50, 50, true);
-        await this.createOffer(ctx, 'offer3', 'user3', 'token3', 50, 50, false);
-        await this.createOffer(ctx, 'offer5', 'user2', 'token2', 50, 50, false);
-        await this.createOffer(ctx, 'offer4', 'user3', 'token2', 50, 50, true);
-        await this.createOffer(ctx, 'offer6', 'user3', 'token1', 50, 50, true);
-        await this.createOffer(ctx, 'offer7', 'user3', 'token3', 50, 50, false);
+        for(let i = 1;i<=5;i++){
+            await this.createUser(ctx, 'ACCOUNT_000'+i, 1000000+i*1000, 500*50);
+            await this.createToken(ctx, 'TOKEN_000'+i, 'LP_000'+i,500);
+            await this.createPropertyTokenOwner(ctx, 'PTO_000'+i, 500, 'TOKEN_000'+i, 'ACCOUNT_000'+i);
+            await this.createOffer(ctx, 'OFFER_000'+i, 'ACCOUNT_000'+i, 'TOKEN_000'+i, 50, 50, false);
+        }
+        await this.createOffer(ctx, 'OFFER_0006', 'ACCOUNT_0001', 'TOKEN_0002', 50, 50, true);
     }
 
     async createUser(ctx, id, cash_balance, token_balance) {
