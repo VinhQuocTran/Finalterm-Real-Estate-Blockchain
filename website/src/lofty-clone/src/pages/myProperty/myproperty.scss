@@ -184,9 +184,15 @@
           padding-bottom: 1rem;
           padding-top: 1rem;
           color: #fff;
-          background-color: #d4d4d4;
+          background-color: var(--blue-dark);
           outline: none;
           border: none;
+          transition: opacity 0.2s ease-in;
+          cursor: pointer;
+
+          &:hover {
+            opacity: 0.7;
+          }
 
           @include md {
             padding-bottom: 1.5rem;

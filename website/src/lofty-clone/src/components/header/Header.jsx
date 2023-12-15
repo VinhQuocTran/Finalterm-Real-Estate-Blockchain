@@ -11,7 +11,7 @@ import "./header.scss";
 
 const Header = () => {
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user?.data.account);
+  const currentUser = useSelector((state) => state.user);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
   const mobileViewRef = useRef();
@@ -27,13 +27,14 @@ const Header = () => {
     profileModalRef.current.style.visibility = !isProfileModalOpened ? 'visible' : 'hidden';
     profileModalRef.current.style.opacity = !isProfileModalOpened ? 1 : 0;
     if (isProfileModalOpened) e.stopPropagation();
-    setIsProfileModalOpened(!isProfileModalOpened);
+    setIsProfileModalOpened(prevState => !prevState);
   };
 
   const handleLogoutBtnClick = async () => {
     try {
       await axios.get(BASE_URL + "/accounts/signout");
       dispatch(logout);
+      localStorage.removeItem('user');
       window.location.reload();
     } catch (err) {
       console.log(err);

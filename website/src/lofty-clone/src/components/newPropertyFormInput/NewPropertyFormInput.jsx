@@ -11,7 +11,7 @@ const NewPropertyFormInput = (props) => {
 
   return (
     <div className="inputForm">
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id}>{label} {id===5&&'(m\u00B2)'}</label>
       <input
         {...inputProps}
         onChange={onChange}
