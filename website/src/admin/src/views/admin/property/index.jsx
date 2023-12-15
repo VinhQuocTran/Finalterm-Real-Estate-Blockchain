@@ -1,4 +1,3 @@
-// Chakra imports
 
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
@@ -25,11 +24,12 @@ function fetchPropertiesData() {
             throw error;
         });
 }
-
 export default function ListingProperty() {
-    let [propertyData, setPropertyData] = useState([{
-
-    }]);
+    let [propertyData, setPropertyData] = useState([{}]);
+    const [reload, setReload] = useState(false);
+    const reloadParent = () => {
+        setReload((prev) => !prev);
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -42,8 +42,8 @@ export default function ListingProperty() {
         };
 
         fetchData();
-    }, []);
-    console.log(propertyData)
+    }, [reload]);
+    console.log(propertyData);
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
@@ -53,6 +53,7 @@ export default function ListingProperty() {
         <PropertiesTable
           columnsData={columnsDataProperty}
           tableData={propertyData}
+          reloadParent = {reloadParent}
         />
       </SimpleGrid>
     </Box>

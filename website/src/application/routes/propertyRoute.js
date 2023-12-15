@@ -8,6 +8,7 @@ router.get('/:id', propertyController.getProperty);
 // Protect all routes after this middleware
 router.use(protect);
 
+
 // router.patch('/:id', restrictTo('admin'), propertyController.updateProperty);
 router.patch('/:id/updateIsVerified', restrictTo('admin'), propertyController.updateIsVerified);
 

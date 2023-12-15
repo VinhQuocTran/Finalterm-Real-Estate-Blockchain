@@ -5,7 +5,7 @@ import {
     columnsDataColumns
 } from "views/admin/user/variables/columnsData";
 import config from '../../../config.json';
-import ColumnsTable from "./components/ColumnsTable";
+import UsersTable from "./components/UsersTable";
 function fetchAccountsData() {
     return fetch(config.API_URL+"accounts/")
         .then((response) => {
@@ -61,7 +61,7 @@ export default function Settings() {
         mb='20px'
         columns={{ sm: 0, md: 0 }}
         spacing={{ base: "20px", xl: "20px" }}>
-        <ColumnsTable
+        <UsersTable
           columnsData={columnsDataColumns}
           tableData={accountsData}
         />
