@@ -1,0 +1,84 @@
+@import "../../mixins.scss";
+
+.signup {
+  margin: 16px 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @include md {
+    margin: 64px 0;
+  }
+
+  .contentWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .authForm {
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    border-radius: 1.5rem;
+
+    @include md {
+      width: 50%;
+      padding: 36px 48px;
+    }
+
+    h1 {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      color: var(--dark-blue);
+
+      @include md {
+        font-size: 2.25rem;
+        line-height: 2.5rem;
+      }
+    }
+
+    span {
+      margin-top: 16px;
+      color: var(--dark-blue);
+      opacity: 0.4;
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+
+    button {
+      margin-top: 24px!important;
+      outline: none;
+      border: none;
+      padding: 16px 28px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #fff;
+      border-radius: 50px;
+      background-color: var(--blue-dark);
+      cursor: pointer;
+
+      @include md {
+        padding: 24px 28px;
+      }
+
+      &.disabled {
+        background-color: #d4d4d4;
+        cursor: unset;
+      }
+    }
+
+    p {
+      margin-top: 16px;
+      text-align: center;
+      color: var(--blue-dark-medium);
+      opacity: 0.6;
+      font-size: 0.875rem;
+      font-weight: 400;
+    }
+  }
+}
