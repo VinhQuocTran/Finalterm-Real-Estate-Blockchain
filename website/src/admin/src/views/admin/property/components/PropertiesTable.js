@@ -141,7 +141,7 @@ export default function PropertiesTable(props) {
         const jwtToken = localStorage.getItem("jwt");
         let prop = propertyData;
         prop.isVerified = selectedOption;
-        await axios.patch(config.API_URL + `properties/` + propertyData.id, prop, {
+        await axios.patch(config.API_URL + `properties/` + propertyData.id+'/updateIsVerified', prop, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwtToken}`,
