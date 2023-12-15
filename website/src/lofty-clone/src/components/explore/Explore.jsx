@@ -2,19 +2,11 @@ import ContentWrapper from "../contentWrapper/ContentWrapper";
 import HouseCard from "../houseCard/HouseCard";
 import "./explore.scss";
 
-const Explore = () => {
+const Explore = ({ properties }) => {
   return (
     <div className="explore">
       <ContentWrapper>
-        <HouseCard />
-        <HouseCard />
-        <HouseCard />
-        <HouseCard />
-        <HouseCard />
-        <HouseCard />
-        <HouseCard />
-        <HouseCard />
-        <HouseCard />
+        {properties && properties.map((item, index) => <HouseCard key={index} property={item} />)}
       </ContentWrapper>
     </div>
   )
