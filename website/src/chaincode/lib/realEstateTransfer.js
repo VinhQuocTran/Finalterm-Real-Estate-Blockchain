@@ -3,16 +3,20 @@
 const { Contract } = require('fabric-contract-api');
 class RealEstateTransfer extends Contract {
     async initLedger(ctx) {
-        // Create some sample users
 
-        for(let i = 1;i<=5;i++){
-            await this.createUser(ctx, 'ACCOUNT_000'+i, 1000000+i*1000, 500*50);
-            await this.createToken(ctx, 'TOKEN_000'+i, 'LP_000'+i,500);
-            await this.createPropertyTokenOwner(ctx, 'PTO_000'+i, 500, 'TOKEN_000'+i, 'ACCOUNT_000'+i);
-            await this.createOffer(ctx, 'OFFER_000'+i, 'ACCOUNT_000'+i, 'TOKEN_000'+i, 50, 50, false);
-        }
-        await this.createOffer(ctx, 'OFFER_0006', 'ACCOUNT_0001', 'TOKEN_0002', 50, 50, true);
+        const iterations = Array.from({ length: 5 }, (_, i) => i + 1);
+
+        await Promise.all(
+            iterations.map(async (i) => {
+                await this.createUser(ctx, `ACCOUNT_000${i}`, 1000000 + i * 1000, 500 * 50);
+                await this.createToken(ctx, `TOKEN_000${i}`, `LP_000${i}`, 500);
+                await this.createPropertyTokenOwner(ctx, `PTO_000${i}`, 500, `TOKEN_000${i}`, `ACCOUNT_000${i}`);
+                await this.createOffer(ctx, `OFFER_000${i}`, `ACCOUNT_000${i}`, `TOKEN_000${i}`, 50, 50, false,'2023-12-15T15:31:43.420Z');
+            })
+        );
+        await this.createOffer(ctx, 'OFFER_0006', 'ACCOUNT_0001', 'TOKEN_0002', 50, 50, true,'2023-12-15T15:31:43.420Z');
     }
+
 
     async createUser(ctx, id, cash_balance, token_balance) {
         const user = {
@@ -56,7 +60,7 @@ class RealEstateTransfer extends Contract {
         await ctx.stub.putState(`token:${id}`, Buffer.from(JSON.stringify(token)));
     }
 
-    async createTokenTransaction(ctx, id, quantity, at_price, seller_id, buyer_id, token_id) {
+    async createTokenTransaction(ctx, id, quantity, at_price, seller_id, buyer_id, token_id,transaction_date) {
         const tokenTransaction = {
             docType:"tokenTransaction",
             id,
@@ -64,12 +68,12 @@ class RealEstateTransfer extends Contract {
             at_price,
             seller_id,
             buyer_id,
-            transaction_date:Date.now().toString(),
+            transaction_date,
             token_id
         };
         await ctx.stub.putState(`tokenTransaction:${id}`, Buffer.from(JSON.stringify(tokenTransaction)));
     }
-    async createOffer(ctx, id, userID, tokenID, quantity, at_price, isBuy) {
+    async createOffer(ctx, id, userID, tokenID, quantity, at_price, isBuy, offer_time) {
         const offer = {
             docType:"offer",
             id,
@@ -80,29 +84,47 @@ class RealEstateTransfer extends Contract {
             is_buy: isBuy,
             is_active: true,
             is_finished: false,
-            offer_time: Date.now().toString(),
+            offer_time
         };
 
         // Convert the offer to JSON and save to the ledger
         await ctx.stub.putState(`offer:${id}`, Buffer.from(JSON.stringify(offer)));
     }
-
+async generateID(key,count){
+        let id;
+        if(count>9){
+            id=key+"_00"+count;
+        }
+        else if(count>99 && count<1000){
+            id=key+"_0"+count;
+        }
+        else if(count>1000){
+            id = key+"_"+count;
+        }
+        else {
+            id=key+"_000"+count;
+        }
+        return id;
+    }
     async getTokenizeProperty(ctx,user_id, listing_property_id, house_price){
         const tokenPriceInit = 50;
+        const tokens = await this.getAllByEntity(ctx,"token");
+
         // create new token
         const token = {
             docType: "token",
-            id:await this.generateId("token"),
+            id:this.generateID("TOKEN",tokens.length),
             listing_property_id,
             quantity:house_price/tokenPriceInit,
             token_price: tokenPriceInit
         };
         await ctx.stub.putState(`token:${token.id}`, Buffer.from(JSON.stringify(token)));
+        const tokenOwns = await this.getAllByEntity(ctx,"propertyTokenOwner");
 
         // create new property
         const propertyTokenOwner = {
             docType: "propertyTokenOwner",
-            id:await this.generateId("propertyTokenOwner"),
+            id:await this.generateID("PTO",tokenOwns.length),
             own_number:token.quantity,
             token_id:token.id,
             user_id
@@ -172,7 +194,7 @@ class RealEstateTransfer extends Contract {
         console.log(`Payment daily rent for list property have ID: ${listing_property_id} successful`)
     }
 
-    async matchingOffers(ctx) {
+    async matchingOffers(ctx,transaction_date) {
     // Query all active buy offers
     let query = {
         docType:"offer",
@@ -203,9 +225,10 @@ class RealEstateTransfer extends Contract {
             if (sellOffer.user_id!==buyOffer.user_id
                 && sellOffer.at_price<= buyOffer.at_price
             ) {
-                let transactionId = await this.generateId("trans_"+sellOffer.user_id+"_"+buyOffer.user_id);
+
+                let transactionId = "TRANSACTION_"+sellOffer.user_id+"_"+buyOffer.user_id+"_"+transaction_date;
                 try {
-                    await this.transferToken(ctx, transactionId, buyOffer.user_id, sellOffer.user_id, sellOffer.token_id, sellOffer.quantity, sellOffer.at_price);
+                    await this.transferToken(ctx, transactionId, buyOffer.user_id, sellOffer.user_id, sellOffer.token_id, sellOffer.quantity, sellOffer.at_price,transaction_date);
                     buyOffer.is_finished = true;
                     buyOffer.is_active = false;
                     sellOffer.is_finished = true;
@@ -223,7 +246,7 @@ class RealEstateTransfer extends Contract {
     }
     }
 
-    async transferToken(ctx, transactionId, buyerId, sellerId, tokenId, quantity,atPrice) {
+    async transferToken(ctx, transactionId, buyerId, sellerId, tokenId, quantity,atPrice,transaction_date) {
         // Get information about the token and buyer/seller
         const token = await this.queryToken(ctx, tokenId);
         let buyer = await this.queryUser(ctx, buyerId);
@@ -264,7 +287,8 @@ class RealEstateTransfer extends Contract {
                 await ctx.stub.putState(`propertyTokenOwner:${buyerProperty.id}`, Buffer.from(JSON.stringify(buyerProperty)));
             }
             else {
-                const propertyId = await this.generateId("prop_"+buyerId)
+                const props = await this.getAllByEntity(ctx,"propertyTokenOwner");
+                const propertyId = await this.generateID("PTO",props.length);
                 await ctx.stub.putState(`propertyTokenOwner:${propertyId}`, Buffer.from(JSON.stringify({
                     docType: 'propertyTokenOwner',
                     id: propertyId,
@@ -279,19 +303,7 @@ class RealEstateTransfer extends Contract {
         await ctx.stub.putState(`user:${sellerId}`, Buffer.from(JSON.stringify(seller)));
 
         // Record the token transaction
-        await this.createTokenTransaction(ctx,transactionId,quantity,token.at_price,sellerId,buyerId,tokenId);
-    }
-
-    async generateId(key) {
-        const currentDate = new Date();
-        const dd = String(currentDate.getDate()).padStart(2, '0');
-        const mm = String(currentDate.getMonth() + 1).padStart(2, '0'); // January is 0!
-        const yyyy = currentDate.getFullYear();
-        const hh = String(currentDate.getHours()).padStart(2, '0');
-        const min = String(currentDate.getMinutes()).padStart(2, '0');
-        const ss = String(currentDate.getSeconds()).padStart(2, '0');
-
-        return `${key}_${dd}_${mm}_${yyyy}_${hh}_${min}_${ss}`;
+        await this.createTokenTransaction(ctx,transactionId,quantity,token.at_price,sellerId,buyerId,tokenId,transaction_date);
     }
 
     async queryUser(ctx, id) {
