@@ -11,7 +11,10 @@ module.exports = {
     getAllProperties: factory.getAll(Property),
 
     // admin
-    updateIsVerified: catchAsync(async (req, res) => {
+    updateIsVerified: catchAsync(async (req, res, next) => {
+        // update property's verify status
+        // isVerified = -1 => not accept
+        // isVerified =  1 => accept
         const [_, updatedRow] = await Property.update({ isVerified: req.body.isVerified }, {
             where: { id: req.params.id },
             returning: true // Get the updated rows
@@ -25,14 +28,13 @@ module.exports = {
             status: "success",
             data: updatedRow
         });
-
     }),
 
     // user
     requestVerify: catchAsync(async (req, res, next) => {
         const [_, updatedRow] = await Property.update({isVerified: "0"}, {
             where: { id: req.params.id },
-            returning: true // Get the updated rows
+            returning: true // get the updated rows
         });
 
         if (!updatedRow) {
