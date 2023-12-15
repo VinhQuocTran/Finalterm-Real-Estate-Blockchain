@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Select from 'react-select'
@@ -7,13 +7,15 @@ import { IoMdClose } from "react-icons/io";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { PropertyCard } from "../../components/imports";
 import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPropertyFormInput";
-import "./myproperty.scss";
 import { BASE_URL } from "../../utils/api";
+import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus } from "../../redux/userPropertiesSlice";
+import "./myproperty.scss";
 
 const MyProperty = () => {
+  const [verifyPropertyId, setVerifyPropertyId] = useState(null);
   const currentUser = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const [userProperties, setUserProperties] = useState(null);
+  const currentUserProperties = useSelector((state) => state.userProperties);
+  const dispatch = useDispatch();
   const newPropertyModalRef = useRef();
   const verifyPropertyModalRef = useRef();
   const [isNewPropertyModalOpened, setIsNewPropertyModalOpened] = useState(false);
@@ -139,19 +141,24 @@ const MyProperty = () => {
     verifyPropertyModalRef.current.style.opacity = !isVerifyPropertyModalOpened ? 1 : 0;
     if (isVerifyPropertyModalOpened) e.stopPropagation();
     setIsVerifyPropertyModalOpened(!isVerifyPropertyModalOpened);
+    setVerifyPropertyId(e.target.dataset.id);
   };
 
   const handleNewPropertySubmit = async (e) => {
     e.preventDefault();
 
     const data = new FormData(e.target);
-    data.append('accountId', currentUser.id);
+    data.append('accountId', currentUser.user.id);
+    dispatch(fetchUserPropertiesStart());
+
     try {
       const response = await axios.post(BASE_URL + "/properties", Object.fromEntries(data), {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${currentUser.token}`
         }
       });
+
+      dispatch(updateUserProperties(response.data.data));
       toast.success('Create new property successfully', {
         position: "top-right",
         autoClose: 5000,
@@ -163,6 +170,7 @@ const MyProperty = () => {
         theme: "colored",
       });
     } catch (err) {
+      dispatch(fetchUserPropertiesFailure());
       toast.error('Internal Server Error!', {
         position: "top-right",
         autoClose: 5000,
@@ -176,18 +184,38 @@ const MyProperty = () => {
     }
   };
 
+  const handleAcceptBtnClick = async () => {
+    try {
+      await axios.get(BASE_URL + `/properties/${verifyPropertyId}/requestVerify`, {
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`
+        }
+      });
+      setVerifyPropertyId(null);
+
+      // close verify property modal
+      verifyPropertyModalRef.current.style.visibility = 'hidden';
+      verifyPropertyModalRef.current.style.opacity = 0;
+      setIsVerifyPropertyModalOpened(false);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(() => {
     const fetchCurrentUserProperties = async () => {
+      dispatch(fetchUserPropertiesStart());
       try {
-        const response = await axios.get(BASE_URL + `/properties?accountId=${currentUser.id}`);
-        setUserProperties(response.data.data);
+        const response = await axios.get(BASE_URL + `/properties?accountId=${currentUser.user.id}`);
+        dispatch(fetchUserPropertiesSuccess(response.data.data));
       } catch (err) {
+        dispatch(fetchUserPropertiesFailure());
         console.log(err);
       }
     };
 
     fetchCurrentUserProperties();
-  }, [currentUser.id]);
+  }, [currentUser]);
 
   return (
     <div className="myProperty">
@@ -197,8 +225,8 @@ const MyProperty = () => {
         </div>
         <div className="line"></div>
         <div className="propertyContainer">
-          {userProperties &&
-            userProperties.map((item, index) =>
+          {currentUserProperties.userProperties &&
+            currentUserProperties.userProperties.map((item, index) =>
               <PropertyCard key={index} property={item} onClick={handleVerifyPropertyClick} />
             )
           }
@@ -232,7 +260,7 @@ const MyProperty = () => {
           <h4>Do you understand that all of your provided information about the property will be used for verification process?</h4>
           <div className="line"></div>
           <div className="submitBtn">
-            <button type="button">Accept</button>
+            <button type="button" onClick={handleAcceptBtnClick}>Accept</button>
             <button type="button" onClick={handleVerifyPropertyClick}>No</button>
           </div>
         </div>
@@ -250,7 +278,7 @@ const MyProperty = () => {
         pauseOnHover
         theme="dark"
       />
-    </div>    
+    </div>
   )
 }
 

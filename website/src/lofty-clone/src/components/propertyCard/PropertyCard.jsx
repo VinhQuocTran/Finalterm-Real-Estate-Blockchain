@@ -25,17 +25,17 @@ const PropertyCard = ({ property, onClick }) => {
       <div className="boxBottom">
         <div className="checkBoxes">
           <div className="checkBox">
-            <input type="checkbox" disabled={property.isVerified==-1} />
-            <label>Is verified </label>
+            <input type="checkbox" checked={property.isVerified==="1"} disabled={property.isVerified==="1"} />
+            <label>Is verified</label>
           </div>
           <div className="checkBox">
-            <input type="checkbox" disabled={property.isVerified!=1} />
-            <label>Is listed </label>
+            <input type="checkbox" disabled />
+            <label>Is listed</label>
           </div>
         </div>
         <div className="buttons">
-          <button type="button" onClick={onClick}>Verify Property</button>
-          <button type="button">Listing Property</button>
+          <button disabled={property.isVerified==="0" || property.isVerified==="1"} data-id={property.id} type="button" onClick={onClick}>{property.isVerified==="-1" ? "Verify Property" : property.isVerified==="0" ? "Pending..." : "Accepted"}</button>
+          <button disabled={property.isVerified==="-1" || property.isVerified==="0"} type="button">Listing Property</button>
         </div>
       </div>
     </div>
