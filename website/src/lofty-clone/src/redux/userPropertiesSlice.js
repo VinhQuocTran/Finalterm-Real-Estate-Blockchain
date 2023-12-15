@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const userPropertiesSlice = createSlice({
-  name: 'user',
+  name: 'userProperties',
   initialState: {
     userProperties: [],
     loading: false,
     error: false
   },
   reducers: {
-    fetchUserProperties: (state) => {
+    fetchUserPropertiesStart: (state) => {
       state.loading = true;
     },
     fetchUserPropertiesSuccess: (state, action) => {
@@ -20,10 +20,10 @@ const userPropertiesSlice = createSlice({
       state.error = true;
     },
     updateUserProperties: (state, action) => {
-        state.userProperties = state.userProperties.push(action.payload);
+      state.userProperties.unshift(action.payload);
     }
   }
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } = userPropertiesSlice.actions;
+export const { fetchUserPropertiesStart, fetchUserPropertiesSuccess, fetchUserPropertiesFailure, updateUserProperties } = userPropertiesSlice.actions;
 export default userPropertiesSlice.reducer;

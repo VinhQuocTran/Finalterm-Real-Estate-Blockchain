@@ -11,7 +11,7 @@ import "./header.scss";
 
 const Header = () => {
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user);
+  const currentUser = useSelector((state) => state.user.user);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
   const mobileViewRef = useRef();
