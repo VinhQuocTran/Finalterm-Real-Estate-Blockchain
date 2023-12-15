@@ -23,12 +23,16 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     await fabricService.connect();
     const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
     const users = JSON.parse(result).sort();
-    const realUsers = accounts.map((acc,index)=>acc.cashBalance = users[index].cash_balance);
+
+    accounts.forEach((acc, index) => {
+        acc.cashBalance = users[index].cash_balance;
+        acc.tokenBalance = users[index].token_balance;
+    });
     await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
-        length: realUsers.length,
-        data: realUsers
+        length: accounts.length,
+        data: accounts
     })
 });
 module.exports = {
@@ -79,8 +83,8 @@ module.exports = {
         });
     },
 
-    getAccount: getAllUsers,
-    getAllAccounts: factory.getAll(Account),
+    getAccount: factory.getOne(Account),
+    getAllAccounts: getAllUsers,
     updateAccount: factory.updateOne(Account),
     deleteAccount: factory.deleteOne(Account)
 }
