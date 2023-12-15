@@ -8,6 +8,7 @@ import {
   MdPeople,
   MdHouse,
   MdManageAccounts,
+  MdSave,
   MdList
 } from "react-icons/md";
 
@@ -18,6 +19,7 @@ import User from "views/admin/user";
 import Property from "views/admin/property";
 import PropertyManager from "views/admin/propertyManager";
 import ListingProperty from "views/admin/listingProperty";
+import SubmitListingProperty from "views/admin/submitListingProperty";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
@@ -50,6 +52,13 @@ const routes = [
     icon: <Icon as={MdHouse} width='20px' height='20px' color='inherit' />,
     path: "/property",
     component: Property,
+  },
+  {
+    name: "Submit Listing Property",
+    layout: "/admin",
+    icon: <Icon as={MdSave} width='20px' height='20px' color='inherit' />,
+    path: "/submit-listing-property",
+    component: SubmitListingProperty,
   },
   {
     name: "Listing Property",

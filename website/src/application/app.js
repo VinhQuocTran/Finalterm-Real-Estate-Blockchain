@@ -9,6 +9,7 @@ const accountRoute = require('./routes/accountRoute');
 const propertyRoute = require('./routes/propertyRoute');
 const propertyManagerRoute = require('./routes/propertyManagerRoute');
 const listingPropertyRoute = require('./routes/listingPropertyRoute');
+const submitListingPropertyRoute = require('./routes/submitListingPropertyRoute');
 const AppError = require('./utils/appError');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
@@ -29,6 +30,7 @@ app.use('/api/accounts', accountRoute);
 app.use('/api/properties', propertyRoute);
 app.use('/api/propertyManagers', propertyManagerRoute);
 app.use('/api/listingProperty', listingPropertyRoute);
+app.use('/api/submitListingProperty', submitListingPropertyRoute);
 
 app.use('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

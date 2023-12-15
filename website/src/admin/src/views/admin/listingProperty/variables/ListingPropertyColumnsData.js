@@ -4,6 +4,10 @@ const ListingPropertyColumnsData = [
     accessor: "id",
   },
   {
+    Header: "Submit Listing Property",
+    accessor: "submitListingPropertyId",
+  },
+  {
     Header: "Monthly Rent",
     accessor: "monthlyRent",
   },
@@ -19,10 +23,7 @@ const ListingPropertyColumnsData = [
     Header: "property manager",
     accessor: "propertyManagerId",
   },
-  {
-    Header: "Submit Listing Property",
-    accessor: "submitListingPropertyId",
-  },
+
   {
     Header: 'Actions',
     accessor: 'actions'

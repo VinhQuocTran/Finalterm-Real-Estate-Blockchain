@@ -147,6 +147,27 @@ export default function ListingPropertyTable(props) {
           },
         });
         console.log('Property updated successfully!');
+        let now = new Date();
+        let resultDate = new Date();
+
+        const submitListingProperty = {
+          createdAt: now,
+          propertyId: propertyData.id,
+          result: false,
+          resultDate:resultDate.setDate(now.getDate()+7),
+          submittedDate:now,
+          updatedAt:now
+        }
+        console.log(submitListingProperty);
+        if(selectedOption===1){
+          const s = await axios.post(config.API_URL + `submitListingProperty/`, submitListingProperty, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${jwtToken}`,
+            },
+          });
+          console.log('Create submitListingProperty successfully!');
+        }
         reloadParent();
       } catch (error) {
         console.error('Error updating property:', error);
@@ -269,9 +290,6 @@ export default function ListingPropertyTable(props) {
                         </Modal>
                         <Button onClick={() => onOpen('update', {id:row.original.id})} colorScheme="green" size="sm" marginLeft="1">
                           Update
-                        </Button>
-                        <Button onClick={() => onOpen('delete', {id:row.original.id})} colorScheme="red" size="sm" marginLeft="1">
-                          Delete
                         </Button>
                       </Flex>
                     )

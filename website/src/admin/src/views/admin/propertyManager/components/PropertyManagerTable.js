@@ -214,9 +214,6 @@ export default function PropertyManagerTable(props) {
                   if (cell.column.id === 'actions') {
                     data = (
                       <Flex justifyContent="space-center" alignItems="center">
-                        <Button onClick={() => onOpen('details', {id:row.original.id})} colorScheme="teal" size="sm" marginLeft="1">
-                          Details
-                        </Button>
                         <Modal isOpen={isOpen} size={size} onClose={onClose}>
                           <ModalOverlay />
                           <ModalContent>
