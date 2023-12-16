@@ -1,6 +1,6 @@
 import "./propertyCard.scss";
 
-const PropertyCard = ({ property, onClick }) => {
+const PropertyCard = ({ property, onClick, onEditModalClick }) => {
 
   return (
     <div className="propertyCard">
@@ -25,19 +25,20 @@ const PropertyCard = ({ property, onClick }) => {
       <div className="boxBottom">
         <div className="checkBoxes">
           <div className="checkBox">
-            <input type="checkbox" checked={property.isVerified==="1"} disabled={property.isVerified==="1"} />
+            <input type="checkbox" defaultChecked={property.isVerified === "1"} disabled={property.isVerified === "1"} />
             <label>Is verified</label>
           </div>
+          <button disabled={property.isVerified === "0" || property.isVerified === "1"} data-id={property.id} type="button" onClick={onClick}>{property.isVerified === "-1" ? "Verify Property" : property.isVerified === "0" ? "Pending..." : "Accepted"}</button>
+        </div>
+        <div className="checkBoxes">
           <div className="checkBox">
             <input type="checkbox" disabled />
             <label>Is listed</label>
           </div>
+          <button disabled={property.isVerified === "-1" || property.isVerified === "0"} type="button">Listing Property</button>
         </div>
-        <div className="buttons">
-          <button disabled={property.isVerified==="0" || property.isVerified==="1"} data-id={property.id} type="button" onClick={onClick}>{property.isVerified==="-1" ? "Verify Property" : property.isVerified==="0" ? "Pending..." : "Accepted"}</button>
-          <button disabled={property.isVerified==="-1" || property.isVerified==="0"} type="button">Listing Property</button>
-        </div>
-      </div>
+        <button data-id={property.id} onClick={onEditModalClick}>Edit</button>
+      </div>      
     </div>
   );
 };

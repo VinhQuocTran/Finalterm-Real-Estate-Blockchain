@@ -28,6 +28,12 @@ const userPropertiesSlice = createSlice({
         state.userProperties[index] = { ...state.userProperties[index], ...{isVerified: "0"} };
       }
     },
+    updateProperty: (state, action) => {
+      const index = state.userProperties.findIndex(item => item.id === action.payload.id);
+      if (index !== -1) {
+        state.userProperties[index] = { ...state.userProperties[index], ...action.payload };
+      }
+    }
   }
 });
 
@@ -36,7 +42,8 @@ export const {
   fetchUserPropertiesSuccess, 
   fetchUserPropertiesFailure, 
   updateUserProperties, 
-  updateVerifiedPropertyStatus 
+  updateVerifiedPropertyStatus,
+  updateProperty
 } = userPropertiesSlice.actions;
 
 export default userPropertiesSlice.reducer;

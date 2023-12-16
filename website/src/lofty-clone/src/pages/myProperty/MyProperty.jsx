@@ -8,7 +8,7 @@ import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { PropertyCard } from "../../components/imports";
 import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPropertyFormInput";
 import { BASE_URL } from "../../utils/api";
-import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus } from "../../redux/userPropertiesSlice";
+import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus, updateProperty } from "../../redux/userPropertiesSlice";
 import "./myproperty.scss";
 
 const MyProperty = () => {
@@ -18,9 +18,24 @@ const MyProperty = () => {
   const dispatch = useDispatch();
   const newPropertyModalRef = useRef();
   const verifyPropertyModalRef = useRef();
+  const editPropertyModalRef = useRef();
+  const [editProperty, setEditProperty] = useState(null);
+  const [editDistrict, setEditDistrict] = useState(null);
   const [isNewPropertyModalOpened, setIsNewPropertyModalOpened] = useState(false);
   const [isVerifyPropertyModalOpened, setIsVerifyPropertyModalOpened] = useState(false);
+  const [isEditPropertyModalOpened, setIsEditPropertyModalOpened] = useState(false);
   const [values, setValues] = useState({
+    address: "",
+    district: "",
+    numOfBedroom: "",
+    numOfWc: "",
+    totalFloor: "",
+    area: "",
+    propertyImageUrl: "",
+    propertyDocumentUrl: "",
+    description: ""
+  });
+  const [editValues, setEditValues] = useState({
     address: "",
     district: "",
     numOfBedroom: "",
@@ -129,6 +144,10 @@ const MyProperty = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
+  const onEditChange = (e) => {
+    setEditValues({ ...editValues, [e.target.name]: e.target.value });
+  }
+
   const handleNewPropertyModalClick = (e) => {
     newPropertyModalRef.current.style.visibility = !isNewPropertyModalOpened ? 'visible' : 'hidden';
     newPropertyModalRef.current.style.opacity = !isNewPropertyModalOpened ? 1 : 0;
@@ -143,6 +162,19 @@ const MyProperty = () => {
     setIsVerifyPropertyModalOpened(!isVerifyPropertyModalOpened);
     setVerifyPropertyId(e.target.dataset.id);
   };
+
+  const handleEditPropertyModalClick = async (e) => {
+    if (!isEditPropertyModalOpened) {
+      const property = currentUserProperties.userProperties.find(item => item.id === e.target.dataset.id);
+      setEditProperty(property);
+      setEditValues(property);
+      setEditDistrict({ label: property.district, value: property.district });          
+    }
+    editPropertyModalRef.current.style.visibility = !isEditPropertyModalOpened ? 'visible' : 'hidden';
+    editPropertyModalRef.current.style.opacity = !isEditPropertyModalOpened ? 1 : 0;
+    if (isEditPropertyModalOpened) e.stopPropagation();
+    setIsEditPropertyModalOpened(!isEditPropertyModalOpened);
+  }
 
   const handleNewPropertySubmit = async (e) => {
     e.preventDefault();
@@ -169,8 +201,87 @@ const MyProperty = () => {
         progress: undefined,
         theme: "colored",
       });
+
+      // reset form
+      setValues({
+        address: "",
+        district: "",
+        numOfBedroom: "",
+        numOfWc: "",
+        totalFloor: "",
+        area: "",
+        propertyImageUrl: "",
+        propertyDocumentUrl: "",
+        description: ""
+      });
+
+      // close modal
+      newPropertyModalRef.current.style.visibility = 'hidden';
+      newPropertyModalRef.current.style.opacity = 0;
+      setIsNewPropertyModalOpened(false);
+
     } catch (err) {
       dispatch(fetchUserPropertiesFailure());
+      toast.error('Internal Server Error!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  };
+
+  const handleEditPropertySubmit = async (e) => {
+    e.preventDefault();
+
+    const data = new FormData(e.target);
+    data.append('accountId', currentUser.user.id);
+    dispatch(fetchUserPropertiesStart());
+
+    try {
+      await axios.patch(BASE_URL + `/properties/${editProperty.id}`, Object.fromEntries(data), {
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`
+        }
+      });
+
+      dispatch(updateProperty({id: editProperty.id, ...Object.fromEntries(data)}));
+
+      toast.success('Edit new property successfully', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+
+      // reset form
+      setEditValues({
+        address: "",
+        district: "",
+        numOfBedroom: "",
+        numOfWc: "",
+        totalFloor: "",
+        area: "",
+        propertyImageUrl: "",
+        propertyDocumentUrl: "",
+        description: ""
+      });
+
+      // close modal
+      editPropertyModalRef.current.style.visibility = 'hidden';
+      editPropertyModalRef.current.style.opacity = 0;
+      setIsEditPropertyModalOpened(false);
+
+    } catch (err) {
+      console.log(err);
       toast.error('Internal Server Error!', {
         position: "top-right",
         autoClose: 5000,
@@ -192,6 +303,7 @@ const MyProperty = () => {
         }
       });
       setVerifyPropertyId(null);
+      dispatch(updateVerifiedPropertyStatus(verifyPropertyId));
 
       // close verify property modal
       verifyPropertyModalRef.current.style.visibility = 'hidden';
@@ -227,12 +339,12 @@ const MyProperty = () => {
         <div className="propertyContainer">
           {currentUserProperties.userProperties &&
             currentUserProperties.userProperties.map((item, index) =>
-              <PropertyCard key={index} property={item} onClick={handleVerifyPropertyClick} />
+              <PropertyCard key={index} property={item} onClick={handleVerifyPropertyClick} onEditModalClick={handleEditPropertyModalClick} />
             )
           }
         </div>
       </ContentWrapper>
-      <div className="newPropertyModal" ref={newPropertyModalRef} onSubmit={handleNewPropertySubmit}>
+      <div className="newPropertyModal" ref={newPropertyModalRef} onSubmit={handleNewPropertySubmit} onClick={handleNewPropertyModalClick}>
         <div className="modalContent" onClick={(e) => e.stopPropagation()}>
           <form action="">
             <div className="contentTop">
@@ -263,6 +375,25 @@ const MyProperty = () => {
             <button type="button" onClick={handleAcceptBtnClick}>Accept</button>
             <button type="button" onClick={handleVerifyPropertyClick}>No</button>
           </div>
+        </div>
+      </div>
+      <div className="editPropertyModal" ref={editPropertyModalRef} onSubmit={handleEditPropertySubmit} onClick={handleEditPropertyModalClick}>
+        <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+          <form action="">
+            <div className="contentTop">
+              <h1>New property</h1>
+              <IoMdClose onClick={handleEditPropertyModalClick} />
+            </div>
+            <div className="inputForm">
+              <label htmlFor="district">District</label>
+              <Select name="district" options={districtOptions} value={editDistrict} onChange={(selectedOption) => setEditDistrict(selectedOption)} required />
+              <span>District is required</span>
+            </div>
+            {inputs.map((item) => <NewPropertyFormInput key={item.id} {...item} value={editValues[item.name]} onChange={onEditChange} />)}
+            <div className="submitBtn">
+              <button type="submit">Submit</button>
+            </div>
+          </form>
         </div>
       </div>
 
