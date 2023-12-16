@@ -66,4 +66,4 @@ ListingPropertyValuation.addHook('beforeCreate', async (listingPropertyValuation
     listingPropertyValuation.id = listingPropertyValuationId;
 });
 
-module.exports = ListingPropertyInspection;
+module.exports = ListingPropertyValuation;

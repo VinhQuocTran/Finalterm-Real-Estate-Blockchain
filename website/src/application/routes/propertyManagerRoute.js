@@ -1,20 +1,16 @@
 const router = require('express').Router();
 const propertyManagerController = require('../controllers/propertyManagerController');
-const {protect, restrictTo} = require("../controllers/authController");
 
+const { protect, restrictTo } = require('../controllers/authController');
 
-// router.use(protect);
-// router.use(restrictTo('admin'));
+router.get('/', propertyManagerController.getAllPropertyManagers);
+router.get('/:id', propertyManagerController.getPropertyManager);
 
-router
-    .route('/')
-    .get(propertyManagerController.getAllPropertyManagers)
-    .post(propertyManagerController.createPropertyManager);
+router.use(protect);
+router.use(restrictTo('admin'));
 
-router
-    .route('/:id')
-    .get(propertyManagerController.getPropertyManager)
-    .patch(propertyManagerController.updatePropertyManage)
-    .delete(propertyManagerController.deletePropertyManager);
+router.post('/', propertyManagerController.createPropertyManager);
+router.patch('/:id', propertyManagerController.updatePropertyManager);
+router.delete('/:id', propertyManagerController.deletePropertyManager);
 
 module.exports = router;

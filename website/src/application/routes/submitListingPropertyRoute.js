@@ -1,18 +1,15 @@
 const router = require('express').Router();
 const submitListingPropertyController = require('../controllers/submitListingPropertyController');
-const {restrictTo, protect} = require("../controllers/authController");
+const { protect, restrictTo } = require('../controllers/authController');
 
-// router.use(protect);
-// router.use(restrictTo('admin'));
+router.get('/', submitListingPropertyController.getAllSubmitListingProperty);
+router.get('/:id', submitListingPropertyController.getSubmitListingProperty);
 
-router
-    .route('/')
-    .get(submitListingPropertyController.getAllSubmitListingProperty)
-    .post(submitListingPropertyController.createSubmitListingProperty);
+router.use(protect);
+router.use(restrictTo('admin'));
 
-router
-    .route('/:id')
-    .get(submitListingPropertyController.getSubmitListingProperty)
-    .patch(submitListingPropertyController.updateSubmitListingProperty)
+router.post('/', submitListingPropertyController.createSubmitListingProperty);
+router.patch('/:id', submitListingPropertyController.updateSubmitListingProperty);
+router.delete('/:id', submitListingPropertyController.deleteSubmitListingProperty);
 
 module.exports = router;
