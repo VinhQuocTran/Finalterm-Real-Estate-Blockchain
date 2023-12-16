@@ -31,7 +31,7 @@ const ListingProperty = sequelize.define('', {
     type: DataTypes.DATE
   }
 }, {
-  tableName: 'ListingProperty',
+  tableName: 'ListingProperties',
   timestamps: true,
   underscored: true,
 });

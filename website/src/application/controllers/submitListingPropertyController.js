@@ -1,22 +1,10 @@
 const SubmitListingProperty = require('../models/SubmitListingProperty');
-const catchAsync = require('../utils/catchAsync');
+const factory = require('../controllers/handlerFactory');
 
-const createSubmitListingProperty = (req, res, next) => {
-    res.status(200).json({
-        status: 'success',
-        data: 'Test connection'
-    })
+module.exports = {
+    getAllSubmitListingPropertys: factory.getAll(SubmitListingProperty),
+    getSubmitListingProperty: factory.getOne(SubmitListingProperty),
+    createSubmitListingProperty: factory.createOne(SubmitListingProperty),
+    updateSubmitListingProperty: factory.updateOne(SubmitListingProperty),
+    deleteSubmitListingProperty: factory.deleteOne(SubmitListingProperty)
 };
-
-const getAllSubmitListingProperties = catchAsync(async (req, res) => {
-    const submitListingProperties = await SubmitListingProperty.findAll();
-
-    res.status(200).json({
-        status: 'success',
-        length: submitListingProperties.length,
-        data: submitListingProperties
-    })
-});
-
-
-module.exports = { createSubmitListingProperty, getAllSubmitListingProperties };
