@@ -1,39 +1,12 @@
 const HyperLedgerService = require('../utils/hyperLedgerService/hyperLedgerService');
 const catchAsync = require("../utils/catchAsync");
 const fabricService = new HyperLedgerService();
+const Property = require('../models/Property');
 
 const getChain =  catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
     await fabricService.submitTransaction("initLedger");
-    // await fabricService.submitTransaction("matchingOffers",new Date());
-
-    // await fabricService.submitTransaction("createUser", 'ACCOUNT_0001', 1000000 , 500 * 50);
-    // await fabricService.submitTransaction("createUser", 'ACCOUNT_0002', 1000000 , 500 * 50);
-    // await fabricService.submitTransaction("createUser", 'ACCOUNT_0003', 1000000 , 500 * 50);
-    // await fabricService.submitTransaction("createUser", 'ACCOUNT_0004', 1000000 , 500 * 50);
-    // await fabricService.submitTransaction("createUser", 'ACCOUNT_0005', 1000000 , 500 * 50);
-    //
-    // await fabricService.submitTransaction("createToken", 'TOKEN_0001', 'LP_0001', 500);
-    // await fabricService.submitTransaction("createToken", 'TOKEN_0002', 'LP_0002', 500);
-    // await fabricService.submitTransaction("createToken", 'TOKEN_0003', 'LP_0003', 500);
-    // await fabricService.submitTransaction("createToken", 'TOKEN_0004', 'LP_0004', 500);
-    // await fabricService.submitTransaction("createToken", 'TOKEN_0005', 'LP_0005', 500);
-    //
-
-    // await fabricService.submitTransaction("createPropertyTokenOwner", 'PTO_0001', 500, 'TOKEN_0001', 'ACCOUNT_0001');
-    // await fabricService.submitTransaction("createPropertyTokenOwner", 'PTO_0002', 500, 'TOKEN_0002', 'ACCOUNT_0002');
-    // await fabricService.submitTransaction("createPropertyTokenOwner", 'PTO_0003', 500, 'TOKEN_0003', 'ACCOUNT_0003');
-    // await fabricService.submitTransaction("createPropertyTokenOwner", 'PTO_0004', 500, 'TOKEN_0004', 'ACCOUNT_0004');
-    // await fabricService.submitTransaction("createPropertyTokenOwner", 'PTO_0005', 500, 'TOKEN_0005', 'ACCOUNT_0005');
-    //
-    // await fabricService.submitTransaction("createOffer", 'OFFER_0001', 'ACCOUNT_0001', 'TOKEN_0001', 50, 50, false);
-    // await fabricService.submitTransaction("createOffer", 'OFFER_0002', 'ACCOUNT_0002', 'TOKEN_0002', 50, 50, false);
-    // await fabricService.submitTransaction("createOffer", 'OFFER_0003', 'ACCOUNT_0003', 'TOKEN_0003', 50, 50, false);
-    // await fabricService.submitTransaction("createOffer", 'OFFER_0004', 'ACCOUNT_0004', 'TOKEN_0004', 50, 50, false);
-    // await fabricService.submitTransaction("createOffer", 'OFFER_0005', 'ACCOUNT_0005', 'TOKEN_0005', 50, 50, false);
-    // await fabricService.submitTransaction("createOffer", 'OFFER_0006', 'ACCOUNT_0001', 'TOKEN_0002', 50, 50, true);
-
 
     await fabricService.disconnect();
     res.status(200).json({
@@ -46,7 +19,7 @@ const getChain =  catchAsync(async (req, res, next) => {
 const getAllUsers = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
-    const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
+    const result  = await fabricService.evaluateTransaction("getAllByEntity","token");
     const users = JSON.parse(result);
     await fabricService.disconnect();
     res.status(200).json({
@@ -118,6 +91,24 @@ const getAllOffers = catchAsync(async (req, res, next) => {
         data: offers
     })
 });
+const getTokenizeProperty = catchAsync(async (req, res, next) => {
+    await fabricService.initialize();
+    await fabricService.connect();
+    const ownerProperty = await Property.findOne({
+        where: { id: req.body.propertyId }
+    });
+    await fabricService.submitTransaction("getTokenizeProperty",ownerProperty.account_id,req.body.listingPropertyId,req.body.propertyValuation);
+    const query = {
+        docType:"token",
+        listing_property_id:req.body.listingPropertyId
+    }
+    const result =  await fabricService.evaluateTransaction("queryToken","TOKEN_0005");
+    await fabricService.disconnect();
+    res.status(200).json({
+        status: 'success',
+        data: [query,JSON.parse(result.toString())]
+    })
+});
 module.exports = {
     getChain,
     getAllUsers,
@@ -125,6 +116,7 @@ module.exports = {
     getDepositByUserId,
     getWithDrawByUserId,
     getOwnPropertyTokenByUserId,
+    getTokenizeProperty,
     createUser,
     getAllOffers
 };

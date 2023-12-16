@@ -7,6 +7,7 @@ router.post('/users', chainController.createUser);
 router.get('/users/:id', chainController.getUserById);
 router.put('/users/deposit',chainController.getDepositByUserId)
 router.put('/users/withdraw',chainController.getWithDrawByUserId)
+router.post('/tokens',chainController.getTokenizeProperty)
 
 router.get('/offers', chainController.getAllOffers);
 module.exports = router;

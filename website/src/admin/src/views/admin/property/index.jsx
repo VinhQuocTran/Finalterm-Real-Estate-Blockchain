@@ -7,7 +7,7 @@ import {
 import config from '../../../config.json';
 import PropertiesTable from "./components/PropertiesTable";
 function fetchPropertiesData() {
-    return fetch(config.API_URL+"properties")
+    return fetch(config.API_URL+"properties/?isVerified=0,1")
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

@@ -80,6 +80,15 @@ describe('RealEstateTransfer Smart Contract', () => {
             console.log(pro);
             pro = await contract.getAllByEntity(ctx,"propertyTokenOwner");
             console.log(pro);
+            await contract.getTokenizeProperty(ctx,"ACCOUNT_0001","cccc",2000);
+            pro = await contract.getAllByEntity(ctx,"token");
+            console.log(pro);
+            const query = {
+                "docType":"token",
+                "listing_property_id":"LP_0001"
+            }
+            const result =  await contract.getQueryResult(ctx,query);
+            console.log(result)
         });
     });
 

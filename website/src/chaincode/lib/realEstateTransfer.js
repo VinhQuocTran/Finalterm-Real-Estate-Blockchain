@@ -113,7 +113,7 @@ async generateID(key,count){
         // create new token
         const token = {
             docType: "token",
-            id:this.generateID("TOKEN",tokens.length),
+            id: await this.generateID("TOKEN",tokens.length+1),
             listing_property_id,
             quantity:house_price/tokenPriceInit,
             token_price: tokenPriceInit
@@ -323,6 +323,13 @@ async generateID(key,count){
 
 
     async queryToken(ctx, id) {
+        const tokenAsBytes = await ctx.stub.getState(`token:${id}`);
+        if (!tokenAsBytes || tokenAsBytes.length === 0) {
+            throw new Error(`Token with ID ${id} does not exist`);
+        }
+        return JSON.parse(tokenAsBytes.toString());
+    }
+    async queryConCac(ctx, id) {
         const tokenAsBytes = await ctx.stub.getState(`token:${id}`);
         if (!tokenAsBytes || tokenAsBytes.length === 0) {
             throw new Error(`Token with ID ${id} does not exist`);
