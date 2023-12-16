@@ -40,6 +40,7 @@ app.use('/api/chains', chainRoute);
 // non-blockchain
 app.use('/api/accounts', accountRoute);
 app.use('/api/properties', propertyRoute);
+
 app.use('/api/propertyVerifications', propertyVerificationRoute);
 app.use('/api/submitListingProperties', submitListingPropertyRoute);
 app.use('/api/propertyManagers', propertyManagerRoute);
@@ -56,6 +57,7 @@ app.use('/api/proposalRepairs', proposalRepairRoute);
 app.use('/api/proposalVotings', proposalVotingRoute);
 app.use('/api/repairTransactions', repairTransactionRoute);
 app.use('/api/dailyReplenishTransactions', dailyReplenishTransactionRoute);
+
 
 app.use('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

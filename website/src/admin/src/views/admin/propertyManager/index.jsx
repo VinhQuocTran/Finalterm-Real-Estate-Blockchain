@@ -1,13 +1,12 @@
-
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
-    columnsDataProperty
-} from "./variables/PropertiesColumnsData";
+    columnsDataPropertyManager
+} from "./variables/PropertyManagerColumnsData";
 import config from '../../../config.json';
-import PropertiesTable from "./components/PropertiesTable";
-function fetchPropertiesData() {
-    return fetch(config.API_URL+"properties/?isVerified=0,1")
+import PropertiesTable from "./components/PropertyManagerTable";
+function fetchPropertyManagerData() {
+    return fetch(config.API_URL+"propertyManagers")
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -24,7 +23,7 @@ function fetchPropertiesData() {
             throw error;
         });
 }
-export default function ListingProperty() {
+export default function PropertyManager() {
     let [propertyData, setPropertyData] = useState([{}]);
     const [reload, setReload] = useState(false);
     const reloadParent = () => {
@@ -33,7 +32,7 @@ export default function ListingProperty() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await fetchPropertiesData();
+                const data = await fetchPropertyManagerData();
                 setPropertyData(data.data);
                 console.log(data)
             } catch (error) {
@@ -51,7 +50,7 @@ export default function ListingProperty() {
         columns={{ sm: 0, md: 0 }}
         spacing={{ base: "20px", xl: "20px" }}>
         <PropertiesTable
-          columnsData={columnsDataProperty}
+          columnsData={columnsDataPropertyManager}
           tableData={propertyData}
           reloadParent = {reloadParent}
         />

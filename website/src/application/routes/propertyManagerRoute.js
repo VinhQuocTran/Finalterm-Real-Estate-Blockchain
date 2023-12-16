@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const propertyManagerController = require('../controllers/propertyManagerController');
+
 const { protect, restrictTo } = require('../controllers/authController');
 
 router.get('/', propertyManagerController.getAllPropertyManagers);

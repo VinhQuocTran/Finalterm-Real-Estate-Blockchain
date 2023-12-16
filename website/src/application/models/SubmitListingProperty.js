@@ -26,7 +26,7 @@ const SubmitListingProperty = sequelize.define('', {
         type: DataTypes.DATE
     }
 }, {
-    tableName: 'SubmitListingProperties',
+    tableName: 'SubmitListingProperty',
     timestamps: true,
     underscored: true,
 });
@@ -41,7 +41,6 @@ SubmitListingProperty.addHook('beforeCreate', async (submitListingProperty, opti
         order: [['id', 'DESC']],
         attributes: ['id'],
     });
-
     let counter = 1;
     if (latestSubmitListingProperty) {
         const lastSubmitListingPropertyId = parseInt(latestSubmitListingProperty.id.split('_')[1], 10);

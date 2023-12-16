@@ -1,15 +1,17 @@
 const HyperLedgerService = require('../utils/hyperLedgerService/hyperLedgerService');
 const catchAsync = require("../utils/catchAsync");
 const fabricService = new HyperLedgerService();
+const Property = require('../models/Property');
 
 const getChain =  catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
     await fabricService.submitTransaction("initLedger");
+
     await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
-        data: 'create init initLedger successful'
+        data: "init data success"
     });
 });
 
@@ -17,7 +19,7 @@ const getChain =  catchAsync(async (req, res, next) => {
 const getAllUsers = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
-    const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
+    const result  = await fabricService.evaluateTransaction("getAllByEntity","token");
     const users = JSON.parse(result);
     await fabricService.disconnect();
     res.status(200).json({
@@ -89,6 +91,24 @@ const getAllOffers = catchAsync(async (req, res, next) => {
         data: offers
     })
 });
+const getTokenizeProperty = catchAsync(async (req, res, next) => {
+    await fabricService.initialize();
+    await fabricService.connect();
+    const ownerProperty = await Property.findOne({
+        where: { id: req.body.propertyId }
+    });
+    await fabricService.submitTransaction("getTokenizeProperty",ownerProperty.account_id,req.body.listingPropertyId,req.body.propertyValuation);
+    const query = {
+        docType:"token",
+        listing_property_id:req.body.listingPropertyId
+    }
+    const result =  await fabricService.evaluateTransaction("queryToken","TOKEN_0005");
+    await fabricService.disconnect();
+    res.status(200).json({
+        status: 'success',
+        data: [query,JSON.parse(result.toString())]
+    })
+});
 module.exports = {
     getChain,
     getAllUsers,
@@ -96,6 +116,7 @@ module.exports = {
     getDepositByUserId,
     getWithDrawByUserId,
     getOwnPropertyTokenByUserId,
+    getTokenizeProperty,
     createUser,
     getAllOffers
 };

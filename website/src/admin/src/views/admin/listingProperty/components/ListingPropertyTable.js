@@ -20,7 +20,6 @@ import {
 } from "react-table";
 // Custom components
 import Card from "components/card/Card";
-import {MdCancel, MdCheckCircle, MdOutlineError} from "react-icons/md";
 import {
   Modal,
   ModalOverlay,
@@ -53,7 +52,7 @@ function fetchPropertyByIdData(id) {
 }
 
 
-export default function PropertiesTable(props) {
+export default function ListingPropertyTable(props) {
   const { columnsData, tableData, reloadParent } = props;
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -150,16 +149,17 @@ export default function PropertiesTable(props) {
         console.log('Property updated successfully!');
         let now = new Date();
         let resultDate = new Date();
-        resultDate.setDate(now.getDate()+7)
+
         const submitListingProperty = {
           createdAt: now,
           propertyId: propertyData.id,
           result: false,
-          resultDate:resultDate.toLocaleString(),
+          resultDate:resultDate.setDate(now.getDate()+7),
           submittedDate:now,
           updatedAt:now
         }
-        if(selectedOption==='1'){
+        console.log(submitListingProperty);
+        if(selectedOption===1){
           const s = await axios.post(config.API_URL + `submitListingProperty/`, submitListingProperty, {
             headers: {
               'Content-Type': 'application/json',
@@ -175,7 +175,6 @@ export default function PropertiesTable(props) {
       onClose();
     }
   };
-
 
   return (
     <Card
@@ -234,15 +233,7 @@ export default function PropertiesTable(props) {
                   // Render the button for the 'actions' column
                   if (cell.column.id === 'actions') {
                     data = (
-                    <Grid
-                        templateColumns={{
-                          base: "1fr",
-                        }}
-                        templateRows={{
-                          base: "repeat(3, 1fr)",
-                        }}
-                    >
-                      <Flex justifyContent="space-between" alignItems="center">
+                      <Flex justifyContent="space-center" alignItems="center">
                         <Button onClick={() => onOpen('details', {id:row.original.id})} colorScheme="teal" size="sm" marginLeft="1">
                           Details
                         </Button>
@@ -257,46 +248,7 @@ export default function PropertiesTable(props) {
                                   <Card>
                                     <Box>
                                       {Object.entries(propertyData).map(([key, value]) => (
-                                          key === 'propertyImageUrl' ? (
-                                              <Box key={key} display="flex" flexDirection="row" mb={2}>
-                                                <Text fontWeight="bold" flex="0 0 30%" pr={2}>
-                                                  {key}
-                                                </Text>
-                                                <Image src={value} height={'200px'}></Image>
-                                              </Box>
-                                          ) : key === 'isVerified' ? (
-                                              // Additional condition for 'someOtherKey'
-                                              <Box key={key} display="flex" flexDirection="row" mb={2}>
-                                                <Text fontWeight="bold" flex="0 0 30%" pr={2}>
-                                                  {key}
-                                                </Text>
-                                                <Flex align='center'>
-                                                  <Icon
-                                                      w='24px'
-                                                      h='24px'
-                                                      me='5px'
-                                                      color={
-                                                        value === '1'
-                                                            ? "green.500"
-                                                            : value === '-1'
-                                                                ? "red.500"
-                                                                : value === '0'
-                                                                    ? "orange.500"
-                                                                    : null
-                                                      }
-                                                      as={
-                                                        value === '1'
-                                                            ? MdCheckCircle
-                                                            : value === '-1'
-                                                                ? MdCancel
-                                                                : value === '0'
-                                                                    ? MdOutlineError
-                                                                    : null
-                                                      }
-                                                  />
-                                                </Flex>
-                                              </Box>
-                                          ):(
+                                          (
                                               // Additional condition for 'someOtherKey'
                                               <Box key={key} display="flex" flexDirection="row" mb={2}>
                                                 <Text fontWeight="bold" flex="0 0 30%" pr={2}>
@@ -330,64 +282,18 @@ export default function PropertiesTable(props) {
                               <Button colorScheme='blue' mr={3} onClick={onClose}>
                                 Close
                               </Button>
-
                               <Button variant='ghost' onClick={handleModalAction}>
                                 {modalAction === 'details' ? 'Details Action' : 'Verify Action'}
                               </Button>
                             </ModalFooter>
                           </ModalContent>
                         </Modal>
-                        <Button onClick={() => onOpen('update', {id:row.original.id})}
-                                isDisabled={row.original.isVerified === '1'}
-                                colorScheme="green" size="sm" marginLeft="1">
-                          Verify
+                        <Button onClick={() => onOpen('update', {id:row.original.id})} colorScheme="green" size="sm" marginLeft="1">
+                          Update
                         </Button>
                       </Flex>
-                    </Grid>
                     )
                   }
-                  else if(cell.column.id === 'propertyImageUrl'){
-                    data = (
-                        <Image src={cell.value}>
-                        </Image>
-                    );
-                  }
-                  else if(cell.column.id === 'propertyDocumentUrl'){
-                    data = (
-                        <Link color={'brand.300'} href={cell.value}> Link here
-                        </Link>
-                    );
-                  }
-                  else if (cell.column.id === "isVerified") {
-                    data = (
-                        <Flex align='center'>
-                          <Icon
-                              w='24px'
-                              h='24px'
-                              me='5px'
-                              color={
-                                cell.value === '1'
-                                    ? "green.500"
-                                    : cell.value === '-1'
-                                        ? "red.500"
-                                        : cell.value === '0'
-                                            ? "orange.500"
-                                            : null
-                              }
-                              as={
-                                cell.value === '1'
-                                    ? MdCheckCircle
-                                    : cell.value === '-1'
-                                        ? MdCancel
-                                        : cell.value === '0'
-                                            ? MdOutlineError
-                                            : null
-                              }
-                          />
-                        </Flex>
-                    );
-                  }
-
                   else {
                     data = (
                         <Text color={textColor} fontSize='sm' fontWeight='700'>

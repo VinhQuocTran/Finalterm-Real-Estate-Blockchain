@@ -2,7 +2,8 @@ const Account = require('../models/Account');
 const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-
+const HyperLedgerService = require('../utils/hyperLedgerService/hyperLedgerService');
+const fabricService = new HyperLedgerService();
 const filterObj = (obj, ...allowedFields) => {
     const newObj = {};
     Object.keys(obj).forEach(el => {
@@ -11,7 +12,29 @@ const filterObj = (obj, ...allowedFields) => {
 
     return newObj;
 };
+const getAllUsers = catchAsync(async (req, res, next) => {
+    let accounts = (await Account.findAll({
+        where:{
+            role:'user'
+        }
+    }
+    ));
+    await fabricService.initialize();
+    await fabricService.connect();
+    const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
+    const users = JSON.parse(result).sort();
 
+    accounts.forEach((acc, index) => {
+        acc.cashBalance = users[index].cash_balance;
+        acc.tokenBalance = users[index].token_balance;
+    });
+    await fabricService.disconnect();
+    res.status(200).json({
+        status: 'success',
+        length: accounts.length,
+        data: accounts
+    })
+});
 module.exports = {
     getMe: (req, res, next) => {
         req.params.id = req.user.id;
@@ -59,8 +82,9 @@ module.exports = {
             message: "This route is not yet defined! Please use /signup instead"
         });
     },
+
     getAccount: factory.getOne(Account),
-    getAllAccounts: factory.getAll(Account),
+    getAllAccounts: getAllUsers,
     updateAccount: factory.updateOne(Account),
     deleteAccount: factory.deleteOne(Account)
 }
