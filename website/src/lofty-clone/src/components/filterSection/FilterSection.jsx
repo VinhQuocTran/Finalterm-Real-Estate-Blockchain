@@ -6,15 +6,10 @@ import "./filterSection.scss";
 
 const FilterSection = ({districts, setDistricts, areaValue, setAreaValue, tokenValue, setTokenValue}) => {
   const [isLocationOpen, setIsLocationOpen] = useState(false);
-  // const [isPropertyOpen, setIsPropertyOpen] = useState(false);
-  // const [location, setLocation] = useState("All districts");
-  // const [propertyType, setPropertyType] = useState("All Properties");
   const rangeAreaValue = useRef();
   const rangeTokenValue = useRef();
   const locationListRef = useRef();
   const locationInputBox = useRef();
-  // const propertyTypeListRef = useRef();
-  // const propertyTypeInputBox = useRef();
 
   const handleClick = (isOpen, setIsOpen, listRef, inputBox) => {
     setIsOpen(!isOpen);
@@ -33,13 +28,10 @@ const FilterSection = ({districts, setDistricts, areaValue, setAreaValue, tokenV
 
   const handleLocationChange = (e) => {
     setDistricts(e.target.textContent);
-    handleClick(locationListRef, locationInputBox);
+    locationListRef.current.style.maxHeight = 0;
+    locationListRef.current.style.boxShadow = 0;
+    locationInputBox.current.click();
   };
-
-  // const handlePropertyTypeChange = (e) => {
-  //   setPropertyType(e.target.textContent);
-  //   handleClick(propertyTypeListRef, propertyTypeInputBox);
-  // };
 
   return (
     <div className="filterSection">
