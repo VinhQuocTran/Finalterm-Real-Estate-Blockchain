@@ -6,12 +6,13 @@ import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import { BASE_URL } from "../../utils/api";
 import ContentWrapper from "../contentWrapper/ContentWrapper";
-import { logout } from "../../redux/userSlice";
+import { logout, updateUser } from "../../redux/userSlice";
 import "./header.scss";
 
 const Header = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user);
+  const [user, setUser] = useState(currentUser.user);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
   const mobileViewRef = useRef();
@@ -41,6 +42,23 @@ const Header = () => {
     }
   }
 
+  const updateProfileClick = async () => {
+    try {
+      await axios.patch(BASE_URL + `/accounts/${currentUser.user?.id}`, user, {
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`
+        }
+      });
+      dispatch(updateUser(user));
+
+      profileModalRef.current.style.visibility = !isProfileModalOpened ? 'visible' : 'hidden';
+      profileModalRef.current.style.opacity = !isProfileModalOpened ? 1 : 0;
+      setIsProfileModalOpened(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   window.addEventListener('resize', function () {
     setWidth(window.innerWidth);
   });
@@ -56,12 +74,12 @@ const Header = () => {
             <li className="nav-item" onClick={() => navigate("/")}>Marketplace</li>
             <li className="nav-item" onClick={() => navigate("/token-ownership")}>Token Ownership</li>
             <li className="nav-item" onClick={() => navigate("/my-property")}>My Property</li>
-            {currentUser ?
-              <li className="nav-item" onClick={handleProfileModalClick}>{currentUser.username}</li> :
+            {currentUser.user ?
+              <li className="nav-item" onClick={handleProfileModalClick}>{currentUser.user.username}</li> :
               <li className="nav-item" onClick={() => navigate("/sign-in")}>Sign In</li>
             }
           </ul>
-          {!currentUser && <button type="button" className="header-btn" onClick={() => navigate("/sign-up")}>Sign Up</button>}
+          {!currentUser.user && <button type="button" className="header-btn" onClick={() => navigate("/sign-up")}>Sign Up</button>}
           <IoClose className="closeIcon" onClick={mobileMenuClickHandler} />
         </div>
         <div className="mobileMenu" onClick={mobileMenuClickHandler}>
@@ -76,34 +94,34 @@ const Header = () => {
           </div>
           <div className="inputForm">
             <label htmlFor="username">Username</label>
-            <input id="username" type="text" value={currentUser?.username} />
+            <input id="username" type="text" defaultValue={currentUser.user?.username} onChange={(e) => setUser((prev) => ({ ...prev, username: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" value={currentUser?.email} readOnly />
+            <input id="email" type="email" defaultValue={currentUser.user?.email} readOnly />
           </div>
           <div className="inputForm">
             <label htmlFor="address">Address</label>
-            <input id="address" type="text" value={currentUser?.address} />
+            <input id="address" type="text" defaultValue={currentUser.user?.address} onChange={(e) => setUser((prev) => ({ ...prev, address: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="phoneNumber">Phone number</label>
-            <input id="phoneNumber" type="text" value={currentUser?.phoneNumber} />
+            <input id="phoneNumber" type="text" defaultValue={currentUser.user?.phoneNumber} onChange={(e) => setUser((prev) => ({ ...prev, phoneNumber: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="residentId">Resident ID</label>
-            <input id="residentId" type="text" value={currentUser?.residentId} />
+            <input id="residentId" type="text" defaultValue={currentUser.user?.residentId} onChange={(e) => setUser((prev) => ({ ...prev, residentId: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="cashBalance">Cash balance</label>
-            <input id="cashBalance" type="number" min={0} value={currentUser?.cashBalance} />
+            <input id="cashBalance" type="number" min={0} defaultValue={currentUser.user?.cashBalance} onChange={(e) => setUser((prev) => ({ ...prev, cashBalance: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="tokenBalance">Token balance</label>
-            <input id="tokenBalance" type="number" min={0} value={currentUser?.tokenBalance} />
+            <input id="tokenBalance" type="number" min={0} defaultValue={currentUser.user?.tokenBalance} onChange={(e) => setUser((prev) => ({ ...prev, tokenBalance: e.target.value }))} />
           </div>
           <div className="submitBtns">
-            <button type="button">Save changes</button>
+            <button type="button" onClick={updateProfileClick}>Save changes</button>
             <button type="button" onClick={handleLogoutBtnClick}>Logout</button>
           </div>
         </div>

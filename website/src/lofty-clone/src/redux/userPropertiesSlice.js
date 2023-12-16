@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const userPropertiesSlice = createSlice({
-  name: 'user',
+  name: 'userProperties',
   initialState: {
     userProperties: [],
     loading: false,
     error: false
   },
   reducers: {
-    fetchUserProperties: (state) => {
+    fetchUserPropertiesStart: (state) => {
       state.loading = true;
     },
     fetchUserPropertiesSuccess: (state, action) => {
@@ -20,10 +20,30 @@ const userPropertiesSlice = createSlice({
       state.error = true;
     },
     updateUserProperties: (state, action) => {
-        state.userProperties = state.userProperties.push(action.payload);
+      state.userProperties.unshift(action.payload);
+    },
+    updateVerifiedPropertyStatus: (state, action) => {
+      const index = state.userProperties.findIndex(item => item.id === action.payload);
+      if (index !== -1) {
+        state.userProperties[index] = { ...state.userProperties[index], ...{isVerified: "0"} };
+      }
+    },
+    updateProperty: (state, action) => {
+      const index = state.userProperties.findIndex(item => item.id === action.payload.id);
+      if (index !== -1) {
+        state.userProperties[index] = { ...state.userProperties[index], ...action.payload };
+      }
     }
   }
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } = userPropertiesSlice.actions;
+export const { 
+  fetchUserPropertiesStart, 
+  fetchUserPropertiesSuccess, 
+  fetchUserPropertiesFailure, 
+  updateUserProperties, 
+  updateVerifiedPropertyStatus,
+  updateProperty
+} = userPropertiesSlice.actions;
+
 export default userPropertiesSlice.reducer;
