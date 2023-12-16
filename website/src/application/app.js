@@ -18,6 +18,11 @@ const listingPropertyInspectionRoute = require('./routes/listingPropertyInspecti
 const listingPropertyRoute = require('./routes/listingPropertyRoute');
 const listingPropertyValuationRoute = require('./routes/listingPropertyValuationRoute');
 const monthlyPropertyValuationRoute = require('./routes/monthlyPropertyValuationRoute');
+const operatingReserveRoute = require('./routes/operatingReserveRoute');
+const proposalRepairRoute = require('./routes/proposalRepairRoute');
+const proposalVotingRoute = require('./routes/proposalVotingRoute');
+const repairTransactionRoute = require('./routes/repairTransactionRoute');
+const dailyReplenishTransactionRoute = require('./routes/dailyReplenishTransactionRoute');
 const AppError = require('./utils/appError');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
@@ -46,7 +51,11 @@ app.use('/api/listingPropertyInspections', listingPropertyInspectionRoute);
 app.use('/api/propertyValuationServices', propertyValuationServiceRoute);
 app.use('/api/listingPropertyValuations', listingPropertyValuationRoute);
 app.use('/api/monthlyPropertyValuations', monthlyPropertyValuationRoute);
-// app.use('/api/opeatingReserves', monthlyPropertyValuationRoute);
+app.use('/api/opeatingReserves', operatingReserveRoute);
+app.use('/api/proposalRepairs', proposalRepairRoute);
+app.use('/api/proposalVotings', proposalVotingRoute);
+app.use('/api/repairTransactions', repairTransactionRoute);
+app.use('/api/dailyReplenishTransactions', dailyReplenishTransactionRoute);
 
 app.use('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
