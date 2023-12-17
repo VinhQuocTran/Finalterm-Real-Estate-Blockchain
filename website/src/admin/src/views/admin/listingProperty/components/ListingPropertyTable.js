@@ -160,7 +160,7 @@ export default function ListingPropertyTable(props) {
         }
         console.log(submitListingProperty);
         if(selectedOption===1){
-          const s = await axios.post(config.API_URL + `submitListingProperty/`, submitListingProperty, {
+          const s = await axios.post(config.API_URL + `submitListingProperties/`, submitListingProperty, {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${jwtToken}`,

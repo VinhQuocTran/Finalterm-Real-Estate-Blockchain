@@ -6,7 +6,7 @@ import {
 import config from '../../../config.json';
 import ListingPropertiesTable from "./components/SubmitListingPropertyTable";
 function fetchListingPropertyData() {
-    return fetch(config.API_URL+"submitListingProperty")
+    return fetch(config.API_URL+"submitListingProperties")
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

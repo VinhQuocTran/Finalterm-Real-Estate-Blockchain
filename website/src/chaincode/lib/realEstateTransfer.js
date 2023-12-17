@@ -17,8 +17,12 @@ class RealEstateTransfer extends Contract {
         await this.createOffer(ctx, 'OFFER_0006', 'ACCOUNT_0001', 'TOKEN_0002', 50, 50, true,'2023-12-15T15:31:43.420Z');
     }
 
-
     async createUser(ctx, id, cash_balance, token_balance) {
+        const exists = await ctx.stub.getState(`user:${id}`);
+        if (exists) {
+
+            throw new Error(`The user ${id} already exists`);
+        }
         const user = {
             docType: "user",
             id,
@@ -30,6 +34,10 @@ class RealEstateTransfer extends Contract {
     }
 
     async createRentalIncomeWallet(ctx, user_id) {
+        const exists = await ctx.stub.getState(`rentalIncomeWallet:${user_id}`);
+        if (exists) {
+            throw new Error(`The rental income wallet ${user_id} already exists`);
+        }
         const rentalIncomeWallet = {
             docType: "rentalIncomeWallet",
             user_id,
@@ -39,6 +47,10 @@ class RealEstateTransfer extends Contract {
     }
 
     async createPropertyTokenOwner(ctx, id, own_number, token_id, user_id) {
+        const exists = await ctx.stub.getState(`propertyTokenOwner:${id}`);
+        if (exists) {
+            throw new Error(`The property Token Owner ${id} already exists`);
+        }
         const propertyTokenOwner = {
             docType: "propertyTokenOwner",
             id,
@@ -50,6 +62,14 @@ class RealEstateTransfer extends Contract {
     }
 
     async createToken(ctx, id, listing_property_id, quantity) {
+        let exists = await ctx.stub.getState(`token:${id}`);
+        if (exists) {
+            throw new Error(`The Token ${id} already exists`);
+        }
+        exists = await this.getTokenByListingPropertyId(ctx,listing_property_id);
+        if (exists) {
+            throw new Error(`The Listing Property ${id} already exists`);
+        }
         const token = {
             docType: "token",
             id,
@@ -61,6 +81,10 @@ class RealEstateTransfer extends Contract {
     }
 
     async createTokenTransaction(ctx, id, quantity, at_price, seller_id, buyer_id, token_id,transaction_date) {
+        const exists = await ctx.stub.getState(`tokenTransaction:${id}`);
+        if (exists) {
+            throw new Error(`The token Transaction ${id} already exists`);
+        }
         const tokenTransaction = {
             docType:"tokenTransaction",
             id,
@@ -74,6 +98,10 @@ class RealEstateTransfer extends Contract {
         await ctx.stub.putState(`tokenTransaction:${id}`, Buffer.from(JSON.stringify(tokenTransaction)));
     }
     async createOffer(ctx, id, userID, tokenID, quantity, at_price, isBuy, offer_time) {
+        const exists = await ctx.stub.getState(`offer:${id}`);
+        if (exists) {
+            throw new Error(`The offer ${id} already exists`);
+        }
         const offer = {
             docType:"offer",
             id,
@@ -150,6 +178,15 @@ async generateID(key,count){
             element.token_price = token.token_price;
         }
         return property;
+    }
+
+    async getTokenByListingPropertyId(ctx,listing_property_id){
+        const query = {
+            docType:"token",
+            listing_property_id
+        }
+        let token = await this.getQueryResult(ctx,query);
+        return token[0];
     }
 
     async getDepositByUserId(ctx,user_id,money){
