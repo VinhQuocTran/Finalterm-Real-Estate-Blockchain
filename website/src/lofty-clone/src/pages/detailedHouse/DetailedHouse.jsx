@@ -8,18 +8,25 @@ import { BASE_URL } from "../../utils/api";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
+import TokenModal from "../../components/tokenTransaction/TokenModal";
 
 const DetailedHouse = () => {
   const { propertyId } = useParams();
   const [property, setProperty] = useState(null);
+  const [token, setToken] = useState(null);
+  // const [tokenOwnerShip, setTokenOwnerShip] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [isBuyModalOpen, setBuyModalOpen] = useState(false);
+  const [isSellModalOpen, setSellModalOpen] = useState(false);
   useEffect(() => {
     setLoading(true);
     const fetchProperty = async () => {
       try {
-        const response = await axios.get(BASE_URL + `/properties/${propertyId}`);
-        setProperty(response.data.data);
+        let response = await axios.get(BASE_URL + `/properties/${propertyId}`);
+        setProperty(response.data.data.property);
+        setToken(response.data.data.token);
+        console.log(response.data.data)
+        // setTokenOwnerShip(response.data.data.tokenOwnerShip[0]);
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -29,6 +36,21 @@ const DetailedHouse = () => {
     fetchProperty();
   }, [propertyId]);
 
+  const openBuyModal = () => {
+    setBuyModalOpen(true);
+  };
+
+  const closeBuyModal = () => {
+    setBuyModalOpen(false);
+  };
+
+  const openSellModal = () => {
+    setSellModalOpen(true);
+  };
+
+  const closeSellModal = () => {
+    setSellModalOpen(false);
+  };
   return (
     <div className="detailedHouse">
       <div className="imgContainer">
@@ -84,53 +106,41 @@ const DetailedHouse = () => {
           <div className="boxHeader">
             <div className="title">
               <div className="titleLeft">
-                <span>Starting at</span>
+                <span>% your tokens:</span>
                 <FaCircleExclamation />
               </div>
               <div className="titleRight">
                 <span>$</span>
-                <span>50.00</span>
+                <span>{loading ? <Skeleton /> : token?.token_price}</span>
               </div>
             </div>
 
-            <ProgressBar completed={60} />
-
+            <ProgressBar
+                completed={100}
+            />
             <div className="boxHeaderBottom">
-              <span>12,696 tokens left</span>
+              <span>{loading ? <Skeleton /> : token?.quantity} tokens</span>
             </div>
           </div>
           <div className="boxBody">
             <div className="bodyItem">
-              <div className="itemLeft">
-                <span>Projected Annual Return</span>
-                <FaCircleExclamation />
-              </div>
-              <div className="itemRight">
-                <span>9.6%</span>
-              </div>
+              <button type="button" onClick={openBuyModal}>Buy</button>
+              <button type="button" onClick={openSellModal}>Sell</button>
             </div>
-            <div className="bodyItem">
-              <div className="itemLeft">
-                <span>Projected Rental Yield</span>
-                <FaCircleExclamation />
-              </div>
-              <div className="itemRight">
-                <span>6%</span>
-              </div>
-            </div>
-            <div className="bodyItem">
-              <div className="itemLeft">
-                <span>Rental Yield</span>
-                <FaCircleExclamation />
-              </div>
-              <div className="itemRight">
-                <span>6%</span>
-              </div>
-            </div>
-            <div className="bodyItem">
-              <button type="button">Buy</button>
-              <button type="button">Sell</button>
-            </div>
+
+            <TokenModal
+                token = {token}
+                isOpen={isBuyModalOpen}
+                onClose={closeBuyModal}
+                actionType="buy"
+            />
+
+            <TokenModal
+                token = {token}
+                isOpen={isSellModalOpen}
+                onClose={closeSellModal}
+                actionType="sell"
+            />
           </div>
         </div>
       </ContentWrapper>

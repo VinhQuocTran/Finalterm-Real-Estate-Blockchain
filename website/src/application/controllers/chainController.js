@@ -47,6 +47,19 @@ const createUser = catchAsync(async (req, res, next) => {
         data: user
     })
 });
+
+const createOffer = catchAsync(async (req, res, next) => {
+    // await fabricService.initialize();
+    // await fabricService.connect();
+    // const offer_id = "OFFER_"+ new Date().toString();
+    // await fabricService.submitTransaction("createOffer",offer_id,req.user.id,
+    //     req.body.token_id,req.body.quantity,req.body.is_buy,new Date());
+    // await fabricService.disconnect();
+    res.status(200).json({
+        status: 'success',
+        data: [req.body.token_id,req.body.quantity,req.body.is_buy]
+    })
+});
 const getUserById = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
@@ -127,5 +140,6 @@ module.exports = {
     getOwnPropertyTokenByUserId,
     getTokenizeProperty,
     createUser,
+    createOffer,
     getAllOffers
 };
