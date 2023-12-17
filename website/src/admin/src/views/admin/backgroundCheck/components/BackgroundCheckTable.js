@@ -34,7 +34,7 @@ import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
 import {MdCancel, MdCheckCircle, MdOutlineError} from "react-icons/md";
 
 function fetchSubmitListingPropertyByIdData(id) {
-  return fetch(config.API_URL+"submitListingProperties/"+id)
+  return fetch(config.API_URL+"backgroundCheckServices/"+id)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -51,7 +51,7 @@ function fetchSubmitListingPropertyByIdData(id) {
       });
 }
 
-export default function ListingPropertyInpectionTable(props) {
+export default function BackgroundCheckTable(props) {
   const { columnsData, tableData,optionManager, reloadParent } = props;
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -313,37 +313,23 @@ export default function ListingPropertyInpectionTable(props) {
                           </form>
 
                         </Modal>
+                        <Button onClick={() => onOpen('create', {id:row.original.id})}
+                                isDisabled={row.original.result === true}
+                                colorScheme="blue" size="sm" marginLeft="1">
+                          Create
+                        </Button>
                         <Button onClick={() => onOpen('update', {id:row.original.id})}
                                 isDisabled={row.original.result === true}
                                 colorScheme="green" size="sm" marginLeft="1">
                           Update
                         </Button>
+                        <Button onClick={() => onOpen('delete', {id:row.original.id})}
+                                isDisabled={row.original.result === true}
+                                colorScheme="red" size="sm" marginLeft="1">
+                          Delete
+                        </Button>
                       </Flex>
                     )
-                  }
-                  else if (cell.column.id === "isPass") {
-                    data = (
-                        <Flex align='center'>
-                          <Icon
-                              w='24px'
-                              h='24px'
-                              me='5px'
-                              color={
-                                cell.value === true
-                                    ? "green.500"
-                                    : cell.value === false
-                                        ? "red.500":null
-                              }
-                              as={
-                                cell.value === true
-                                    ? MdCheckCircle
-                                        : cell.value === false
-                                            ? MdOutlineError
-                                            : null
-                              }
-                          />
-                        </Flex>
-                    );
                   }
                   else {
                     data = (

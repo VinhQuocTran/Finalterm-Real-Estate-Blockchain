@@ -11,7 +11,8 @@ import {
   MdSave,
   MdCheck,
   MdChecklist,
-    MdSafetyCheck,
+  MdSafetyCheck,
+    MdCheckCircle,
   MdList
 } from "react-icons/md";
 
@@ -26,6 +27,7 @@ import SubmitListingProperty from "views/admin/submitListingProperty";
 import ListingBackgroundCheck from "views/admin/listingBackgroundCheck";
 import ListingPropertyInspection from "views/admin/listingPropertyInpection";
 import ListingPropertyValuation from "views/admin/listingPropertyValuation";
+import BackgroundCheckService from "views/admin/backgroundCheck";
 
 
 // Auth Imports
@@ -80,6 +82,13 @@ const routes = [
     icon: <Icon as={MdCheck} width='20px' height='20px' color='inherit' />,
     path: "/background-check",
     component: ListingBackgroundCheck,
+  },
+  {
+    name: "Background Check Services",
+    layout: "/admin",
+    icon: <Icon as={MdCheckCircle} width='20px' height='20px' color='inherit' />,
+    path: "/bg-check-service",
+    component: BackgroundCheckService,
   },
   {
     name: "Listing Property Inspection",

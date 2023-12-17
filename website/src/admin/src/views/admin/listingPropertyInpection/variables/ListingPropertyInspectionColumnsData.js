@@ -1,4 +1,4 @@
-const ListingBackgroundCheckColumnsData = [
+const ListingPropertyInspectionColumnsData = [
   {
     Header: "ID",
     accessor: "id",
@@ -30,4 +30,4 @@ const ListingBackgroundCheckColumnsData = [
   },
 ];
 
-export { ListingBackgroundCheckColumnsData };
+export { ListingPropertyInspectionColumnsData };

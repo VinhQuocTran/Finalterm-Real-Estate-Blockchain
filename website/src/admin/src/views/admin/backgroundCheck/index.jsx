@@ -1,12 +1,12 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
-    ListingBackgroundCheckColumnsData
-} from "./variables/ListingBackgroundCheckColumnsData";
+    BackgroundCheckColumnsData
+} from "./variables/BackgroundCheckColumnsData";
 import config from '../../../config.json';
-import ListingBackgroundCheckTable from "./components/ListingBackgroundCheckTable";
+import BackgroundCheckTable from "./components/BackgroundCheckTable";
 function fetchListingPropertyData() {
-    return fetch(config.API_URL+"listingBackgroundChecks")
+    return fetch(config.API_URL+"backgroundCheckServices")
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -73,8 +73,8 @@ export default function PropertyManager() {
         mb='20px'
         columns={{ sm: 0, md: 0 }}
         spacing={{ base: "20px", xl: "20px" }}>
-        <ListingBackgroundCheckTable
-          columnsData={ListingBackgroundCheckColumnsData}
+        <BackgroundCheckTable
+          columnsData={BackgroundCheckColumnsData}
           tableData={propertyData}
           optionManager={optionManagers}
           reloadParent = {reloadParent}
