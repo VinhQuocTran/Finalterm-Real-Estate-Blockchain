@@ -29,8 +29,6 @@ const MyProperty = () => {
   const [isListingPropertyModalOpened, setIsListingPropertyModalOpened] = useState(false);
   const [isInspectionSelectOpened, setIsInspectionSelectOpened] = useState(false);
   const [isValuationSelectOpened, setIsValuationSelectOpened] = useState(false);
-  const [selectedInspectionItem, setSelectedInspectionItem] = useState({ key: "Select a service", value: null });
-  const [selectedValuationItem, setSelectedValuationItem] = useState({ key: "Select a service", value: null });
   const [values, setValues] = useState({
     address: "",
     district: "",
@@ -313,6 +311,11 @@ const MyProperty = () => {
 
   const handleListingPropertySubmit = async (e) => {
     e.preventDefault();
+
+    const data = new FormData(e.target);
+    data.append('backgroundCheck', backgroundCheckServices[0]);
+    data.append('totalPrice', totalPrice.current.dataset.value);
+    console.log('data:', Object.fromEntries(data));
   }
 
   const handleAcceptBtnClick = async () => {
@@ -334,12 +337,10 @@ const MyProperty = () => {
     }
   }
 
-  const handleListingPropertyBtnClick = () => {
-
-  };
-
-  const inspectionItems = ["IS 1", "IS 2", "IS 3"];
-  const valuationItems = ["VS 1", "VS 2", "VS 3"];
+  const totalPrice = useRef();
+  const backgroundCheckServices = ["BGC_1"];
+  const backgroundCheckServicePrice = "500";
+  const selectedBackgroundCheckService = "BGC_1";
   const [inspectionServices, setInspectionServices] = useState(null);
   const [valuationServices, setValuationServices] = useState(null);
   const [selectedInspectionService, setSelectedInspectionService] = useState(null);
@@ -378,10 +379,6 @@ const MyProperty = () => {
     fetchCurrentUserProperties();
   }, [currentUser]);
 
-  // console.log('inspectionService name:', selectedInspectionService);
-  // console.log(inspectionServices)
-  // console.log('value', selectedInspectionService && inspectionServices?.find((item) => item.name === selectedInspectionService.name)?.feePerTime);
-
   return (
     <div className="myProperty">
       <ContentWrapper>
@@ -392,7 +389,7 @@ const MyProperty = () => {
         <div className="propertyContainer">
           {currentUserProperties.userProperties &&
             currentUserProperties.userProperties.map((item, index) =>
-              <PropertyCard key={index} property={item} onClick={handleVerifyPropertyClick} onEditModalClick={handleEditPropertyModalClick} />
+              <PropertyCard key={index} property={item} onClick={handleVerifyPropertyClick} onEditModalClick={handleEditPropertyModalClick} onListingPropertyClick={handleListingPropertyModalClick} />
             )
           }
         </div>
@@ -456,21 +453,25 @@ const MyProperty = () => {
               <h1>Choose services</h1>
               <IoMdClose onClick={handleListingPropertyModalClick} />
             </div>
-            <div className="contentBody">
+            <div className="contentBody">              
               <div className="selectBox">
-                <FilterItem title={"Inspection"} inputName={"inspection"} isFilterItemOpen={isInspectionSelectOpened} setIsFilterItemOpen={setIsInspectionSelectOpened} items={inspectionServices} selectedItem={selectedInspectionService} setSelectedItem={setSelectedInspectionService} setServicePrice={setInspectionServicePrice} />
+                <FilterItem title={"Property inspection"} inputName={"inspection"} isFilterItemOpen={isInspectionSelectOpened} setIsFilterItemOpen={setIsInspectionSelectOpened} items={inspectionServices} selectedItem={selectedInspectionService} setSelectedItem={setSelectedInspectionService} setServicePrice={setInspectionServicePrice} isNotChange={false} />
                 <span className="price">Price: {inspectionServicePrice}$</span>
               </div>
               <div className="selectBox">
-                <FilterItem title={"Valuation"} inputName={"valuation"} isFilterItemOpen={isValuationSelectOpened} setIsFilterItemOpen={setIsValuationSelectOpened} items={valuationServices} selectedItem={selectedValuationService} setSelectedItem={setSelectedValuationService} setServicePrice={setValuationServicePrice} />
+                <FilterItem title={"Property valuation"} inputName={"valuation"} isFilterItemOpen={isValuationSelectOpened} setIsFilterItemOpen={setIsValuationSelectOpened} items={valuationServices} selectedItem={selectedValuationService} setSelectedItem={setSelectedValuationService} setServicePrice={setValuationServicePrice} isNotChange={false} />
                 <span className="price">Price: {valuationServicePrice}$</span>
+              </div>
+              <div className="selectBox">
+                <FilterItem title={"Property background check"} inputName={"backgroundCheck"} isFilterItemOpen={false} setIsFilterItemOpen={null} items={backgroundCheckServices} selectedItem={selectedBackgroundCheckService} setSelectedItem={null} setServicePrice={null} isNotChange={true} />
+                <span className="price">Price: {backgroundCheckServicePrice}$</span>
               </div>
             </div>
             <div className="totalPrice">
-              <span>Total: {parseInt(inspectionServicePrice) + parseInt(valuationServicePrice)}$</span>
+              <span ref={totalPrice} data-value={parseInt(inspectionServicePrice) + parseInt(valuationServicePrice)  + parseInt(backgroundCheckServicePrice)} >Total: {parseInt(inspectionServicePrice) + parseInt(valuationServicePrice)  + parseInt(backgroundCheckServicePrice)}$</span>
             </div>
             <div className="submitBtn">
-              <button type="submit">Pay</button>
+              <button type="submit">Accept</button>
             </div>
           </form>
         </div>

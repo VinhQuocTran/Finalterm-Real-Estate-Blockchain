@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import "./filterItem.scss";
 
-const FilterItem = ({ title, isFilterItemOpen, setIsFilterItemOpen, items, inputName, selectedItem, setSelectedItem, setServicePrice }) => {
+const FilterItem = ({ title, isFilterItemOpen, setIsFilterItemOpen, items, inputName, selectedItem, setSelectedItem, setServicePrice, isNotChange }) => {
 
     const itemListRef = useRef();
     const itemInputBox = useRef();
@@ -30,7 +30,7 @@ const FilterItem = ({ title, isFilterItemOpen, setIsFilterItemOpen, items, input
     };
 
     return (
-        <div className="filterItem">
+        <div className={`filterItem ${isNotChange ? 'isNotChange' : ''}`}>
             <span className="filterItemTitle">{title}</span>
             <div className="dropdown">
                 <div
@@ -44,8 +44,8 @@ const FilterItem = ({ title, isFilterItemOpen, setIsFilterItemOpen, items, input
                 </div>
                 <div className="list" ref={itemListRef}>
                     {items ?
-                        items.map((item) => (
-                            <React.Fragment key={item.id}>
+                        items.map((item, index) => (
+                            <React.Fragment key={index}>
                                 <input type="radio" name={inputName} id={item.id} value={item.name} onClick={handleItemChange} />
                                 <label htmlFor={item.id}>
                                     {item.name}

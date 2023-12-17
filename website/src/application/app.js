@@ -56,6 +56,8 @@ app.use('/api/proposalRepairs', proposalRepairRoute);
 app.use('/api/proposalVotings', proposalVotingRoute);
 app.use('/api/repairTransactions', repairTransactionRoute);
 app.use('/api/dailyReplenishTransactions', dailyReplenishTransactionRoute);
+// custom - related to multiple-models
+// app.use('/api/custom');
 
 app.use('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

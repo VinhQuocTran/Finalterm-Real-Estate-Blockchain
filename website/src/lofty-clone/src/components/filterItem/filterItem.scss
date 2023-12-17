@@ -12,11 +12,20 @@
     &:first-child {
         padding-left: 0;
     }
+
+    &.isNotChange {
+        .input-box {
+            cursor: unset;
+            opacity: 0.5;           
+        }
+        
+    }
 }
 
 .filterItemTitle {
-    font-size: 0.8125rem;
-    color: var(--grey-lighter);
+    font-size: 1rem;
+    color: var(--purple-dark);
+    font-weight: 600;
 }
 
 .dropdown {
@@ -33,6 +42,7 @@
         outline: 1px solid rgba(0, 0, 0, 0.15);
         border-radius: 8px;
         padding: 10px 15px;
+        line-height: 24px;
         cursor: pointer;
 
         &.open {
