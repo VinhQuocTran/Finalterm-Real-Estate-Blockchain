@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import "./houseCard.scss";
 
 const HouseCard = ({property}) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="houseCard">
+    <div className="houseCard" onClick={() => navigate(`/properties/${property.id}`)}>
       <div className="imgContainer">
         <img src={property.propertyImageUrl} alt="" />
         {/* <div className="topTag">FEATURED</div>

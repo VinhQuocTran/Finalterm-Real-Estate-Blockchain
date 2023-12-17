@@ -148,6 +148,26 @@ export default function PropertiesTable(props) {
           },
         });
         console.log('Property updated successfully!');
+        let now = new Date();
+        let resultDate = new Date();
+        resultDate.setDate(now.getDate()+7)
+        const submitListingProperty = {
+          createdAt: now,
+          propertyId: propertyData.id,
+          result: false,
+          resultDate:resultDate.toLocaleString(),
+          submittedDate:now,
+          updatedAt:now
+        }
+        // if(selectedOption==='1'){
+        //   const s = await axios.post(config.API_URL + `submitListingProperties/`, submitListingProperty, {
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //       'Authorization': `Bearer ${jwtToken}`,
+        //     },
+        //   });
+        //   console.log('Create submitListingProperty successfully!');
+        // }
         reloadParent();
       } catch (error) {
         console.error('Error updating property:', error);
@@ -155,6 +175,7 @@ export default function PropertiesTable(props) {
       onClose();
     }
   };
+
 
   return (
     <Card
@@ -316,7 +337,9 @@ export default function PropertiesTable(props) {
                             </ModalFooter>
                           </ModalContent>
                         </Modal>
-                        <Button onClick={() => onOpen('update', {id:row.original.id})} colorScheme="green" size="sm" marginLeft="1">
+                        <Button onClick={() => onOpen('update', {id:row.original.id})}
+                                isDisabled={row.original.isVerified === '1'}
+                                colorScheme="green" size="sm" marginLeft="1">
                           Verify
                         </Button>
                       </Flex>

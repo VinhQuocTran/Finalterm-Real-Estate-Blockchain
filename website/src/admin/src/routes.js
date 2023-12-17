@@ -2,20 +2,33 @@ import React from "react";
 
 import { Icon } from "@chakra-ui/react";
 import {
-  MdBarChart,
   MdPerson,
   MdHome,
   MdLock,
   MdPeople,
-  MdHouse
+  MdHouse,
+  MdManageAccounts,
+  MdSave,
+  MdCheck,
+  MdChecklist,
+  MdSafetyCheck,
+    MdCheckCircle,
+  MdList
 } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
 import Profile from "views/admin/profile";
-import DataTables from "views/admin/dataTables";
 import User from "views/admin/user";
 import Property from "views/admin/property";
+import PropertyManager from "views/admin/propertyManager";
+import ListingProperty from "views/admin/listingProperty";
+import SubmitListingProperty from "views/admin/submitListingProperty";
+import ListingBackgroundCheck from "views/admin/listingBackgroundCheck";
+import ListingPropertyInspection from "views/admin/listingPropertyInpection";
+import ListingPropertyValuation from "views/admin/listingPropertyValuation";
+import BackgroundCheckService from "views/admin/backgroundCheck";
+
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
@@ -36,6 +49,13 @@ const routes = [
     component: User,
   },
   {
+    name: "Property Manager",
+    layout: "/admin",
+    icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
+    path: "/manager-property",
+    component: PropertyManager,
+  },
+  {
     name: "Property",
     layout: "/admin",
     icon: <Icon as={MdHouse} width='20px' height='20px' color='inherit' />,
@@ -43,11 +63,46 @@ const routes = [
     component: Property,
   },
   {
-    name: "Data Tables",
+    name: "Submit Listing Property",
     layout: "/admin",
-    icon: <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />,
-    path: "/data-tables",
-    component: DataTables,
+    icon: <Icon as={MdSave} width='20px' height='20px' color='inherit' />,
+    path: "/submit-listing-property",
+    component: SubmitListingProperty,
+  },
+  {
+    name: "Listing Property",
+    layout: "/admin",
+    icon: <Icon as={MdList} width='20px' height='20px' color='inherit' />,
+    path: "/listing-property",
+    component: ListingProperty,
+  },
+  {
+    name: "Listing Background check",
+    layout: "/admin",
+    icon: <Icon as={MdCheck} width='20px' height='20px' color='inherit' />,
+    path: "/background-check",
+    component: ListingBackgroundCheck,
+  },
+  {
+    name: "Background Check Services",
+    layout: "/admin",
+    icon: <Icon as={MdCheckCircle} width='20px' height='20px' color='inherit' />,
+    path: "/bg-check-service",
+    component: BackgroundCheckService,
+  },
+  {
+    name: "Listing Property Inspection",
+    layout: "/admin",
+    icon: <Icon as={MdSafetyCheck} width='20px' height='20px' color='inherit' />,
+    path: "/inspection",
+    component: ListingPropertyInspection,
+  },
+  {
+    name: "Listing Property Valuation",
+    layout: "/admin",
+    icon: <Icon as={MdChecklist} width='20px' height='20px' color='inherit' />,
+    path: "/valuation",
+    component: ListingPropertyValuation,
   },
   {
     name: "Profile",

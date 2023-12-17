@@ -2,7 +2,7 @@ const router = require('express').Router();
 const submitListingPropertyController = require('../controllers/submitListingPropertyController');
 const { protect, restrictTo } = require('../controllers/authController');
 
-router.get('/', submitListingPropertyController.getAllSubmitListingPropertys);
+router.get('/', submitListingPropertyController.getAllSubmitListingProperty);
 router.get('/:id', submitListingPropertyController.getSubmitListingProperty);
 
 router.use(protect);

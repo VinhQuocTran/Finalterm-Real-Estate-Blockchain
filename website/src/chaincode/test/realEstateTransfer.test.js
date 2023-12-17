@@ -9,7 +9,7 @@ const { Context } = require('fabric-contract-api');
 const { ChaincodeStub } = require('fabric-shim');
 
 const RealEstateTransfer = require('../lib/realEstateTransfer');
-const {c} = require("sinon/lib/sinon/spy-formatters");
+const {json} = require("mocha/lib/reporters");
 
 describe('RealEstateTransfer Smart Contract', () => {
     let contract;
@@ -20,6 +20,7 @@ describe('RealEstateTransfer Smart Contract', () => {
         contract = new RealEstateTransfer();
         chaincodeStub = sinon.createStubInstance(ChaincodeStub);
         ctx.setChaincodeStub(chaincodeStub);
+
 
         chaincodeStub.putState.callsFake((key, value) => {
             if (!chaincodeStub.states) {
@@ -73,10 +74,18 @@ describe('RealEstateTransfer Smart Contract', () => {
     describe('initLedger', () => {
         it('should initialize the ledger with sample data', async () => {
             await contract.initLedger(ctx);
-            await contract.matchingOffers(ctx);
-            await contract.getPaymentRentDaily(ctx,'property3',3000)
-            let users = await contract.getAllByEntity(ctx,"rentalIncomeWallet");
-            console.log(users);
+            await contract.matchingOffers(ctx,new Date());
+            // console.log(await contract.getAllByEntity(ctx,"token"))
+            // await contract.getTokenizeProperty(ctx,"ACCOUNT_0001","cccc",2000);
+            // await contract.createUser(ctx,"ACCOUNT_0001",2342,23424);
+            // await contract.createToken(ctx,"TOKEN_00010","LP_0001",23424);
+            // const test= await contract.getTokenByListingPropertyId(ctx,"LP_0001");
+            // console.log(test);
+            // const query = {
+            //    "selector":{
+            //        "docType":"123"
+            //    }
+            // }
         });
     });
 

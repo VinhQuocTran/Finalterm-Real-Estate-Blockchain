@@ -20,7 +20,7 @@ const userPropertiesSlice = createSlice({
       state.error = true;
     },
     updateUserProperties: (state, action) => {
-      state.userProperties.unshift(action.payload);
+      state.userProperties = [action.payload, ...state.userProperties];
     },
     updateVerifiedPropertyStatus: (state, action) => {
       const index = state.userProperties.findIndex(item => item.id === action.payload);
