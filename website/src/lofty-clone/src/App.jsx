@@ -13,7 +13,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/:propertyId" element={<DetailedHouse />} />
+          <Route path="/properties/:propertyId" element={<DetailedHouse />} />
           <Route path="/my-property" element={currentUser.user ? <MyProperty /> : <Signin />} />
           <Route path="/token-ownership" element={<TokenOwnership />} />
           <Route path="/sign-up" element={currentUser.user ? <Home /> : <Signup />} />

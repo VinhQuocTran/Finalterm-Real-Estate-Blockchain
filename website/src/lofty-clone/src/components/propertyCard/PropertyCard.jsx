@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import "./propertyCard.scss";
 
-const PropertyCard = ({ property, onClick, onEditModalClick }) => {
+const PropertyCard = ({ property, onClick, onEditModalClick, onListingPropertyClick }) => {
+  const navigate = useNavigate();
 
   return (
     <div className="propertyCard">
@@ -35,9 +37,10 @@ const PropertyCard = ({ property, onClick, onEditModalClick }) => {
             <input type="checkbox" disabled />
             <label>Is listed</label>
           </div>
-          <button disabled={property.isVerified === "-1" || property.isVerified === "0"} type="button">Listing Property</button>
+          <button disabled={property.isVerified === "-1" || property.isVerified === "0"} type="button" onClick={onListingPropertyClick}>Listing Property</button>
         </div>
-        <button data-id={property.id} onClick={onEditModalClick}>Edit</button>
+        <button className="btnBottom" onClick={() => navigate(`/properties/${property.id}`)}>View</button>
+        <button className="btnBottom" data-id={property.id} onClick={onEditModalClick} disabled={property.isVerified === "1"}>Edit</button>
       </div>      
     </div>
   );
