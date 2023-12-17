@@ -6,6 +6,7 @@
 
   .buttons {
     button {
+      width: fit-content;
       outline: none;
       border: none;
       color: #fff;
@@ -38,7 +39,7 @@
     }
   }
 
-  .newPropertyModal, .editPropertyModal {
+  .newPropertyModal, .editPropertyModal, .listingPropertyModal {
     position: fixed;
     top: 0;
     left: 0;
@@ -277,6 +278,46 @@
           }
         }
       }
+    }
+  }
+
+  .listingPropertyModal {
+    visibility: visible!important;
+    opacity: 1!important;
+
+    .modalContent {
+      height: fit-content;
+    }
+
+    .contentBody {
+      .selectBox {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .price {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--blue-dark-medium);
+
+        }
+      }
+
+      .filterItem {
+        width: 70%;
+        padding: 0;
+        margin-bottom: 16px;
+      }
+    }
+
+    .totalPrice {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--blue-dark-medium);
+      
     }
   }
 }

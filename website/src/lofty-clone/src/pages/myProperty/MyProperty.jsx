@@ -9,6 +9,7 @@ import { PropertyCard } from "../../components/imports";
 import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPropertyFormInput";
 import { BASE_URL } from "../../utils/api";
 import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus, updateProperty } from "../../redux/userPropertiesSlice";
+import FilterItem from "../../components/filterItem/FilterItem";
 import "./myproperty.scss";
 
 const MyProperty = () => {
@@ -19,11 +20,17 @@ const MyProperty = () => {
   const newPropertyModalRef = useRef();
   const verifyPropertyModalRef = useRef();
   const editPropertyModalRef = useRef();
+  const listingPropertyModalRef = useRef();
   const [editProperty, setEditProperty] = useState(null);
   const [editDistrict, setEditDistrict] = useState(null);
   const [isNewPropertyModalOpened, setIsNewPropertyModalOpened] = useState(false);
   const [isVerifyPropertyModalOpened, setIsVerifyPropertyModalOpened] = useState(false);
   const [isEditPropertyModalOpened, setIsEditPropertyModalOpened] = useState(false);
+  const [isListingPropertyModalOpened, setIsListingPropertyModalOpened] = useState(false);
+  const [isInspectionSelectOpened, setIsInspectionSelectOpened] = useState(false);
+  const [isValuationSelectOpened, setIsValuationSelectOpened] = useState(false);
+  const [selectedInspectionItem, setSelectedInspectionItem] = useState({ key: "Select a service", value: null });
+  const [selectedValuationItem, setSelectedValuationItem] = useState({ key: "Select a service", value: null });
   const [values, setValues] = useState({
     address: "",
     district: "",
@@ -163,17 +170,24 @@ const MyProperty = () => {
     setVerifyPropertyId(e.target.dataset.id);
   };
 
-  const handleEditPropertyModalClick = async (e) => {
+  const handleEditPropertyModalClick = (e) => {
     if (!isEditPropertyModalOpened) {
       const property = currentUserProperties.userProperties.find(item => item.id === e.target.dataset.id);
       setEditProperty(property);
       setEditValues(property);
-      setEditDistrict({ label: property.district, value: property.district });          
+      setEditDistrict({ label: property.district, value: property.district });
     }
     editPropertyModalRef.current.style.visibility = !isEditPropertyModalOpened ? 'visible' : 'hidden';
     editPropertyModalRef.current.style.opacity = !isEditPropertyModalOpened ? 1 : 0;
     if (isEditPropertyModalOpened) e.stopPropagation();
     setIsEditPropertyModalOpened(!isEditPropertyModalOpened);
+  }
+
+  const handleListingPropertyModalClick = (e) => {
+    listingPropertyModalRef.current.style.visibility = !isListingPropertyModalOpened ? 'visible' : 'hidden';
+    listingPropertyModalRef.current.style.opacity = !isListingPropertyModalOpened ? 1 : 0;
+    if (isListingPropertyModalOpened) e.stopPropagation();
+    setIsListingPropertyModalOpened(!isListingPropertyModalOpened);
   }
 
   const handleNewPropertySubmit = async (e) => {
@@ -189,6 +203,8 @@ const MyProperty = () => {
           Authorization: `Bearer ${currentUser.token}`
         }
       });
+
+      console.log(response.data);
 
       dispatch(updateUserProperties(response.data.data));
       toast.success('Create new property successfully', {
@@ -249,7 +265,7 @@ const MyProperty = () => {
         }
       });
 
-      dispatch(updateProperty({id: editProperty.id, ...Object.fromEntries(data)}));
+      dispatch(updateProperty({ id: editProperty.id, ...Object.fromEntries(data) }));
 
       toast.success('Edit new property successfully', {
         position: "top-right",
@@ -295,6 +311,10 @@ const MyProperty = () => {
     }
   };
 
+  const handleListingPropertySubmit = async (e) => {
+    e.preventDefault();
+  }
+
   const handleAcceptBtnClick = async () => {
     try {
       await axios.get(BASE_URL + `/properties/${verifyPropertyId}/requestVerify`, {
@@ -314,6 +334,35 @@ const MyProperty = () => {
     }
   }
 
+  const handleListingPropertyBtnClick = () => {
+
+  };
+
+  const inspectionItems = ["IS 1", "IS 2", "IS 3"];
+  const valuationItems = ["VS 1", "VS 2", "VS 3"];
+  const [inspectionServices, setInspectionServices] = useState(null);
+  const [valuationServices, setValuationServices] = useState(null);
+  const [selectedInspectionService, setSelectedInspectionService] = useState(null);
+  const [selectedValuationService, setSelectedValuationService] = useState(null);
+  const [inspectionServicePrice, setInspectionServicePrice] = useState(0);
+  const [valuationServicePrice, setValuationServicePrice] = useState(0);
+
+  useEffect(() => {
+    const fetchInspectionServices = async () => {
+      const response = await axios.get(BASE_URL + "/propertyInspectionServices");
+      setInspectionServices(response.data.data);
+    }
+
+    const fetchValuationServices = async () => {
+      const response = await axios.get(BASE_URL + "/propertyValuationServices");
+      setValuationServices(response.data.data);
+    }
+
+    fetchInspectionServices();
+    fetchValuationServices();
+  }, []);
+
+
   useEffect(() => {
     const fetchCurrentUserProperties = async () => {
       dispatch(fetchUserPropertiesStart());
@@ -329,11 +378,15 @@ const MyProperty = () => {
     fetchCurrentUserProperties();
   }, [currentUser]);
 
+  // console.log('inspectionService name:', selectedInspectionService);
+  // console.log(inspectionServices)
+  // console.log('value', selectedInspectionService && inspectionServices?.find((item) => item.name === selectedInspectionService.name)?.feePerTime);
+
   return (
     <div className="myProperty">
       <ContentWrapper>
-        <div className="buttons" onClick={handleNewPropertyModalClick}>
-          <button type="button">Create new property</button>
+        <div className="buttons">
+          <button type="button" onClick={handleNewPropertyModalClick}>Create new property</button>
         </div>
         <div className="line"></div>
         <div className="propertyContainer">
@@ -392,6 +445,32 @@ const MyProperty = () => {
             {inputs.map((item) => <NewPropertyFormInput key={item.id} {...item} value={editValues[item.name]} onChange={onEditChange} />)}
             <div className="submitBtn">
               <button type="submit">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div className="listingPropertyModal" ref={listingPropertyModalRef} onSubmit={handleListingPropertySubmit} onClick={handleListingPropertyModalClick}>
+        <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+          <form action="">
+            <div className="contentTop">
+              <h1>Choose services</h1>
+              <IoMdClose onClick={handleListingPropertyModalClick} />
+            </div>
+            <div className="contentBody">
+              <div className="selectBox">
+                <FilterItem title={"Inspection"} inputName={"inspection"} isFilterItemOpen={isInspectionSelectOpened} setIsFilterItemOpen={setIsInspectionSelectOpened} items={inspectionServices} selectedItem={selectedInspectionService} setSelectedItem={setSelectedInspectionService} setServicePrice={setInspectionServicePrice} />
+                <span className="price">Price: {inspectionServicePrice}$</span>
+              </div>
+              <div className="selectBox">
+                <FilterItem title={"Valuation"} inputName={"valuation"} isFilterItemOpen={isValuationSelectOpened} setIsFilterItemOpen={setIsValuationSelectOpened} items={valuationServices} selectedItem={selectedValuationService} setSelectedItem={setSelectedValuationService} setServicePrice={setValuationServicePrice} />
+                <span className="price">Price: {valuationServicePrice}$</span>
+              </div>
+            </div>
+            <div className="totalPrice">
+              <span>Total: {parseInt(inspectionServicePrice) + parseInt(valuationServicePrice)}$</span>
+            </div>
+            <div className="submitBtn">
+              <button type="submit">Pay</button>
             </div>
           </form>
         </div>

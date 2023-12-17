@@ -1,14 +1,39 @@
+import axios from "axios";
 import ProgressBar from "@ramonak/react-progress-bar";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
-import "./detailedHouse.scss";
 import { FaCircleExclamation } from "react-icons/fa6";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { BASE_URL } from "../../utils/api";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+import "./detailedHouse.scss";
 
 const DetailedHouse = () => {
+  const { propertyId } = useParams();
+  const [property, setProperty] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchProperty = async () => {
+      try {
+        const response = await axios.get(BASE_URL + `/properties/${propertyId}`);
+        setProperty(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    fetchProperty();
+  }, [propertyId]);
+
   return (
     <div className="detailedHouse">
       <div className="imgContainer">
         <img
-          src="https://images.lofty.ai/images/01FYWQCYEFQFTYDWH1YY5D0DR8/01H9S5B7DH9AMX9PP2QT937E0G.webp"
+          src={property?.propertyImageUrl || <Skeleton count={5} />}
           alt=""
         />
       </div>
@@ -18,8 +43,8 @@ const DetailedHouse = () => {
             <span>Active</span>
           </div>
           <div className="title">
-            <h1>621 E Le Claire Rd</h1>
-            <span>Eldridge, IA 52748</span>
+            <h1>{loading ? <Skeleton /> : property?.address}</h1>
+            <span>{loading ? <Skeleton /> : property?.district + " District, HCM City"}</span>
           </div>
           <ul className="navItems">
             <li>
@@ -32,10 +57,16 @@ const DetailedHouse = () => {
           <div className="line"></div>
           <div className="infoItems">
             <div className="infoItem">
-              <span>7800 sqft</span>
+              <span>{loading ? <Skeleton /> : property?.area} m<sup>2</sup></span>
             </div>
             <div className="infoItem">
-              <span>Retail</span>
+              <span>{loading ? <Skeleton /> : property?.totalFloor} floor</span>
+            </div>
+            <div className="infoItem">
+              <span>{loading ? <Skeleton /> : property?.numOfBedroom} bedroom</span>
+            </div>
+            <div className="infoItem">
+              <span>{loading ? <Skeleton /> : property?.numOfWc} wc</span>
             </div>
           </div>
           <div className="description">
@@ -43,52 +74,7 @@ const DetailedHouse = () => {
             <div className="line"></div>
             <div className="content">
               <p>
-                Located in the Quad Cities Metro area, this is a 4-unit retail
-                building built in 2010. The tenants include McDonalds, Dominos,
-                US Cellular, and a Real Estate Office. All tenants are on
-                multi-year triple-net leases (NNN). This means that the tenants
-                pay all the expenses of the property including real estate
-                taxes, building insurance, and maintenance. Near new Amazon
-                project Amazon is building a 2.9M square foot robotics
-                fulfillment center just a 12 minute drive from this strip mall.
-                The warehouse is expected to open summer of 2024 and create a
-                minimum annual economic impact of $148M to the region.
-              </p>
-              <p>
-                Located in the Quad Cities Metro area, this is a 4-unit retail
-                building built in 2010. The tenants include McDonalds, Dominos,
-                US Cellular, and a Real Estate Office. All tenants are on
-                multi-year triple-net leases (NNN). This means that the tenants
-                pay all the expenses of the property including real estate
-                taxes, building insurance, and maintenance. Near new Amazon
-                project Amazon is building a 2.9M square foot robotics
-                fulfillment center just a 12 minute drive from this strip mall.
-                The warehouse is expected to open summer of 2024 and create a
-                minimum annual economic impact of $148M to the region.
-              </p>
-              <p>
-                Located in the Quad Cities Metro area, this is a 4-unit retail
-                building built in 2010. The tenants include McDonalds, Dominos,
-                US Cellular, and a Real Estate Office. All tenants are on
-                multi-year triple-net leases (NNN). This means that the tenants
-                pay all the expenses of the property including real estate
-                taxes, building insurance, and maintenance. Near new Amazon
-                project Amazon is building a 2.9M square foot robotics
-                fulfillment center just a 12 minute drive from this strip mall.
-                The warehouse is expected to open summer of 2024 and create a
-                minimum annual economic impact of $148M to the region.
-              </p>
-              <p>
-                Located in the Quad Cities Metro area, this is a 4-unit retail
-                building built in 2010. The tenants include McDonalds, Dominos,
-                US Cellular, and a Real Estate Office. All tenants are on
-                multi-year triple-net leases (NNN). This means that the tenants
-                pay all the expenses of the property including real estate
-                taxes, building insurance, and maintenance. Near new Amazon
-                project Amazon is building a 2.9M square foot robotics
-                fulfillment center just a 12 minute drive from this strip mall.
-                The warehouse is expected to open summer of 2024 and create a
-                minimum annual economic impact of $148M to the region.
+                {loading ? <Skeleton /> : property?.description}
               </p>
             </div>
           </div>

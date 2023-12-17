@@ -129,16 +129,22 @@
       }
     }
 
-    button {
+    .btnBottom {
       outline: 0;
       border: 0;
-      background-color: var(--blue-dark);
       color: #fff;
-      opacity: 0.7;
       padding: 8px;
       border-radius: 5px;
       transition: opacity 0.2s ease-in-out;
       cursor: pointer;
+
+      &:nth-child(3) {
+        background-color: var(--blue-dark);
+      }
+      
+      &:last-child {
+        background-color: var(--purple-dark);
+      }
 
       &:hover {
         opacity: 0.6;
