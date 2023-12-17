@@ -159,15 +159,15 @@ export default function PropertiesTable(props) {
           submittedDate:now,
           updatedAt:now
         }
-        if(selectedOption==='1'){
-          const s = await axios.post(config.API_URL + `submitListingProperty/`, submitListingProperty, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${jwtToken}`,
-            },
-          });
-          console.log('Create submitListingProperty successfully!');
-        }
+        // if(selectedOption==='1'){
+        //   const s = await axios.post(config.API_URL + `submitListingProperties/`, submitListingProperty, {
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //       'Authorization': `Bearer ${jwtToken}`,
+        //     },
+        //   });
+        //   console.log('Create submitListingProperty successfully!');
+        // }
         reloadParent();
       } catch (error) {
         console.error('Error updating property:', error);

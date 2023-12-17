@@ -4,11 +4,7 @@ const PropertyInspectionService = require('../models/PropertyInspectionService')
 const SubmitListingProperty = require('../models/SubmitListingProperty');
 
 const ListingPropertyInspection = sequelize.define('', {
-    name: {
-        type: DataTypes.STRING(64),
-        allowNull: false
-    },
-    isPass: {        
+    isPass: {
         type: DataTypes.BOOLEAN,
         allowNull: false
     },

@@ -30,10 +30,8 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import config from "../../../../config.json";
-import axios from 'axios';
 import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
 import {MdCancel, MdCheckCircle, MdOutlineError} from "react-icons/md";
-import {list} from "@chakra-ui/system";
 
 function fetchSubmitListingPropertyByIdData(id) {
   return fetch(config.API_URL+"submitListingProperties/"+id)
@@ -53,7 +51,7 @@ function fetchSubmitListingPropertyByIdData(id) {
       });
 }
 
-export default function SubmitListingPropertyTable(props) {
+export default function ListingPropertyInspectionTable(props) {
   const { columnsData, tableData,optionManager, reloadParent } = props;
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -154,52 +152,9 @@ export default function SubmitListingPropertyTable(props) {
 
   const handleModalAction = async () => {
     if (modalAction === 'update') {
-      console.log('Update action with data:', selectedOption);
-      try {
-        const jwtToken = localStorage.getItem("jwt");
-        let prop = submitListingPropertyData;
-        prop.result = selectedOption;
-        await axios.patch(config.API_URL + `submitListingProperties/` + submitListingPropertyData.id, prop, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwtToken}`,
-          },
-        });
-        console.log('Property updated successfully!');
-        if(prop.result==="true"){
-          let listProp = listingPropertyData;
-          listProp.createdAt = new Date();
-          listProp.updatedAt = new Date();
-          listProp.listedDate = new Date();
-          listProp.submitListingPropertyId = submitListingPropertyData.id;
-          const response = await axios.post(config.API_URL + `listingProperties/`, listProp, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${jwtToken}`,
-            },
-          });
-          console.log('Create ListingProperty successfully!');
-          listProp = response.data.data
-          const token = {
-            listingPropertyId: listProp.id,
-            propertyId: submitListingPropertyData.propertyId,
-            propertyValuation: listProp.propertyValuation
-          }
-          console.log(token)
-          const resToken = await axios.post(config.API_URL + `chains/tokens/`, token, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${jwtToken}`,
-            },
-          });
-          console.log('Create ListingProperty successfully!');
-        }
-        reloadParent();
-      } catch (error) {
-        console.error('Error updating property:', error);
-      }
-      onClose();
+
     }
+
   };
 
   function handleInputChange(event) {
@@ -351,7 +306,7 @@ export default function SubmitListingPropertyTable(props) {
                                   Close
                                 </Button>
                                 <Button variant='ghost' type={"submit"} onClick={handleModalAction}>
-                                  {modalAction === 'details' ? 'Details Action' : 'Listing Action'}
+                                  {modalAction === 'details' ? 'Details Action' : 'Update Action'}
                                 </Button>
                               </ModalFooter>
                             </ModalContent>
@@ -361,12 +316,12 @@ export default function SubmitListingPropertyTable(props) {
                         <Button onClick={() => onOpen('update', {id:row.original.id})}
                                 isDisabled={row.original.result === true}
                                 colorScheme="green" size="sm" marginLeft="1">
-                          Listing
+                          Update
                         </Button>
                       </Flex>
                     )
                   }
-                  else if (cell.column.id === "result") {
+                  else if (cell.column.id === "isPass") {
                     data = (
                         <Flex align='center'>
                           <Icon
