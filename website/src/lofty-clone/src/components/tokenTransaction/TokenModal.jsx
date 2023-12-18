@@ -23,6 +23,7 @@ const TokenModal = ({ isOpen, onClose, actionType,token }) => {
     const [formData, setFormData] = useState({
         quantity:0,
         at_price:0,
+        token_id:"",
         is_buy:true
     });
     const { propertyId } = useParams();
@@ -58,7 +59,7 @@ const TokenModal = ({ isOpen, onClose, actionType,token }) => {
                 [name]: value,
             });
         }
-        else if(name==="at_price"||name==="token_id") {
+        else if(name==="at_price") {
             setFormData({
                 ...formData,
                 [name]: value,
@@ -68,7 +69,9 @@ const TokenModal = ({ isOpen, onClose, actionType,token }) => {
 
     const handleFormSubmit = async (event) => {
         event.preventDefault();
-        const response = await axios.post(BASE_URL + "/chains/offers", formData, {
+        const data = new FormData(event.target)
+        console.log(Object.fromEntries(data));
+        const response = await axios.post(BASE_URL + "/chains/offers", Object.fromEntries(data), {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${jwt}`,
@@ -123,13 +126,16 @@ const TokenModal = ({ isOpen, onClose, actionType,token }) => {
                         required
                         style={{margin: '15px'}}
                     />
+
                     <TextField
                         label="At price"
                         type="text"
                         name={"token_id"}
-                        value={token?.token_id}
+                        value={token?.id}
+                        onChange={handleAmountChange}
                         fullWidth
-                        style={{margin: '15px',display: 'none'}}
+                        required
+                        style={{margin: '15px', display:'none'}}
                     />
                     <Button
                         type="submit"

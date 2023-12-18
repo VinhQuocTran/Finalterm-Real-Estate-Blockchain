@@ -49,15 +49,16 @@ const createUser = catchAsync(async (req, res, next) => {
 });
 
 const createOffer = catchAsync(async (req, res, next) => {
-    // await fabricService.initialize();
-    // await fabricService.connect();
-    // const offer_id = "OFFER_"+ new Date().toString();
-    // await fabricService.submitTransaction("createOffer",offer_id,req.user.id,
-    //     req.body.token_id,req.body.quantity,req.body.is_buy,new Date());
-    // await fabricService.disconnect();
+    await fabricService.initialize();
+    await fabricService.connect();
+    let now = new Date();
+    const offer_id = "OFFER_00009";
+    await fabricService.submitTransaction("createOffer",offer_id,req.user.id,
+        req.body.token_id,req.body.quantity,req.body.is_buy,now);
+    await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
-        data: [req.body.token_id,req.body.quantity,req.body.is_buy]
+        data: "create offer successful"
     })
 });
 const getUserById = catchAsync(async (req, res, next) => {
