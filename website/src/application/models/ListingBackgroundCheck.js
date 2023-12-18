@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/database');
 const BackgroundCheckService = require('../models/BackgroundCheckService');
-const SubmitListingProperty = require('../models/SubmitListingProperty');
+const SubmitPropertyListing = require('../models/SubmitPropertyListing');
 
 const ListingBackgroundCheck = sequelize.define('', {
     isPass: {
@@ -20,7 +20,7 @@ const ListingBackgroundCheck = sequelize.define('', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    submitListingPropertyId: {        
+    submitPropertyListingId: {        
         type: DataTypes.UUID,
         allowNull: false
     },
@@ -37,8 +37,8 @@ const ListingBackgroundCheck = sequelize.define('', {
 });
 
 // Associates
-ListingBackgroundCheck.belongsTo(BackgroundCheckService, { foreignKey: 'background_check_service_id' });
-ListingBackgroundCheck.belongsTo(SubmitListingProperty, { foreignKey: 'submit_listing_property_id' });
+ListingBackgroundCheck.belongsTo(BackgroundCheckService, { foreignKey: 'backgroundCheckServiceId' });
+ListingBackgroundCheck.belongsTo(SubmitPropertyListing, { foreignKey: 'submitPropertyListingId' });
 
 // Hooks
 ListingBackgroundCheck.addHook('beforeCreate', async (listingBackgroundCheck, options) => {

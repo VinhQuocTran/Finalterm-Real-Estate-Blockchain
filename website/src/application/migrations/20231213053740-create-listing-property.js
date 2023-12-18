@@ -30,8 +30,8 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
       },
-      submitListingPropertyId: {
-        field: 'submit_listing_property_id',
+      submitPropertyListingId: {
+        field: 'submit_property_listing_id',
         type: Sequelize.UUID,
         allowNull: false,
       },

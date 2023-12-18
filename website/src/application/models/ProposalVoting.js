@@ -35,8 +35,8 @@ const ProposalVoting = sequelize.define('', {
 });
 
 // Associates
-ProposalVoting.belongsTo(Account, { foreignKey: 'account_id' });
-ProposalVoting.belongsTo(ProposalRepair, { foreignKey: 'proposal_repair_id' });
+ProposalVoting.belongsTo(Account, { foreignKey: 'accountId' });
+ProposalVoting.belongsTo(ProposalRepair, { foreignKey: 'proposalRepairId' });
 
 // Hooks
 ProposalVoting.addHook('beforeCreate', async (proposalVoting, options) => {

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/database');
 const PropertyInspectionService = require('../models/PropertyInspectionService');
-const SubmitListingProperty = require('../models/SubmitListingProperty');
+const SubmitPropertyListing = require('../models/SubmitPropertyListing');
 
 const ListingPropertyInspection = sequelize.define('', {
     isPass: {
@@ -20,7 +20,7 @@ const ListingPropertyInspection = sequelize.define('', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    submitListingPropertyId: {        
+    submitPropertyListingId: {        
         type: DataTypes.UUID,
         allowNull: false
     },
@@ -37,12 +37,12 @@ const ListingPropertyInspection = sequelize.define('', {
 });
 
 // Associates
-ListingPropertyInspection.belongsTo(PropertyInspectionService, { foreignKey: 'property_inspection_service_id' });
-ListingPropertyInspection.belongsTo(SubmitListingProperty, { foreignKey: 'submit_listing_property_id' });
+ListingPropertyInspection.belongsTo(PropertyInspectionService, { foreignKey: 'propertyInspectionServiceId' });
+ListingPropertyInspection.belongsTo(SubmitPropertyListing, { foreignKey: 'submitPropertyListingId' });
 
 // Hooks
 ListingPropertyInspection.addHook('beforeCreate', async (listingPropertyInspection, options) => {
-    // Generate a custom ID like "LBC_0001", "LBC_0002", ...
+    // Generate a custom ID like "LPI_0001", "LPI_0002", ...
     const latestListingPropertyInspection = await ListingPropertyInspection.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
@@ -54,7 +54,7 @@ ListingPropertyInspection.addHook('beforeCreate', async (listingPropertyInspecti
         counter = lastListingPropertyInspectionId + 1;
     }
 
-    const listingPropertyInspectionId = `LBC_${counter.toString().padStart(4, '0')}`;
+    const listingPropertyInspectionId = `LPI_${counter.toString().padStart(4, '0')}`;
     listingPropertyInspection.id = listingPropertyInspectionId;
 });
 

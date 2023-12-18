@@ -32,7 +32,7 @@ const MyProperty = () => {
   const [isValuationSelectOpened, setIsValuationSelectOpened] = useState(false);
   const [values, setValues] = useState({
     address: "",
-    district: "",
+    propertyDistrict: "",
     numOfBedroom: "",
     numOfWc: "",
     totalFloor: "",
@@ -43,7 +43,7 @@ const MyProperty = () => {
   });
   const [editValues, setEditValues] = useState({
     address: "",
-    district: "",
+    propertyDistrict: "",
     numOfBedroom: "",
     numOfWc: "",
     totalFloor: "",
@@ -185,7 +185,7 @@ const MyProperty = () => {
       const property = currentUserProperties.userProperties.find(item => item.id === e.target.dataset.id);
       setEditProperty(property);
       setEditValues(property);
-      setEditDistrict({ label: property.district, value: property.district });
+      setEditDistrict({ label: property.propertyDistrict, value: property.propertyDistrict });
     }
     editPropertyModalRef.current.style.visibility = !isEditPropertyModalOpened ? 'visible' : 'hidden';
     editPropertyModalRef.current.style.opacity = !isEditPropertyModalOpened ? 1 : 0;
@@ -232,7 +232,7 @@ const MyProperty = () => {
       // reset form
       setValues({
         address: "",
-        district: "",
+        propertyDistrict: "",
         numOfBedroom: "",
         numOfWc: "",
         totalFloor: "",
@@ -292,7 +292,7 @@ const MyProperty = () => {
       // reset form
       setEditValues({
         address: "",
-        district: "",
+        propertyDistrict: "",
         numOfBedroom: "",
         numOfWc: "",
         totalFloor: "",
@@ -336,10 +336,10 @@ const MyProperty = () => {
         }
       });
       console.log(response.data);
-      // if (response.data.status === "success") {
-      //   dispatch(updateListingPropertyStatus(listingPropertyId));
-      // }
-      // setListingPropertyId(null);
+      if (response.data.status === "success") {
+        dispatch(updateListingPropertyStatus(listingPropertyId));
+      }
+      setListingPropertyId(null);
 
       // close modal
       listingPropertyModalRef.current.style.visibility = 'hidden';
@@ -351,12 +351,15 @@ const MyProperty = () => {
 
   const handleAcceptBtnClick = async () => {
     try {
-      await axios.get(BASE_URL + `/properties/${verifyPropertyId}/requestVerify`, {
+      const response = await axios.get(BASE_URL + `/custom/${verifyPropertyId}/requestVerify`, {
         headers: {
           Authorization: `Bearer ${currentUser.token}`
         }
       });
-      dispatch(updateVerifiedPropertyStatus(verifyPropertyId));
+
+      if (response.data.status === "success") {
+        dispatch(updateVerifiedPropertyStatus(verifyPropertyId));
+      }
       setVerifyPropertyId(null);
 
       // close verify property modal
@@ -431,7 +434,7 @@ const MyProperty = () => {
             <label htmlFor="select" className="districtLabel">
               District:
             </label>
-            <Select className="selectDistrict" name="district" options={districtOptions} />
+            <Select className="selectDistrict" name="propertyDistrict" options={districtOptions} />
             {inputs.map((item) => <NewPropertyFormInput key={item.id} {...item} value={values[item.name]} onChange={onChange} />)}
             <div className="submitBtn">
               <button type="submit">Submit</button>
@@ -462,7 +465,7 @@ const MyProperty = () => {
             </div>
             <div className="inputForm">
               <label htmlFor="district">District</label>
-              <Select name="district" options={districtOptions} value={editDistrict} onChange={(selectedOption) => setEditDistrict(selectedOption)} required />
+              <Select name="propertyDistrict" options={districtOptions} value={editDistrict} onChange={(selectedOption) => setEditDistrict(selectedOption)} required />
               <span>District is required</span>
             </div>
             {inputs.map((item) => <NewPropertyFormInput key={item.id} {...item} value={editValues[item.name]} onChange={onEditChange} />)}

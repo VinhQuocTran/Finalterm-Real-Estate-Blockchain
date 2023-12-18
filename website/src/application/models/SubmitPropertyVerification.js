@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/database');
 const Property = require('../models/Property');
 
-const PropertyVerification = sequelize.define('', {
+const SubmitPropertyVerification = sequelize.define('', {
     createdDate: {        
         type: DataTypes.DATE,
         allowNull: false
@@ -26,30 +26,30 @@ const PropertyVerification = sequelize.define('', {
         type: DataTypes.DATE
     }
 }, {
-    tableName: 'PropertyVerifications',
+    tableName: 'SubmitPropertyVerifications',
     timestamps: true,
     underscored: true,
 });
 
 // Associates
-PropertyVerification.belongsTo(Property, { foreignKey: 'property_id' });
+SubmitPropertyVerification.belongsTo(Property, { foreignKey: 'propertyId' });
 
 // Hooks
-PropertyVerification.addHook('beforeCreate', async (propertyVerification, options) => {
-    // Generate a custom ID like "PV_0001", "PV_0002", ...
-    const latestPropertVerification = await PropertyVerification.findOne({
+SubmitPropertyVerification.addHook('beforeCreate', async (submitPropertyVerification, options) => {
+    // Generate a custom ID like "SPV_0001", "SPV_0002", ...
+    const latestPropertVerification = await SubmitPropertyVerification.findOne({
         order: [['id', 'DESC']],
         attributes: ['id'],
     });
 
     let counter = 1;
     if (latestPropertVerification) {
-        const lastPropertyVerificationId = parseInt(latestPropertVerification.id.split('_')[1], 10);
-        counter = lastPropertyVerificationId + 1;
+        const lastSubmitPropertyVerificationId = parseInt(latestPropertVerification.id.split('_')[1], 10);
+        counter = lastSubmitPropertyVerificationId + 1;
     }
 
-    const propertyVerificationId = `PV_${counter.toString().padStart(4, '0')}`;
-    propertyVerification.id = propertyVerificationId;
+    const submitPropertyVerificationId = `SPV_${counter.toString().padStart(4, '0')}`;
+    submitPropertyVerification.id = submitPropertyVerificationId;
 });
 
-module.exports = PropertyVerification;
+module.exports = SubmitPropertyVerification;

@@ -28,7 +28,7 @@ const RepairTransaction = sequelize.define('', {
 });
 
 // Associates
-RepairTransaction.belongsTo(ProposalRepair, { foreignKey: 'proposal_repair_id' });
+RepairTransaction.belongsTo(ProposalRepair, { foreignKey: 'proposalRepairId' });
 
 // Hooks
 RepairTransaction.addHook('beforeCreate', async (repairTransaction, options) => {

@@ -13,7 +13,7 @@ const HouseCard = ({property}) => {
       </div>
       <div className="textSection">
         <h1>{property.address}</h1>
-        <p>{property.district} District, HCM City</p>
+        <p>{property.propertyDistrict} District, HCM City</p>
         <h2>Area: {property.area} ({'m\u00B2'})</h2>
         <h3>Token: </h3>
       </div>

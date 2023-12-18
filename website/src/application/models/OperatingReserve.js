@@ -24,7 +24,7 @@ const OperatingReserve = sequelize.define('', {
 });
 
 // Associates
-OperatingReserve.belongsTo(ListingProperty, { foreignKey: 'listing_property_id' });
+OperatingReserve.belongsTo(ListingProperty, { foreignKey: 'listingPropertyId' });
 
 // Hooks
 OperatingReserve.addHook('beforeCreate', async (operatingReserve, options) => {

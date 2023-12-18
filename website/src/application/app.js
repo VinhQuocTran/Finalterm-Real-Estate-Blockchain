@@ -7,8 +7,8 @@ const globalErrorHandler = require('./controllers/errorController');
 const chainRoute = require('./routes/chainRoute');
 const accountRoute = require('./routes/accountRoute');
 const propertyRoute = require('./routes/propertyRoute');
-const propertyVerificationRoute = require('./routes/propertyVerificationRoute');
-const submitListingPropertyRoute = require('./routes/submitListingPropertyRoute');
+const submitPropertyVerificationRoute = require('./routes/submitPropertyVerificationRoute');
+const submitPropertyListingRoute = require('./routes/submitPropertyListingRoute');
 const propertyManagerRoute = require('./routes/propertyManagerRoute');
 const backgroundCheckServiceRoute = require('./routes/backgroundCheckServiceRoute');
 const propertyInspectionServiceRoute = require('./routes/propertyInspectionServiceRoute');
@@ -41,9 +41,8 @@ app.use('/api/chains', chainRoute);
 // non-blockchain
 app.use('/api/accounts', accountRoute);
 app.use('/api/properties', propertyRoute);
-
-app.use('/api/propertyVerifications', propertyVerificationRoute);
-app.use('/api/submitListingProperties', submitListingPropertyRoute);
+app.use('/api/submitPropertyVerifications', submitPropertyVerificationRoute);
+app.use('/api/submitPropertyListings', submitPropertyListingRoute);
 app.use('/api/propertyManagers', propertyManagerRoute);
 app.use('/api/listingProperties', listingPropertyRoute);
 app.use('/api/backgroundCheckServices', backgroundCheckServiceRoute);
@@ -58,7 +57,7 @@ app.use('/api/proposalRepairs', proposalRepairRoute);
 app.use('/api/proposalVotings', proposalVotingRoute);
 app.use('/api/repairTransactions', repairTransactionRoute);
 app.use('/api/dailyReplenishTransactions', dailyReplenishTransactionRoute);
-// custom - related to multiple-models
+// custom - related to multiple-table
 app.use('/api/custom', customRoute);
 
 
