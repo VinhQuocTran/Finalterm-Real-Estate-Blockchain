@@ -7,6 +7,9 @@
 body {
   background-color: var(--grey-light);
   scroll-behavior: smooth;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;  
 }
 
 .skeleton {

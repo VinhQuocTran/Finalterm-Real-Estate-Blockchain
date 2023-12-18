@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/database');
 const PropertyManager = require('../models/PropertyManager');
-const SubmitListingProperty = require('../models/SubmitListingProperty');
+const SubmitPropertyListing = require('../models/SubmitPropertyListing');
 
 const ListingProperty = sequelize.define('', {
   monthlyRent: {    
@@ -20,7 +20,7 @@ const ListingProperty = sequelize.define('', {
     type: DataTypes.UUID,
     allowNull: false,
   },
-  submitListingPropertyId: {    
+  submitPropertyListingId: {    
     type: DataTypes.UUID,
     allowNull: false,
   },
@@ -37,8 +37,8 @@ const ListingProperty = sequelize.define('', {
 });
 
 // Associates
-ListingProperty.belongsTo(PropertyManager, { foreignKey: 'property_manager_id' });
-ListingProperty.belongsTo(SubmitListingProperty, { foreignKey: 'submit_listing_property_id' });
+ListingProperty.belongsTo(PropertyManager, { foreignKey: 'propertyManagerId' });
+ListingProperty.belongsTo(SubmitPropertyListing, { foreignKey: 'submitPropertyListingId' });
 
 // Hooks
 ListingProperty.addHook('beforeCreate', async (listingProperty, options) => {

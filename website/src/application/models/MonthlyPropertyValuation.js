@@ -33,8 +33,8 @@ const MonthlyPropertyValuation = sequelize.define('', {
 });
 
 // Associates
-MonthlyPropertyValuation.belongsTo(ListingProperty, { foreignKey: 'listing_property_id' });
-MonthlyPropertyValuation.belongsTo(PropertyValuationService, { foreignKey: 'property_valuation_service_id' });
+MonthlyPropertyValuation.belongsTo(ListingProperty, { foreignKey: 'listingPropertyId' });
+MonthlyPropertyValuation.belongsTo(PropertyValuationService, { foreignKey: 'propertyValuationServiceId' });
 
 // Hooks
 MonthlyPropertyValuation.addHook('beforeCreate', async (monthlyPropertyValuation, options) => {

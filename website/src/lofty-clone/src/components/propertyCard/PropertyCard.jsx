@@ -13,7 +13,7 @@ const PropertyCard = ({ property, onClick, onEditModalClick, onListingPropertyCl
         />
       </div>
       <div className="boxBody">
-        <div className="title">{property.address}, {property.district} District, HCM City</div>
+        <div className="title">{property.address}, {property.propertyDistrict} District, HCM City</div>
         <div className="details">
           <div className="detail">Bedroom: {property.numOfBedroom}</div>
           <div className="detail">WC: {property.numOfWc}</div>
@@ -34,10 +34,10 @@ const PropertyCard = ({ property, onClick, onEditModalClick, onListingPropertyCl
         </div>
         <div className="checkBoxes">
           <div className="checkBox">
-            <input type="checkbox" disabled />
+            <input type="checkbox" defaultChecked={property.isListed === "1"} disabled />
             <label>Is listed</label>
           </div>
-          <button disabled={property.isVerified === "-1" || property.isVerified === "0" || property.isListed === "0" || property.isListed === "1"} data-id={property.id} type="button" onClick={onListingPropertyClick}>{property.isListed === "-1" ? "Verify Property" : property.isListed === "0" ? "Pending..." : "Accepted"}</button>
+          <button disabled={property.isVerified === "-1" || property.isVerified === "0" || property.isListed === "0" || property.isListed === "1"} data-id={property.id} type="button" onClick={onListingPropertyClick}>{property.isListed === "-1" ? "List Property" : property.isListed === "0" ? "Pending..." : "Accepted"}</button>
         </div>
         <button className="btnBottom" onClick={() => navigate(`/properties/${property.id}`)}>View</button>
         <button className="btnBottom" data-id={property.id} onClick={onEditModalClick} disabled={property.isVerified === "1"}>Edit</button>

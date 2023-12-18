@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/database');
 const PropertyValuationService = require('../models/PropertyValuationService');
-const SubmitListingProperty = require('../models/SubmitListingProperty');
+const SubmitPropertyListing = require('../models/SubmitPropertyListing');
 
 const ListingPropertyValuation = sequelize.define('', {
     isPass: {
@@ -24,7 +24,7 @@ const ListingPropertyValuation = sequelize.define('', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    submitListingPropertyId: {        
+    submitPropertyListingId: {        
         type: DataTypes.UUID,
         allowNull: false
     },
@@ -41,8 +41,8 @@ const ListingPropertyValuation = sequelize.define('', {
 });
 
 // Associates
-ListingPropertyValuation.belongsTo(PropertyValuationService, { foreignKey: 'property_valuation_service_id' });
-ListingPropertyValuation.belongsTo(SubmitListingProperty, { foreignKey: 'submit_listing_property_id' });
+ListingPropertyValuation.belongsTo(PropertyValuationService, { foreignKey: 'propertyValuationServiceId' });
+ListingPropertyValuation.belongsTo(SubmitPropertyListing, { foreignKey: 'submitPropertyListingId' });
 
 // Hooks
 ListingPropertyValuation.addHook('beforeCreate', async (listingPropertyValuation, options) => {

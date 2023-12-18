@@ -28,7 +28,7 @@ const DailyReplenishTransaction = sequelize.define('', {
 });
 
 // Associates
-DailyReplenishTransaction.belongsTo(RepairTransaction, { foreignKey: 'repair_transaction_id' });
+DailyReplenishTransaction.belongsTo(RepairTransaction, { foreignKey: 'repairTransactionId' });
 
 // Hooks
 DailyReplenishTransaction.addHook('beforeCreate', async (dailyReplenishTransaction, options) => {
