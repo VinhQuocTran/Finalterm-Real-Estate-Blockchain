@@ -178,6 +178,22 @@ async generateID(key,count){
         }
         return property;
     }
+    async getOwnPropertyTokenByTokenAndUserId(ctx,token_id,user_id){
+        const query = {
+            docType:"propertyTokenOwner",
+            token_id,
+            user_id
+        }
+        let property = await this.getQueryResult(ctx,query);
+        if (!property||property.length === 0) {
+            return {};
+        }
+        for (let element of property) {
+            let token = await this.queryToken(ctx,element.token_id);
+            element.token_price = token.token_price;
+        }
+        return property[0];
+    }
 
     async getTokenByListingPropertyId(ctx,listing_property_id){
         const query = {

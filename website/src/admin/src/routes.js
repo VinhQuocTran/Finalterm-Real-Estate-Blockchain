@@ -24,9 +24,6 @@ import Property from "views/admin/property";
 import PropertyManager from "views/admin/propertyManager";
 import ListingProperty from "views/admin/listingProperty";
 import SubmitListingProperty from "views/admin/submitListingProperty";
-import ListingBackgroundCheck from "views/admin/listingBackgroundCheck";
-import ListingPropertyInspection from "views/admin/listingPropertyInpection";
-import ListingPropertyValuation from "views/admin/listingPropertyValuation";
 import BackgroundCheckService from "views/admin/backgroundCheck";
 
 
@@ -63,7 +60,7 @@ const routes = [
     component: Property,
   },
   {
-    name: "Submit Listing Property",
+    name: "Listing Request",
     layout: "/admin",
     icon: <Icon as={MdSave} width='20px' height='20px' color='inherit' />,
     path: "/submit-listing-property",
@@ -77,32 +74,11 @@ const routes = [
     component: ListingProperty,
   },
   {
-    name: "Listing Background check",
-    layout: "/admin",
-    icon: <Icon as={MdCheck} width='20px' height='20px' color='inherit' />,
-    path: "/background-check",
-    component: ListingBackgroundCheck,
-  },
-  {
     name: "Background Check Services",
     layout: "/admin",
     icon: <Icon as={MdCheckCircle} width='20px' height='20px' color='inherit' />,
     path: "/bg-check-service",
     component: BackgroundCheckService,
-  },
-  {
-    name: "Listing Property Inspection",
-    layout: "/admin",
-    icon: <Icon as={MdSafetyCheck} width='20px' height='20px' color='inherit' />,
-    path: "/inspection",
-    component: ListingPropertyInspection,
-  },
-  {
-    name: "Listing Property Valuation",
-    layout: "/admin",
-    icon: <Icon as={MdChecklist} width='20px' height='20px' color='inherit' />,
-    path: "/valuation",
-    component: ListingPropertyValuation,
   },
   {
     name: "Profile",

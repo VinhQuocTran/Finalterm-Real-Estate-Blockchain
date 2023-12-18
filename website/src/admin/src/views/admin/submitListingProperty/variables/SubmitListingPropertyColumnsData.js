@@ -4,8 +4,8 @@ const SubmitListingPropertyColumnsData = [
     accessor: "id",
   },
   {
-    Header: "Property",
-    accessor: "propertyId",
+    Header: "property Verification",
+    accessor: "propertyVerificationId",
   },
   {
     Header: "Result",
