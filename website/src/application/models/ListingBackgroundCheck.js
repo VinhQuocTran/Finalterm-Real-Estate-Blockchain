@@ -4,10 +4,6 @@ const BackgroundCheckService = require('../models/BackgroundCheckService');
 const SubmitListingProperty = require('../models/SubmitListingProperty');
 
 const ListingBackgroundCheck = sequelize.define('', {
-    name: {
-        type: DataTypes.STRING(64),
-        allowNull: false
-    },
     isPass: {        
         type: DataTypes.BOOLEAN,
         allowNull: false

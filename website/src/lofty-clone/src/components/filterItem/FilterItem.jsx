@@ -22,8 +22,8 @@ const FilterItem = ({ title, isFilterItemOpen, setIsFilterItemOpen, items, input
     };
 
     const handleItemChange = (e) => {
-        setSelectedItem(e.target.value);
-        setServicePrice(items.find(item => item.name === e.target.value).feePerTime);
+        setSelectedItem(e.target.dataset.name);
+        setServicePrice(items.find(item => item.name === e.target.dataset.name).feePerTime);
         itemListRef.current.style.maxHeight = 0;
         itemListRef.current.style.boxShadow = 0;
         itemInputBox.current.click();
@@ -46,7 +46,7 @@ const FilterItem = ({ title, isFilterItemOpen, setIsFilterItemOpen, items, input
                     {items ?
                         items.map((item, index) => (
                             <React.Fragment key={index}>
-                                <input type="radio" name={inputName} id={item.id} value={item.name} onClick={handleItemChange} />
+                                <input type="radio" name={inputName} id={item.id} data-name={item.name} value={item.id} onClick={handleItemChange} />
                                 <label htmlFor={item.id}>
                                     {item.name}
                                 </label>

@@ -39,6 +39,10 @@ const Property = sequelize.define('', {
         type: DataTypes.ENUM('-1', '0', '1'),
         defaultValue: '-1'
     },
+    isListed: {
+        type: DataTypes.ENUM('-1', '0', '1'),
+        defaultValue: '-1'
+    },
     district: {
         type: DataTypes.ENUM('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
             'Binh Thanh', 'Thu Duc', 'Go Vap', 'Phu Nhuan', 'Tan Binh', 'Tan Phu', 'Binh Tan'),

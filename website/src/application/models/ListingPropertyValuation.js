@@ -4,10 +4,6 @@ const PropertyValuationService = require('../models/PropertyValuationService');
 const SubmitListingProperty = require('../models/SubmitListingProperty');
 
 const ListingPropertyValuation = sequelize.define('', {
-    name: {
-        type: DataTypes.STRING(64),
-        allowNull: false
-    },
     isPass: {        
         type: DataTypes.BOOLEAN,
         allowNull: false

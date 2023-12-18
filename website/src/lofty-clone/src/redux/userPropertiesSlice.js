@@ -28,6 +28,12 @@ const userPropertiesSlice = createSlice({
         state.userProperties[index] = { ...state.userProperties[index], ...{isVerified: "0"} };
       }
     },
+    updateListingPropertyStatus: (state, action) => {
+      const index = state.userProperties.findIndex(item => item.id === action.payload);
+      if (index !== -1) {
+        state.userProperties[index] = { ...state.userProperties[index], ...{isListed: "0"} };
+      }
+    },
     updateProperty: (state, action) => {
       const index = state.userProperties.findIndex(item => item.id === action.payload.id);
       if (index !== -1) {
@@ -43,6 +49,7 @@ export const {
   fetchUserPropertiesFailure, 
   updateUserProperties, 
   updateVerifiedPropertyStatus,
+  updateListingPropertyStatus,
   updateProperty
 } = userPropertiesSlice.actions;
 

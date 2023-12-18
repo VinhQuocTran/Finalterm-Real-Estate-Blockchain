@@ -8,14 +8,14 @@ const SubmitListingProperty = sequelize.define('', {
         allowNull: false,
     },
     result: {
-        type: DataTypes.BOOLEAN,
-        allowNull: true,
+        type: DataTypes.ENUM('-1', '0', '1'),
+        allowNull: false,
     },
     resultDate: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
     },
-    propertyId: {
+    propertyVerificationId: {
         type: DataTypes.UUID,
         allowNull: false,
     },
@@ -26,13 +26,13 @@ const SubmitListingProperty = sequelize.define('', {
         type: DataTypes.DATE
     }
 }, {
-    tableName: 'SubmitListingProperty',
+    tableName: 'SubmitListingProperties',
     timestamps: true,
     underscored: true,
 });
 
 // Associates
-SubmitListingProperty.belongsTo(Property, { foreignKey: 'property_id' });
+SubmitListingProperty.belongsTo(Property, { foreignKey: 'property_verification_id' });
 
 // Hooks
 SubmitListingProperty.addHook('beforeCreate', async (submitListingProperty, options) => {

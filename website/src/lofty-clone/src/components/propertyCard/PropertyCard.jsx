@@ -37,7 +37,7 @@ const PropertyCard = ({ property, onClick, onEditModalClick, onListingPropertyCl
             <input type="checkbox" disabled />
             <label>Is listed</label>
           </div>
-          <button disabled={property.isVerified === "-1" || property.isVerified === "0"} type="button" onClick={onListingPropertyClick}>Listing Property</button>
+          <button disabled={property.isVerified === "-1" || property.isVerified === "0" || property.isListed === "0" || property.isListed === "1"} data-id={property.id} type="button" onClick={onListingPropertyClick}>{property.isListed === "-1" ? "Verify Property" : property.isListed === "0" ? "Pending..." : "Accepted"}</button>
         </div>
         <button className="btnBottom" onClick={() => navigate(`/properties/${property.id}`)}>View</button>
         <button className="btnBottom" data-id={property.id} onClick={onEditModalClick} disabled={property.isVerified === "1"}>Edit</button>

@@ -8,12 +8,13 @@ import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { PropertyCard } from "../../components/imports";
 import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPropertyFormInput";
 import { BASE_URL } from "../../utils/api";
-import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus, updateProperty } from "../../redux/userPropertiesSlice";
+import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus, updateProperty, updateListingPropertyStatus } from "../../redux/userPropertiesSlice";
 import FilterItem from "../../components/filterItem/FilterItem";
 import "./myproperty.scss";
 
 const MyProperty = () => {
   const [verifyPropertyId, setVerifyPropertyId] = useState(null);
+  const [listingPropertyId, setListingPropertyId] = useState(null);
   const currentUser = useSelector((state) => state.user);
   const currentUserProperties = useSelector((state) => state.userProperties);
   const dispatch = useDispatch();
@@ -145,6 +146,17 @@ const MyProperty = () => {
     { value: 'Binh Tan', label: 'Binh Tan' }
   ]
 
+  const totalPrice = useRef();
+  const selectedBackgroundCheckServiceId = "BCS_0001";
+  const [selectedBackgroundCheckService, setSelectedBackgroundCheckService] = useState("BGC_1");  //"BGC_1";
+  const [backgroundCheckServicePrice, setBackgroundCheckServicePrice] = useState("500"); //"500";
+  const [inspectionServices, setInspectionServices] = useState(null);
+  const [valuationServices, setValuationServices] = useState(null);
+  const [selectedInspectionService, setSelectedInspectionService] = useState(null);
+  const [selectedValuationService, setSelectedValuationService] = useState(null);
+  const [inspectionServicePrice, setInspectionServicePrice] = useState(0);
+  const [valuationServicePrice, setValuationServicePrice] = useState(0);
+
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
@@ -186,6 +198,7 @@ const MyProperty = () => {
     listingPropertyModalRef.current.style.opacity = !isListingPropertyModalOpened ? 1 : 0;
     if (isListingPropertyModalOpened) e.stopPropagation();
     setIsListingPropertyModalOpened(!isListingPropertyModalOpened);
+    setListingPropertyId(e.target.dataset.id);
   }
 
   const handleNewPropertySubmit = async (e) => {
@@ -313,9 +326,27 @@ const MyProperty = () => {
     e.preventDefault();
 
     const data = new FormData(e.target);
-    data.append('backgroundCheck', backgroundCheckServices[0]);
+    data.append('backgroundCheck', selectedBackgroundCheckServiceId);
     data.append('totalPrice', totalPrice.current.dataset.value);
-    console.log('data:', Object.fromEntries(data));
+
+    try {
+      const response = await axios.post(BASE_URL + `/custom/${listingPropertyId}/requestListingProperty`, Object.fromEntries(data), {
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`
+        }
+      });
+      console.log(response.data);
+      // if (response.data.status === "success") {
+      //   dispatch(updateListingPropertyStatus(listingPropertyId));
+      // }
+      // setListingPropertyId(null);
+
+      // close modal
+      listingPropertyModalRef.current.style.visibility = 'hidden';
+      listingPropertyModalRef.current.style.opacity = 0;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   const handleAcceptBtnClick = async () => {
@@ -325,8 +356,8 @@ const MyProperty = () => {
           Authorization: `Bearer ${currentUser.token}`
         }
       });
-      setVerifyPropertyId(null);
       dispatch(updateVerifiedPropertyStatus(verifyPropertyId));
+      setVerifyPropertyId(null);
 
       // close verify property modal
       verifyPropertyModalRef.current.style.visibility = 'hidden';
@@ -336,17 +367,6 @@ const MyProperty = () => {
       console.log(err);
     }
   }
-
-  const totalPrice = useRef();
-  const backgroundCheckServices = ["BGC_1"];
-  const backgroundCheckServicePrice = "500";
-  const selectedBackgroundCheckService = "BGC_1";
-  const [inspectionServices, setInspectionServices] = useState(null);
-  const [valuationServices, setValuationServices] = useState(null);
-  const [selectedInspectionService, setSelectedInspectionService] = useState(null);
-  const [selectedValuationService, setSelectedValuationService] = useState(null);
-  const [inspectionServicePrice, setInspectionServicePrice] = useState(0);
-  const [valuationServicePrice, setValuationServicePrice] = useState(0);
 
   useEffect(() => {
     const fetchInspectionServices = async () => {
@@ -359,8 +379,15 @@ const MyProperty = () => {
       setValuationServices(response.data.data);
     }
 
+    const fetchBackgroundCheckService = async () => {
+      const response = await axios.get(BASE_URL + `/backgroundCheckServices/${selectedBackgroundCheckServiceId}`);
+      setSelectedBackgroundCheckService(response.data.data.name);
+      setBackgroundCheckServicePrice(response.data.data.feePerTime);
+    }
+
     fetchInspectionServices();
     fetchValuationServices();
+    fetchBackgroundCheckService();
   }, []);
 
 
@@ -401,11 +428,10 @@ const MyProperty = () => {
               <h1>New property</h1>
               <IoMdClose onClick={handleNewPropertyModalClick} />
             </div>
-            <div className="inputForm">
-              <label htmlFor="district">District</label>
-              <Select name="district" options={districtOptions} />
-              <span>District is required</span>
-            </div>
+            <label htmlFor="select" className="districtLabel">
+              District:
+            </label>
+            <Select className="selectDistrict" name="district" options={districtOptions} />
             {inputs.map((item) => <NewPropertyFormInput key={item.id} {...item} value={values[item.name]} onChange={onChange} />)}
             <div className="submitBtn">
               <button type="submit">Submit</button>
@@ -453,7 +479,7 @@ const MyProperty = () => {
               <h1>Choose services</h1>
               <IoMdClose onClick={handleListingPropertyModalClick} />
             </div>
-            <div className="contentBody">              
+            <div className="contentBody">
               <div className="selectBox">
                 <FilterItem title={"Property inspection"} inputName={"inspection"} isFilterItemOpen={isInspectionSelectOpened} setIsFilterItemOpen={setIsInspectionSelectOpened} items={inspectionServices} selectedItem={selectedInspectionService} setSelectedItem={setSelectedInspectionService} setServicePrice={setInspectionServicePrice} isNotChange={false} />
                 <span className="price">Price: {inspectionServicePrice}$</span>
@@ -463,12 +489,12 @@ const MyProperty = () => {
                 <span className="price">Price: {valuationServicePrice}$</span>
               </div>
               <div className="selectBox">
-                <FilterItem title={"Property background check"} inputName={"backgroundCheck"} isFilterItemOpen={false} setIsFilterItemOpen={null} items={backgroundCheckServices} selectedItem={selectedBackgroundCheckService} setSelectedItem={null} setServicePrice={null} isNotChange={true} />
+                <FilterItem title={"Property background check"} inputName={"backgroundCheck"} isFilterItemOpen={false} setIsFilterItemOpen={null} items={[selectedBackgroundCheckService]} selectedItem={selectedBackgroundCheckService} setSelectedItem={null} setServicePrice={null} isNotChange={true} />
                 <span className="price">Price: {backgroundCheckServicePrice}$</span>
               </div>
             </div>
             <div className="totalPrice">
-              <span ref={totalPrice} data-value={parseInt(inspectionServicePrice) + parseInt(valuationServicePrice)  + parseInt(backgroundCheckServicePrice)} >Total: {parseInt(inspectionServicePrice) + parseInt(valuationServicePrice)  + parseInt(backgroundCheckServicePrice)}$</span>
+              <span ref={totalPrice} data-value={parseInt(inspectionServicePrice) + parseInt(valuationServicePrice) + parseInt(backgroundCheckServicePrice)} >Total: {parseInt(inspectionServicePrice) + parseInt(valuationServicePrice) + parseInt(backgroundCheckServicePrice)}$</span>
             </div>
             <div className="submitBtn">
               <button type="submit">Accept</button>
