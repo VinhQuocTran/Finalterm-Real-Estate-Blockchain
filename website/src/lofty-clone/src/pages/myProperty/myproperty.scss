@@ -39,7 +39,9 @@
     }
   }
 
-  .newPropertyModal, .editPropertyModal, .listingPropertyModal {
+  .newPropertyModal,
+  .editPropertyModal,
+  .listingPropertyModal {
     position: fixed;
     top: 0;
     left: 0;
@@ -164,13 +166,9 @@
 
         span {
           display: none;
-          margin-top: 4px!important;
-          color: red!important;
-          opacity: 1!important;
-        }
-
-        .css-1dimb5e-singleValue {
-          line-height: 120%;
+          margin-top: 4px !important;
+          color: red !important;
+          opacity: 1 !important;
         }
       }
 
@@ -201,6 +199,21 @@
           }
         }
       }
+    }
+  }
+
+  .newPropertyModal {
+    .districtLabel {
+      line-height: 1.75rem;
+      color: var(--blue-dark-medium);
+      opacity: 0.4;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+
+    .selectDistrict {
+      margin-top: 8px;
+      margin-bottom: 16px;
     }
   }
 
@@ -314,7 +327,7 @@
       font-size: 24px;
       font-weight: 600;
       color: var(--blue-dark-medium);
-      
+
     }
   }
 }

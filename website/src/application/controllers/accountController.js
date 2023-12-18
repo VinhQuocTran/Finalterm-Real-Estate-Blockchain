@@ -19,11 +19,11 @@ const getAllUsers = catchAsync(async (req, res, next) => {
         }
     }
     ));
+
     await fabricService.initialize();
     await fabricService.connect();
     const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
     const users = JSON.parse(result).sort();
-
     accounts.forEach((acc, index) => {
         acc.cashBalance = users[index].cash_balance;
         acc.tokenBalance = users[index].token_balance;
@@ -35,6 +35,30 @@ const getAllUsers = catchAsync(async (req, res, next) => {
         data: accounts
     })
 });
+
+const getAccount = catchAsync(async (req, res, next) => {
+    const account = await Account.findByPk(req.params.id);
+
+    await fabricService.initialize();
+    await fabricService.connect();
+
+    const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
+    const users = JSON.parse(result).sort();
+    
+    users.forEach((user, index) => {
+        if (user.id === account.id) {
+            account.cashBalance = users[index].cash_balance;
+            account.tokenBalance = users[index].token_balance;
+        }
+    });
+    await fabricService.disconnect();
+
+    res.status(200).json({
+        status: 'success',
+        data: account
+    });
+});
+
 module.exports = {
     getMe: (req, res, next) => {
         req.params.id = req.user.id;
@@ -83,7 +107,7 @@ module.exports = {
         });
     },
 
-    getAccount: factory.getOne(Account),
+    getAccount,
     getAllAccounts: getAllUsers,
     updateAccount: factory.updateOne(Account),
     deleteAccount: factory.deleteOne(Account)

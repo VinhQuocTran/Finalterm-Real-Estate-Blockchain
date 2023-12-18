@@ -23,6 +23,7 @@ const proposalRepairRoute = require('./routes/proposalRepairRoute');
 const proposalVotingRoute = require('./routes/proposalVotingRoute');
 const repairTransactionRoute = require('./routes/repairTransactionRoute');
 const dailyReplenishTransactionRoute = require('./routes/dailyReplenishTransactionRoute');
+const customRoute = require('./routes/customRoute');
 const AppError = require('./utils/appError');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
@@ -58,7 +59,7 @@ app.use('/api/proposalVotings', proposalVotingRoute);
 app.use('/api/repairTransactions', repairTransactionRoute);
 app.use('/api/dailyReplenishTransactions', dailyReplenishTransactionRoute);
 // custom - related to multiple-models
-// app.use('/api/custom');
+app.use('/api/custom', customRoute);
 
 
 app.use('*', (req, res, next) => {

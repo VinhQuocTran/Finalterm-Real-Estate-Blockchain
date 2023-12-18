@@ -22,7 +22,7 @@ module.exports = {
       },
       isPass: {
         field: 'is_pass',
-        type: Sequelize.DataTypes.BOOLEAN,
+        type: Sequelize.DataTypes.ENUM('-1', '0', '1'),
         allowNull: false
       },
       propertyId: {

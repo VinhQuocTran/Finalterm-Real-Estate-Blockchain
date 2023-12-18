@@ -12,7 +12,7 @@ const PropertyVerification = sequelize.define('', {
         allowNull: false
     },
     isPass: {        
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.ENUM('-1', '0', '1'),
         allowNull: false
     },
     propertyId: {        

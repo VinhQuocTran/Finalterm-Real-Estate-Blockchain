@@ -11,6 +11,7 @@ router.get('/:id', propertyController.getProperty);
 router.use(protect);
 
 router.patch('/:id/updateIsVerified', restrictTo('admin'), propertyController.updateIsVerified);
+router.patch('/:id/updateIsListed', restrictTo('admin'), propertyController.updateIsListed);
 
 router.post('/', restrictTo('user'), propertyController.createProperty);
 // router.post('/uploadImage', propertyController.uploadSingleFile, propertyController.uploadImage);

@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("SubmitListingProperty", {
+    await queryInterface.createTable("SubmitListingProperties", {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -16,7 +16,7 @@ module.exports = {
         allowNull: false,
       },
       result: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.ENUM('-1', '0', '1'),
         allowNull: false,
       },
       resultDate: {
@@ -24,8 +24,8 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      propertyId: {
-        field: 'property_id',
+      propertyVerificationId: {
+        field: 'property_verification_id',
         type: Sequelize.DataTypes.UUID,
         allowNull: false,
       },
@@ -41,6 +41,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('SubmitListingProperty');
+    await queryInterface.dropTable('SubmitListingProperties');
   }
 };
