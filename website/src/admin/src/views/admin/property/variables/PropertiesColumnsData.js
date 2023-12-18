@@ -9,7 +9,7 @@ const columnsDataProperty = [
   },
   {
     Header: "Dístrict",
-    accessor: "district",
+    accessor: "propertyDistrict",
   },
   {
     Header: "Address",
@@ -22,6 +22,10 @@ const columnsDataProperty = [
   {
     Header: "Is Verified",
     accessor: "isVerified",
+  },
+  {
+    Header: "Is Listed",
+    accessor: "isListed",
   },
   {
     Header: "N.o Bedrooms",

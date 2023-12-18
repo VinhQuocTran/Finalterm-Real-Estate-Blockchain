@@ -35,8 +35,14 @@ import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
 import {MdCancel, MdCheckCircle, MdOutlineError} from "react-icons/md";
 import {list} from "@chakra-ui/system";
 
-function fetchSubmitListingPropertyByIdData(id) {
-  return fetch(config.API_URL+"submitListingProperties/"+id)
+function fetchRequestListingProcess(id) {
+  return fetch(config.API_URL+"custom/"+id+"/listingProcess",
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
+        }
+      })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -113,16 +119,16 @@ export default function SubmitListingPropertyTable(props) {
     if (modalAction==="update") {
       const fetchData = async () => {
         try {
-          const data = await fetchSubmitListingPropertyByIdData(modalData.id);
+          const data = await fetchRequestListingProcess(modalData.id);
           setSubmitListingPropertyData(data.data);
-          setSelectedOption(submitListingPropertyData.result);
+          console.log(data.data);
         } catch (error) {
           console.error('Error in component:', error);
         }
       };
       fetchData();
     }
-  }, [modalAction, modalData,submitListingPropertyData.result]);
+  }, [modalAction, modalData]);
 
   const onOpen = (action, dataInput) => {
     setModalAction(action);
@@ -135,7 +141,6 @@ export default function SubmitListingPropertyTable(props) {
     setIsOpen(false);
     setModalAction(null);
     setModalData(null);
-    setSelectedOption(null);
     setListingPropertyData({
       createdAt: new Date(),
       listedDate: new Date(),
@@ -154,41 +159,43 @@ export default function SubmitListingPropertyTable(props) {
         const jwtToken = localStorage.getItem("jwt");
         let prop = submitListingPropertyData;
         prop.result = selectedOption;
-        await axios.patch(config.API_URL + `submitListingProperties/` + submitListingPropertyData.id, prop, {
+        await axios.patch(config.API_URL + `submitPropertyListings/` + submitListingPropertyData.id, prop, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwtToken}`,
           },
         });
-        console.log('Property updated successfully!');
-        if(prop.result==="true"){
-          let listProp = listingPropertyData;
-          listProp.createdAt = new Date();
-          listProp.updatedAt = new Date();
-          listProp.listedDate = new Date();
-          listProp.submitListingPropertyId = submitListingPropertyData.id;
-          const response = await axios.post(config.API_URL + `listingProperties/`, listProp, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${jwtToken}`,
-            },
-          });
-          console.log('Create ListingProperty successfully!');
-          listProp = response.data.data
-          const token = {
-            listingPropertyId: listProp.id,
-            propertyId: submitListingPropertyData.propertyId,
-            propertyValuation: listProp.propertyValuation
-          }
-          console.log(token)
-          const resToken = await axios.post(config.API_URL + `chains/tokens/`, token, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${jwtToken}`,
-            },
-          });
-          console.log('Create ListingProperty successfully!');
-        }
+
+
+        // console.log('Property updated successfully!');
+        // if(prop.result==="true"){
+        //   let listProp = listingPropertyData;
+        //   listProp.createdAt = new Date();
+        //   listProp.updatedAt = new Date();
+        //   listProp.listedDate = new Date();
+        //   listProp.submitListingPropertyId = submitListingPropertyData.id;
+        //   const response = await axios.post(config.API_URL + `listingProperties/`, listProp, {
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //       'Authorization': `Bearer ${jwtToken}`,
+        //     },
+        //   });
+        //   console.log('Create ListingProperty successfully!');
+        //   listProp = response.data.data
+        //   const token = {
+        //     listingPropertyId: listProp.id,
+        //     propertyId: submitListingPropertyData.propertyId,
+        //     propertyValuation: listProp.propertyValuation
+        //   }
+        //   console.log(token)
+        //   const resToken = await axios.post(config.API_URL + `chains/tokens/`, token, {
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //       'Authorization': `Bearer ${jwtToken}`,
+        //     },
+        //   });
+        //   console.log('Create ListingProperty successfully!');
+        // }
         reloadParent();
       } catch (error) {
         console.error('Error updating property:', error);
@@ -430,14 +437,14 @@ export default function SubmitListingPropertyTable(props) {
 
                         </Modal>
                         <Button onClick={() => onOpen('update', {id:row.original.id})}
-                                isDisabled={row.original.result === true}
+                                isDisabled={row.original.isPass === "1"}
                                 colorScheme="green" size="sm" marginLeft="1">
                           Listing
                         </Button>
                       </Flex>
                     )
                   }
-                  else if (cell.column.id === "result") {
+                  else if (cell.column.id === "isPass") {
                     data = (
                         <Flex align='center'>
                           <Icon

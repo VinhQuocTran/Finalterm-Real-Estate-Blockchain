@@ -264,7 +264,7 @@ export default function PropertiesTable(props) {
                                                 </Text>
                                                 <Image src={value} height={'200px'}></Image>
                                               </Box>
-                                          ) : key === 'isVerified' ? (
+                                          ) : key === 'isListed' ? (
                                               // Additional condition for 'someOtherKey'
                                               <Box key={key} display="flex" flexDirection="row" mb={2}>
                                                 <Text fontWeight="bold" flex="0 0 30%" pr={2}>
@@ -296,8 +296,38 @@ export default function PropertiesTable(props) {
                                                   />
                                                 </Flex>
                                               </Box>
-                                          ):(
-                                              // Additional condition for 'someOtherKey'
+                                          ): key === 'isVerified' ? (
+                                                  <Box key={key} display="flex" flexDirection="row" mb={2}>
+                                                    <Text fontWeight="bold" flex="0 0 30%" pr={2}>
+                                                      {key}
+                                                    </Text>
+                                                    <Flex align='center'>
+                                                      <Icon
+                                                          w='24px'
+                                                          h='24px'
+                                                          me='5px'
+                                                          color={
+                                                            value === '1'
+                                                                ? "green.500"
+                                                                : value === '-1'
+                                                                    ? "red.500"
+                                                                    : value === '0'
+                                                                        ? "orange.500"
+                                                                        : null
+                                                          }
+                                                          as={
+                                                            value === '1'
+                                                                ? MdCheckCircle
+                                                                : value === '-1'
+                                                                    ? MdCancel
+                                                                    : value === '0'
+                                                                        ? MdOutlineError
+                                                                        : null
+                                                          }
+                                                      />
+                                                    </Flex>
+                                                  </Box>
+                                              ) :(
                                               <Box key={key} display="flex" flexDirection="row" mb={2}>
                                                 <Text fontWeight="bold" flex="0 0 30%" pr={2}>
                                                   {key}
