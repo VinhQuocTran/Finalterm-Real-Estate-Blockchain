@@ -19,15 +19,24 @@ const getChain =  catchAsync(async (req, res, next) => {
 const getAllUsers = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
-    const result  = await fabricService.evaluateTransaction("getAllByEntity","token");
+
+    // const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
+    const queryResult = {
+        "selector":{
+            "docType": "token"
+        }
+    }
+    const result  = await fabricService.evaluateTransaction("getQueryResultV2",JSON.stringify(queryResult));
+
     const users = JSON.parse(result);
-    await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
         length: users.length,
         data: users
     })
+    await fabricService.disconnect();
 });
+
 const createUser = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
@@ -102,11 +111,11 @@ const getTokenizeProperty = catchAsync(async (req, res, next) => {
         docType:"token",
         listing_property_id:req.body.listingPropertyId
     }
-    const result =  await fabricService.evaluateTransaction("queryToken","TOKEN_0005");
+    const result =  await fabricService.evaluateTransaction("getTokenByListingPropertyId",req.body.listingPropertyId);
     await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
-        data: [query,JSON.parse(result.toString())]
+        data: result
     })
 });
 module.exports = {

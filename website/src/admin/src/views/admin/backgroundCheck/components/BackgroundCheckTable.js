@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Flex, Grid, Icon, IconButton, Image, Input, Link, Select,
+  Flex, Grid, Icon, IconButton, Input, Select,
   Table,
   Tbody,
   Td,
@@ -30,11 +30,11 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import config from "../../../../config.json";
-import axios from 'axios';
 import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
+import {MdCancel, MdCheckCircle, MdOutlineError} from "react-icons/md";
 
-function fetchPropertyByIdData(id) {
-  return fetch(config.API_URL+"properties/"+id)
+function fetchSubmitListingPropertyByIdData(id) {
+  return fetch(config.API_URL+"backgroundCheckServices/"+id)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -51,9 +51,8 @@ function fetchPropertyByIdData(id) {
       });
 }
 
-
-export default function ListingPropertyTable(props) {
-  const { columnsData, tableData, reloadParent } = props;
+export default function BackgroundCheckTable(props) {
+  const { columnsData, tableData,optionManager, reloadParent } = props;
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
 
@@ -92,27 +91,36 @@ export default function ListingPropertyTable(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalAction, setModalAction] = useState(null);
   const [modalData, setModalData] = useState(null);
-  const [propertyData, setPropertyData] = useState({});
+  const [submitListingPropertyData, setSubmitListingPropertyData] = useState({});
+  const [listingPropertyData, setListingPropertyData] = React.useState({
+    createdAt: new Date(),
+    listedDate: new Date(),
+    monthlyRent: '',
+    propertyManagerId: '',
+    propertyValuation: '',
+    submitListingPropertyId: '',
+    updatedAt: new Date()
+  })
   const [selectedOption, setSelectedOption] = useState("");
+
   const options = [
-    { value: 1, label: "Success" },
-    { value: 0, label: "In Progress" },
-    { value: -1, label: "Failed" },
+    { value: true, label: "Success" },
+    { value: false, label: "Failed" },
   ];
   useEffect(() => {
-    if (modalAction === 'details'|| modalAction==="update") {
+    if (modalAction==="update") {
       const fetchData = async () => {
         try {
-          const data = await fetchPropertyByIdData(modalData.id);
-          setPropertyData(data.data);
-          setSelectedOption(propertyData.isVerified);
+          const data = await fetchSubmitListingPropertyByIdData(modalData.id);
+          setSubmitListingPropertyData(data.data);
+          setSelectedOption(submitListingPropertyData.result);
         } catch (error) {
           console.error('Error in component:', error);
         }
       };
       fetchData();
     }
-  }, [modalAction, modalData,propertyData.isVerified]);
+  }, [modalAction, modalData,submitListingPropertyData.result]);
 
   const onOpen = (action, dataInput) => {
     setModalAction(action);
@@ -131,50 +139,31 @@ export default function ListingPropertyTable(props) {
     setModalAction(null);
     setModalData(null);
     setSelectedOption(null);
+    setListingPropertyData({
+      createdAt: new Date(),
+      listedDate: new Date(),
+      monthlyRent: '',
+      propertyManagerId: '',
+      propertyValuation: '',
+      submitListingPropertyId: '',
+      updatedAt: new Date()
+    });
   };
 
   const handleModalAction = async () => {
     if (modalAction === 'update') {
-      console.log('Update action with data:', selectedOption);
-      try {
-        const jwtToken = localStorage.getItem("jwt");
-        let prop = propertyData;
-        prop.isVerified = selectedOption;
-        await axios.patch(config.API_URL + `properties/` + propertyData.id+'/updateIsVerified', prop, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwtToken}`,
-          },
-        });
-        console.log('Property updated successfully!');
-        let now = new Date();
-        let resultDate = new Date();
 
-        const submitListingProperty = {
-          createdAt: now,
-          propertyId: propertyData.id,
-          result: false,
-          resultDate:resultDate.setDate(now.getDate()+7),
-          submittedDate:now,
-          updatedAt:now
-        }
-        console.log(submitListingProperty);
-        if(selectedOption===1){
-          const s = await axios.post(config.API_URL + `submitListingProperties/`, submitListingProperty, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${jwtToken}`,
-            },
-          });
-          console.log('Create submitListingProperty successfully!');
-        }
-        reloadParent();
-      } catch (error) {
-        console.error('Error updating property:', error);
-      }
-      onClose();
     }
+
   };
+
+  function handleInputChange(event) {
+    const { name, value} = event.target;
+    setListingPropertyData({
+      ...listingPropertyData,
+      [name]: value,
+    });
+  }
 
   return (
     <Card
@@ -234,62 +223,110 @@ export default function ListingPropertyTable(props) {
                   if (cell.column.id === 'actions') {
                     data = (
                       <Flex justifyContent="space-center" alignItems="center">
-                        <Button onClick={() => onOpen('details', {id:row.original.id})} colorScheme="teal" size="sm" marginLeft="1">
-                          Details
-                        </Button>
                         <Modal isOpen={isOpen} size={size} onClose={onClose}>
                           <ModalOverlay />
-                          <ModalContent>
-                            <ModalHeader>{modalAction === 'details' ? 'Details Property' : 'Verify Property'}</ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody>
-                              {/* Conditionally render content based on modalAction and modalData */}
-                              {modalAction === 'details' && modalData && (
-                                  <Card>
-                                    <Box>
-                                      {Object.entries(propertyData).map(([key, value]) => (
-                                          (
-                                              // Additional condition for 'someOtherKey'
-                                              <Box key={key} display="flex" flexDirection="row" mb={2}>
-                                                <Text fontWeight="bold" flex="0 0 30%" pr={2}>
-                                                  {key}
-                                                </Text>
-                                                <Text flex="1">{value}</Text>
-                                              </Box>
-                                          )
-                                      ))}
-                                    </Box>
-                                  </Card>
-                              )}
-                              {/* Other content for different modalAction or no modalData */}
-                              {modalAction === 'update' && (
+                          <form>
+                            <ModalContent>
+                              <ModalHeader>{modalAction === 'details' ? 'Details Property' : 'Verify Property'}</ModalHeader>
+                              <ModalCloseButton />
+                              <ModalBody>
+                                <>
                                   <Select
                                       placeholder="Select an option"
+                                      fontSize='sm'
+                                      color={textColor}
+                                      ms={{ base: "0px", md: "0px" }}
+                                      mb='24px'
+                                      fontWeight='500'
+                                      size='lg'
                                       value={selectedOption}
                                       onChange={(e) => setSelectedOption(e.target.value)}
-                                      defaultValue={parseInt(propertyData.isVerified)}>
+                                  >
                                     {options.map((option) => (
                                         <option key={option.value} value={option.value}>
                                           {option.label}
                                         </option>
                                     ))}
                                   </Select>
-                              )}
+                                  {selectedOption !== true && (
+                                      <form>
+                                        <Input
+                                            isRequired={true}
+                                            value={listingPropertyData.propertyValuation}
+                                            type="number"
+                                            name="propertyValuation"
+                                            fontSize='sm'
+                                            color={textColor}
+                                            ms={{ base: "0px", md: "0px" }}
+                                            mb='24px'
+                                            fontWeight='500'
+                                            size='lg'
+                                            placeholder="Property Valuation"
+                                            onChange={handleInputChange}
+                                        />
+                                        <Input
+                                            isRequired={true}
+                                            value={listingPropertyData.monthlyRent}
+                                            type="number"
+                                            fontSize='sm'
+                                            color={textColor}
+                                            ms={{ base: "0px", md: "0px" }}
+                                            mb='24px'
+                                            fontWeight='500'
+                                            size='lg'
+                                            name="monthlyRent"
+                                            min={500}
+                                            placeholder="Monthly Rent"
+                                            onChange={handleInputChange}
+                                        />
+                                        <Select
+                                            isRequired={true}
+                                            placeholder="Select a Property Manager"
+                                            fontSize='sm'
+                                            color={textColor}
+                                            ms={{ base: "0px", md: "0px" }}
+                                            mb='24px'
+                                            fontWeight='500'
+                                            size='lg'
+                                            name="propertyManagerId"
+                                            value={listingPropertyData.propertyManagerId}
+                                            onChange={handleInputChange}>
+                                          {optionManager.map((option) => (
+                                              <option key={option.id} value={option.id}>
+                                                {option.name}
+                                              </option>
+                                          ))}
+                                        </Select>
+                                      </form>
+                                  )}
+                                </>
+                              </ModalBody>
+                              <ModalFooter>
+                                <Button colorScheme='blue' mr={3} onClick={onClose}>
+                                  Close
+                                </Button>
+                                <Button variant='ghost' type={"submit"} onClick={handleModalAction}>
+                                  {modalAction === 'details' ? 'Details Action' : 'Update Action'}
+                                </Button>
+                              </ModalFooter>
+                            </ModalContent>
+                          </form>
 
-                              {modalAction === 'details' && !propertyData && <p>Loading...</p>}
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button colorScheme='blue' mr={3} onClick={onClose}>
-                                Close
-                              </Button>
-                              <Button variant='ghost' onClick={handleModalAction}>
-                                {modalAction === 'details' ? 'Details Action' : 'Verify Action'}
-                              </Button>
-                            </ModalFooter>
-                          </ModalContent>
                         </Modal>
-                        <Button onClick={() => onOpen('update', {id:row.original.id})} colorScheme="green" size="sm" marginLeft="1">
+                        <Button onClick={() => onOpen('create', {id:row.original.id})}
+                                isDisabled={row.original.result === true}
+                                colorScheme="blue" size="sm" marginLeft="1">
+                          Create
+                        </Button>
+                        <Button onClick={() => onOpen('update', {id:row.original.id})}
+                                isDisabled={row.original.result === true}
+                                colorScheme="green" size="sm" marginLeft="1">
                           Update
+                        </Button>
+                        <Button onClick={() => onOpen('delete', {id:row.original.id})}
+                                isDisabled={row.original.result === true}
+                                colorScheme="red" size="sm" marginLeft="1">
+                          Delete
                         </Button>
                       </Flex>
                     )
