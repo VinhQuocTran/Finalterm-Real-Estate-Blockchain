@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Flex, Grid, Icon, IconButton, Input, Select,
+  Flex, Grid, GridItem, Icon, IconButton, Input, Select,
   Table,
   Tbody,
   Td,
@@ -106,7 +106,7 @@ export default function SubmitListingPropertyTable(props) {
   const [selectedOption, setSelectedOption] = useState("");
 
   const options = [
-    { value: true, label: "Success" },
+    { value: true, label: "Passed" },
     { value: false, label: "Failed" },
   ];
   useEffect(() => {
@@ -127,12 +127,7 @@ export default function SubmitListingPropertyTable(props) {
   const onOpen = (action, dataInput) => {
     setModalAction(action);
     setModalData(dataInput);
-    if (action === 'update') {
-      setSize('xl');
-    }
-    else {
       setSize('full');
-    }
       setIsOpen(true);
   };
 
@@ -227,7 +222,7 @@ export default function SubmitListingPropertyTable(props) {
           <Input
               type='text'
               placeholder='Search...'
-              fontSize={{ sm: "10px", lg: "12px" }}
+              fontSize={{ sm: "15px", lg: "12px" }}
               color='gray.400'
               fontWeight='700'
               value={globalFilter || ''}
@@ -242,13 +237,13 @@ export default function SubmitListingPropertyTable(props) {
               {headerGroup.headers.map((column, index) => (
                 <Th
                   {...column.getHeaderProps(column.getSortByToggleProps())}
-                  pe='10px'
+                  pe='15px'
                   key={index}
                   borderColor={borderColor}>
                   <Flex
                     justify='space-between'
                     align='center'
-                    fontSize={{ sm: "10px", lg: "12px" }}
+                    fontSize={{ sm: "15px", lg: "12px" }}
                     color='gray.400'>
                     {column.render("Header")}
                   </Flex>
@@ -275,85 +270,161 @@ export default function SubmitListingPropertyTable(props) {
                               <ModalHeader>{modalAction === 'details' ? 'Details Property' : 'Verify Property'}</ModalHeader>
                               <ModalCloseButton />
                               <ModalBody>
-                                <>
-                                  <Select
-                                      placeholder="Select an option"
-                                      fontSize='sm'
-                                      color={textColor}
-                                      ms={{ base: "0px", md: "0px" }}
-                                      mb='24px'
-                                      fontWeight='500'
-                                      size='lg'
-                                      value={selectedOption}
-                                      onChange={(e) => setSelectedOption(e.target.value)}
-                                  >
-                                    {options.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                          {option.label}
-                                        </option>
-                                    ))}
-                                  </Select>
-                                  {selectedOption !== true && (
-                                      <form>
-                                        <Input
-                                            isRequired={true}
-                                            value={listingPropertyData.propertyValuation}
-                                            type="number"
-                                            name="propertyValuation"
-                                            fontSize='sm'
-                                            color={textColor}
-                                            ms={{ base: "0px", md: "0px" }}
-                                            mb='24px'
-                                            fontWeight='500'
-                                            size='lg'
-                                            placeholder="Property Valuation"
-                                            onChange={handleInputChange}
-                                        />
-                                        <Input
-                                            isRequired={true}
-                                            value={listingPropertyData.monthlyRent}
-                                            type="number"
-                                            fontSize='sm'
-                                            color={textColor}
-                                            ms={{ base: "0px", md: "0px" }}
-                                            mb='24px'
-                                            fontWeight='500'
-                                            size='lg'
-                                            name="monthlyRent"
-                                            min={500}
-                                            placeholder="Monthly Rent"
-                                            onChange={handleInputChange}
-                                        />
-                                        <Select
-                                            isRequired={true}
-                                            placeholder="Select a Property Manager"
-                                            fontSize='sm'
-                                            color={textColor}
-                                            ms={{ base: "0px", md: "0px" }}
-                                            mb='24px'
-                                            fontWeight='500'
-                                            size='lg'
-                                            name="propertyManagerId"
-                                            value={listingPropertyData.propertyManagerId}
-                                            onChange={handleInputChange}>
-                                          {optionManager.map((option) => (
-                                              <option key={option.id} value={option.id}>
-                                                {option.name}
-                                              </option>
-                                          ))}
-                                        </Select>
-                                      </form>
-                                  )}
-                                </>
+                                <form>
+                                  <Card>
+                                    <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%' mb="25px">
+                                      Request Information
+                                    </Text>
+                                  <Flex justify="space-between">
+                                      <Box flex="1" mr={{base: '0px', md: '4px'}}>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          Property ID
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          User ID
+                                        </Text><Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                        Created Date
+                                      </Text>
+                                      </Box>
+                                      <Box flex="1" ml={{base: '0px', md: '4px'}}>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          PROPERTY_001
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          ACCOUNT_001
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          10/11/2023
+                                        </Text>
+                                      </Box>
+                                  </Flex>
+                                    <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%' mt={"25px"} mb="25px">
+                                      Background Check
+                                    </Text>
+                                    <Flex justify="space-between">
+                                      <Box flex="1" mr={{base: '0px', md: '4px'}}>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          Service Used
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          Cost Of The Service
+                                        </Text><Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          Result
+                                      </Text>
+                                      </Box>
+                                      <Box flex="1" ml={{base: '0px', md: '4px'}}>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          BCS_001
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          $500
+                                        </Text>
+                                        <Grid templateColumns={{ base: '1fr', md: 'repeat(12, 1fr)' }} gap={4}>
+                                          <GridItem colSpan={{ base: 12, md: 3 }}>
+                                            <Select
+                                                placeholder="Select an option"
+                                                value={selectedOption}
+                                                onChange={(e) => setSelectedOption(e.target.value)}>
+                                              {options.map((option) => (
+                                                  <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                  </option>
+                                              ))}
+                                            </Select>
+                                          </GridItem>
+                                        </Grid>
+                                      </Box>
+                                    </Flex>
+                                    <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%' mt={"25px"} mb="25px">
+                                      House Inspection
+                                    </Text>
+                                    <Flex justify="space-between">
+                                      <Box flex="1" mr={{base: '0px', md: '4px'}}>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          Service Used
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          Cost Of The Service
+                                        </Text><Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                        Result
+                                      </Text>
+                                      </Box>
+                                      <Box flex="1" ml={{base: '0px', md: '4px'}}>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          HIS_001
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          $500
+                                        </Text>
+                                        <Grid templateColumns={{ base: '1fr', md: 'repeat(12, 1fr)' }} gap={4}>
+                                          <GridItem colSpan={{ base: 12, md: 3 }}>
+                                            <Select
+                                                placeholder="Select an option"
+                                                value={selectedOption}
+                                                onChange={(e) => setSelectedOption(e.target.value)}>
+                                              {options.map((option) => (
+                                                  <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                  </option>
+                                              ))}
+                                            </Select>
+                                          </GridItem>
+                                        </Grid>
+                                      </Box>
+                                    </Flex>
+                                    <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%' mt={"25px"} mb="25px">
+                                      House Valuation
+                                    </Text>
+                                    <Flex justify="space-between">
+                                      <Box flex="1" mr={{base: '0px', md: '4px'}}>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          Service Used
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          Cost Of The Service
+                                        </Text><Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                        Result
+                                      </Text>
+                                      </Box>
+                                      <Box flex="1" ml={{base: '0px', md: '4px'}}>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          HVS_001
+                                        </Text>
+                                        <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%' mb="15px">
+                                          $500
+                                        </Text>
+                                        <Grid templateColumns={{ base: '1fr', md: 'repeat(12, 1fr)' }} gap={4}>
+                                          <GridItem colSpan={{ base: 12, md: 3 }}>
+                                            <Select
+                                                placeholder="Select an option"
+                                                value={selectedOption}
+                                                onChange={(e) => setSelectedOption(e.target.value)}>
+                                              {options.map((option) => (
+                                                  <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                  </option>
+                                              ))}
+                                            </Select>
+                                          </GridItem>
+                                        </Grid>
+                                      </Box>
+                                    </Flex>
+                                    <br/>
+                                    <Flex justifyContent="flex-end">
+                                      <Box flex="1" mr={{ base: '0px', md: '10px' }}>
+                                        <Button colorScheme='blue' mr={3} onClick={onClose}>
+                                          Close
+                                        </Button>
+                                      </Box>
+                                      <Box flex="1" mr={{ base: '0px', md: '10px' }}>
+                                        <Button colorScheme='green' type="submit" onClick={handleModalAction}>
+                                          {modalAction === 'details' ? 'Details Action' : 'Listing Action'}
+                                        </Button>
+                                      </Box>
+                                    </Flex>
+                                  </Card>
+                                </form>
                               </ModalBody>
-                              <ModalFooter>
-                                <Button colorScheme='blue' mr={3} onClick={onClose}>
-                                  Close
-                                </Button>
-                                <Button variant='ghost' type={"submit"} onClick={handleModalAction}>
-                                  {modalAction === 'details' ? 'Details Action' : 'Listing Action'}
-                                </Button>
-                              </ModalFooter>
                             </ModalContent>
                           </form>
 
@@ -374,15 +445,20 @@ export default function SubmitListingPropertyTable(props) {
                               h='24px'
                               me='5px'
                               color={
-                                cell.value === true
+                                cell.value === '1'
                                     ? "green.500"
-                                    : cell.value === false
-                                        ? "red.500":null
+                                    : cell.value === '-1'
+                                        ? "red.500"
+                                        : cell.value === '0'
+                                            ? "orange.500"
+                                            : null
                               }
                               as={
-                                cell.value === true
+                                cell.value === '1'
                                     ? MdCheckCircle
-                                        : cell.value === false
+                                    : cell.value === '-1'
+                                        ? MdCancel
+                                        : cell.value === '0'
                                             ? MdOutlineError
                                             : null
                               }
