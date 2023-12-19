@@ -9,6 +9,7 @@ const SubmitPropertyVerification = require('../models/SubmitPropertyVerification
 const BackgroundCheckService = require('../models/BackgroundCheckService');
 const PropertyInspectionService = require('../models/PropertyInspectionService');
 const PropertyValuationService = require('../models/PropertyValuationService');
+const ListingProperty = require('../models/ListingProperty');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -247,7 +248,8 @@ module.exports = {
             isPassListingPropertyInspection,
             propertyValuationServiceId,
             isPassListingPropertyValuation,
-            valuationAmount
+            valuationAmount,
+            monthlyRent
         } = req.body;
 
         // retrieve submit property verification that is verified
@@ -307,10 +309,43 @@ module.exports = {
         await submitPropertyListing.save();
 
         // update Property's isListed status
-        await Property.update({ isListed: isPassUpdated }, {
+
+        const property = await Property.findOne({
             where: { id: req.params.propertyId }
         });
+        property.isListed = isPassUpdated;
+        await property.save();
 
+        if(isPassUpdated === "1") {
+            // create listing property
+            const listingProperty = await ListingProperty.create({
+                monthlyRent,
+                listedDate: new Date().toISOString(),
+                propertyValuation: valuationAmount,
+                propertyManagerId: req.user.id,
+                submitPropertyListingId: submitPropertyListing.id
+            })
+            // tokenize property
+            await fabricService.initialize();
+            await fabricService.connect();
+            await fabricService.submitTransaction("getTokenizeProperty", property.accountId, listingProperty.id, valuationAmount);
+            const token = await fabricService.evaluateTransaction("getTokenByListingPropertyId", listingProperty.id);
+            await fabricService.disconnect();
+            return res.status(200).json({
+                status: 'success',
+                data: {
+                    submitPropertyListing: {
+                        isPass: isPassUpdated
+                    },
+                    listingBackgroundCheck,
+                    listingPropertyInspection,
+                    listingPropertyValuation,
+                    listingProperty,
+                    token
+                }
+            });
+        }
+        
         res.status(200).json({
             status: 'success',
             data: {

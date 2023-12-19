@@ -5,19 +5,19 @@ const SubmitListingPropertyColumnsData = [
   },
   {
     Header: "property Verification",
-    accessor: "propertyVerificationId",
+    accessor: "submitPropertyVerificationId",
   },
   {
     Header: "Result",
-    accessor: "result",
+    accessor: "isPass",
   },
   {
-    Header: "Result Date",
-    accessor: "resultDate",
+    Header: "Created Date",
+    accessor: "createdDate",
   },
   {
-    Header: "Submitted Date",
-    accessor: "submittedDate",
+    Header: "Finish Date",
+    accessor: "finishedDate",
   },
   {
     Header: 'Actions',
