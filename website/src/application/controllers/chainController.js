@@ -18,14 +18,14 @@ const getChain =  catchAsync(async (req, res, next) => {
 const getAllUsers = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
-
-    // const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
-    const queryResult = {
-        "selector":{
-            "docType": "token"
-        }
-    }
-    const result  = await fabricService.evaluateTransaction("getQueryResultV2",JSON.stringify(queryResult));
+""
+    const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId","ACCOUNT_0003");
+    // const queryResult = {
+    //     "selector":{
+    //         "docType": "token"
+    //     }
+    // }
+    // const result  = await fabricService.evaluateTransaction("getQueryResultV2",JSON.stringify(queryResult));
 
     const users = JSON.parse(result);
     res.status(200).json({

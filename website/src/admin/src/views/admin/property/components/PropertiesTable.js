@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Flex, Grid, Icon, IconButton, Image, Input, Link, Select,
+  Flex, Grid, GridItem, Icon, IconButton, Image, Input, Link, Select,
   Table,
   Tbody,
   Td,
@@ -33,7 +33,29 @@ import {
 import config from "../../../../config.json";
 import axios from 'axios';
 import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
-
+function fetchRequestListingProcess(id) {
+  return fetch(config.API_URL+"custom/"+id+"/listingProcess",
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
+        }
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Properties data:', data);
+        return data;
+      })
+      .catch((error) => {
+        console.error('Error fetching properties data:', error);
+        throw error;
+      });
+}
 function fetchPropertyByIdData(id) {
   return fetch(config.API_URL+"properties/"+id)
       .then((response) => {
@@ -94,10 +116,15 @@ export default function PropertiesTable(props) {
   const [modalAction, setModalAction] = useState(null);
   const [modalData, setModalData] = useState(null);
   const [propertyData, setPropertyData] = useState({});
+  const [listingData, setListingData] = useState({});
   const [selectedOption, setSelectedOption] = useState("");
+  const [selectedBackgroundCheck, setSelectedBackgroundCheck] = useState("");
+  const [selectedHouseInspection, setSelectHouseInspection] = useState("");
+  const [selectedHouseValuation, setSelectedHouseValuation] = useState("");
+  const [valuationAmount, setValuationAmount] = useState("");
+  const [monthlyRent, setMonthlyRent] = useState("");
   const options = [
-    { value: 1, label: "Success" },
-    { value: 0, label: "In Progress" },
+    { value: 1, label: "Passed" },
     { value: -1, label: "Failed" },
   ];
   useEffect(() => {
@@ -113,8 +140,19 @@ export default function PropertiesTable(props) {
       };
       fetchData();
     }
+    else if (modalAction === 'listing') {
+      const fetchData = async () => {
+        try {
+          const data = await fetchRequestListingProcess(modalData.id);
+          setListingData(data.data);
+          console.log(listingData);
+        } catch (error) {
+          console.error('Error in component:', error);
+        }
+      };
+      fetchData();
+    }
   }, [modalAction, modalData,propertyData.isVerified]);
-
   const onOpen = (action, dataInput) => {
     setModalAction(action);
     setModalData(dataInput);
@@ -132,7 +170,19 @@ export default function PropertiesTable(props) {
     setModalAction(null);
     setModalData(null);
     setSelectedOption(null);
+    setPropertyData({});
+    setListingData({});
+    setSelectedBackgroundCheck("");
+    setSelectHouseInspection("");
+    setSelectedHouseValuation("");
+    setValuationAmount("");
   };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    if(name=="houseValuation") setValuationAmount(value);
+    else if(name=="monthlyRent") setMonthlyRent(value);
+  }
 
   const handleModalAction = async () => {
     if (modalAction === 'update') {
@@ -141,38 +191,47 @@ export default function PropertiesTable(props) {
         const jwtToken = localStorage.getItem("jwt");
         let prop = propertyData;
         prop.isVerified = selectedOption;
-        await axios.patch(config.API_URL + `properties/` + propertyData.id+'/updateIsVerified', prop, {
+        await axios.patch(config.API_URL + `custom/` + propertyData.id+'/updateIsVerified', prop, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwtToken}`,
           },
         });
         console.log('Property updated successfully!');
-        let now = new Date();
-        let resultDate = new Date();
-        resultDate.setDate(now.getDate()+7)
-        const submitListingProperty = {
-          createdAt: now,
-          propertyId: propertyData.id,
-          result: false,
-          resultDate:resultDate.toLocaleString(),
-          submittedDate:now,
-          updatedAt:now
-        }
-        // if(selectedOption==='1'){
-        //   const s = await axios.post(config.API_URL + `submitListingProperties/`, submitListingProperty, {
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //       'Authorization': `Bearer ${jwtToken}`,
-        //     },
-        //   });
-        //   console.log('Create submitListingProperty successfully!');
-        // }
         reloadParent();
       } catch (error) {
         console.error('Error updating property:', error);
       }
       onClose();
+    }
+    if(modalAction==='listing'){
+      console.log('Listing action with data:', selectedBackgroundCheck,selectedHouseInspection,selectedHouseValuation);
+      try {
+        const jwtToken = localStorage.getItem("jwt");
+        let prop ={
+          backgroundCheckServiceId: listingData.backgroundCheck.serviceUserdId,
+          isPassListingBackgroundCheck: selectedBackgroundCheck,
+          propertyInspectionServiceId: listingData.houseInspection.serviceUserdId,
+          isPassListingPropertyInspection: selectedHouseInspection,
+          propertyValuationServiceId: listingData.houseValuation.serviceUserdId,
+          isPassListingPropertyValuation: selectedHouseValuation,
+          valuationAmount: valuationAmount,
+          monthlyRent: monthlyRent,
+        }
+        console.log(prop);;
+        const response = await axios.post(config.API_URL + `custom/` + listingData.propertyId+'/updateIsListed', prop, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwtToken}`,
+          },
+        });
+        console.log('Listing updated successfully!');
+        console.log(response.data);
+        reloadParent();
+      } catch (error) {
+        console.error('Error updating listing:', error);
+      }
+      onClose();  
     }
   };
 
@@ -252,7 +311,6 @@ export default function PropertiesTable(props) {
                             <ModalHeader>{modalAction === 'details' ? 'Details Property' : 'Verify Property'}</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody>
-                              {/* Conditionally render content based on modalAction and modalData */}
                               {modalAction === 'details' && modalData && (
                                   <Card>
                                     <Box>
@@ -264,45 +322,13 @@ export default function PropertiesTable(props) {
                                                 </Text>
                                                 <Image src={value} height={'200px'}></Image>
                                               </Box>
-                                          ) : key === 'isListed' ? (
-                                              // Additional condition for 'someOtherKey'
-                                              <Box key={key} display="flex" flexDirection="row" mb={2}>
-                                                <Text fontWeight="bold" flex="0 0 30%" pr={2}>
-                                                  {key}
-                                                </Text>
-                                                <Flex align='center'>
-                                                  <Icon
-                                                      w='24px'
-                                                      h='24px'
-                                                      me='5px'
-                                                      color={
-                                                        value === '1'
-                                                            ? "green.500"
-                                                            : value === '-1'
-                                                                ? "red.500"
-                                                                : value === '0'
-                                                                    ? "orange.500"
-                                                                    : null
-                                                      }
-                                                      as={
-                                                        value === '1'
-                                                            ? MdCheckCircle
-                                                            : value === '-1'
-                                                                ? MdCancel
-                                                                : value === '0'
-                                                                    ? MdOutlineError
-                                                                    : null
-                                                      }
-                                                  />
-                                                </Flex>
-                                              </Box>
                                           ): key === 'isVerified' ? (
                                                   <Box key={key} display="flex" flexDirection="row" mb={2}>
                                                     <Text fontWeight="bold" flex="0 0 30%" pr={2}>
                                                       {key}
                                                     </Text>
                                                     <Flex align='center'>
-                                                      <Icon
+                                                    setValuationAmount      <Icon
                                                           w='24px'
                                                           h='24px'
                                                           me='5px'
@@ -327,7 +353,40 @@ export default function PropertiesTable(props) {
                                                       />
                                                     </Flex>
                                                   </Box>
-                                              ) :(
+                                              )
+                                              : key === 'isListed' ? (
+                                                      <Box key={key} display="flex" flexDirection="row" mb={2}>
+                                                        <Text fontWeight="bold" flex="0 0 30%" pr={2}>
+                                                          {key}
+                                                        </Text>
+                                                        <Flex align='center'>
+                                                          <Icon
+                                                              w='24px'
+                                                              h='24px'
+                                                              me='5px'
+                                                              color={
+                                                                value === '1'
+                                                                    ? "green.500"
+                                                                    : value === '-1'
+                                                                        ? "red.500"
+                                                                        : value === '0'
+                                                                            ? "orange.500"
+                                                                            : null
+                                                              }
+                                                              as={
+                                                                value === '1'
+                                                                    ? MdCheckCircle
+                                                                    : value === '-1'
+                                                                        ? MdCancel
+                                                                        : value === '0'
+                                                                            ? MdOutlineError
+                                                                            : null
+                                                              }
+                                                          />
+                                                        </Flex>
+                                                      </Box>
+                                                  )
+                                              :(
                                               <Box key={key} display="flex" flexDirection="row" mb={2}>
                                                 <Text fontWeight="bold" flex="0 0 30%" pr={2}>
                                                   {key}
@@ -354,41 +413,248 @@ export default function PropertiesTable(props) {
                                   </Select>
                               )}
 
-                              {modalAction === 'details' && !propertyData && <p>Loading...</p>}
+                              {modalAction === 'listing' && (
+                                  <form>
+                                    <Card>
+                                      <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%'
+                                            mb="25px">
+                                        Request Information
+                                      </Text>
+                                      <Flex justify="space-between">
+                                        <Box flex="1" mr={{base: '0px', md: '4px'}}>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            Property ID
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            User ID
+                                          </Text><Text color={textColor} fontSize='16px' fontWeight='700'
+                                                       lineHeight='100%' mb="15px">
+                                          Created Date
+                                        </Text>
+                                        </Box>
+                                        <Box flex="1" ml={{base: '0px', md: '4px'}}>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.propertyId}
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.userId}
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.createdDate}
+                                          </Text>
+                                        </Box>
+                                      </Flex>
+                                      <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%'
+                                            mt={"25px"} mb="25px">
+                                        Background Check
+                                      </Text>
+                                      <Flex justify="space-between">
+                                        <Box flex="1" mr={{base: '0px', md: '4px'}}>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            Service Used
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            Cost Of The Service
+                                          </Text><Text color={textColor} fontSize='16px' fontWeight='700'
+                                                       lineHeight='100%' mb="15px">
+                                          Result
+                                        </Text>
+                                        </Box>
+                                        <Box flex="1" ml={{base: '0px', md: '4px'}}>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.backgroundCheck?.serviceUsed}
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.backgroundCheck?.costOfService}
+                                          </Text>
+                                          <Grid templateColumns={{base: '1fr', md: 'repeat(12, 1fr)'}} gap={4}>
+                                            <GridItem colSpan={{base: 12, md: 3}}>
+                                              <Select
+                                                  placeholder="Select an option"
+                                                  defaultValue={0}
+                                                  onChange={(e) => setSelectedBackgroundCheck(e.target.value)}>
+                                                {options.map((option) => (
+                                                    <option key={option.value} value={option.value}>
+                                                      {option.label}
+                                                    </option>
+                                                ))}
+                                              </Select>
+                                            </GridItem>
+                                          </Grid>
+                                        </Box>
+                                      </Flex>
+                                      <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%'
+                                            mt={"25px"} mb="25px">
+                                        House Inspection
+                                      </Text>
+                                      <Flex justify="space-between">
+                                        <Box flex="1" mr={{base: '0px', md: '4px'}}>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            Service Used
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            Cost Of The Service
+                                          </Text><Text color={textColor} fontSize='16px' fontWeight='700'
+                                                       lineHeight='100%' mb="15px">
+                                          Result
+                                        </Text>
+                                        </Box>
+                                        <Box flex="1" ml={{base: '0px', md: '4px'}}>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.houseInspection?.serviceUsed}
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.houseInspection?.costOfService}
+                                          </Text>
+                                          <Grid templateColumns={{base: '1fr', md: 'repeat(12, 1fr)'}} gap={4}>
+                                            <GridItem colSpan={{base: 12, md: 3}}>
+                                              <Select
+                                                  placeholder="Select an option"
+                                                  defaultValue={0}
+                                                  onChange={(e) => setSelectHouseInspection(e.target.value)}>
+                                                {options.map((option) => (
+                                                    <option key={option.value} value={option.value}>
+                                                      {option.label}
+                                                    </option>
+                                                ))}
+                                              </Select>
+                                            </GridItem>
+                                          </Grid>
+                                        </Box>
+                                      </Flex>
+                                      <Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%'
+                                            mt={"25px"} mb="25px">
+                                        House Valuation
+                                      </Text>
+                                      <Flex justify="space-between">
+                                        <Box flex="1" mr={{base: '0px', md: '4px'}}>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            Service Used
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="20px">
+                                            Cost Of The Service
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700'
+                                                       lineHeight='100%' mb="30px">
+                                          Result
+                                        </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            Valuation Amount &  monthly Rent
+                                          </Text>
+                                        </Box>
+                                        <Box flex="1" ml={{base: '0px', md: '4px'}}>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.houseValuation?.serviceUsed}
+                                          </Text>
+                                          <Text color={textColor} fontSize='16px' fontWeight='700' lineHeight='100%'
+                                                mb="15px">
+                                            {listingData.houseValuation?.costOfService}
+                                          </Text>
+                                         
+                                          <Grid templateColumns={{base: '1fr', md: 'repeat(12, 1fr)'}} gap={4}>
+                                            <GridItem colSpan={{base: 12, md: 3}}>
+                                              <Select
+                                                  placeholder="Select an option"
+                                                  defaultValue={0}
+                                                  onChange={(e) => setSelectedHouseValuation(e.target.value)}>
+                                                {options.map((option) => (
+                                                    <option key={option.value} value={option.value}>
+                                                      {option.label}
+                                                    </option>
+                                                ))}
+                                              </Select>
+                                            </GridItem>
+                                          </Grid>
+                                          <Grid templateColumns={{base: '1fr', md: 'repeat(12, 1fr)'}} gap={4}>
+                                            <GridItem colSpan={{base: 12, md: 3}}>
+                                            <Input
+                                              isRequired={true}
+                                              fontSize='sm'
+                                              ms={{ base: "0px", md: "0px" }}
+                                              type='number'
+                                              placeholder='house valuation'
+                                              mb='24px'
+                                              fontWeight='500'
+                                              size='lg'
+                                              name={"houseValuation"}
+                                              onChange={handleInputChange}
+                                              value={valuationAmount}
+                                          />
+                                            </GridItem>
+                                            <GridItem colSpan={{base: 12, md: 3}}>
+                                            <Input
+                                              isRequired={true}
+                                              fontSize='sm'
+                                              ms={{ base: "0px", md: "0px" }}
+                                              type='number'
+                                              placeholder='monthly rent'
+                                              mb='24px'
+                                              fontWeight='500'
+                                              size='lg'
+                                              name={"monthlyRent"}
+                                              onChange={handleInputChange}
+                                              value={monthlyRent}
+                                          />
+                                            </GridItem>
+                                          </Grid>
+                                        </Box>
+                                      </Flex>
+                                    </Card>
+                                  </form>
+                              )}
                             </ModalBody>
                             <ModalFooter>
                               <Button colorScheme='blue' mr={3} onClick={onClose}>
                                 Close
                               </Button>
-
                               <Button variant='ghost' onClick={handleModalAction}>
-                                {modalAction === 'details' ? 'Details Action' : 'Verify Action'}
+                                {modalAction === 'details' ? 'Details' : modalAction === 'update' ? 'Verify' : 'Listing'}
                               </Button>
                             </ModalFooter>
                           </ModalContent>
                         </Modal>
-                        <Button onClick={() => onOpen('update', {id:row.original.id})}
+                        <Button onClick={() => onOpen('update', {id: row.original.id})}
                                 isDisabled={row.original.isVerified === '1'}
                                 colorScheme="green" size="sm" marginLeft="1">
                           Verify
                         </Button>
+                        <Button onClick={() => onOpen('listing', {id: row.original.id})}
+                                isDisabled={(row.original.isListed === '1' && row.original.isVerified === '1')||(row.original.isListed === '0' && row.original.isVerified === '0')}
+                                colorScheme="green" size="sm" marginLeft="1">
+                          Listing
+                        </Button>
                       </Flex>
                     </Grid>
                     )
-                  }
-                  else if(cell.column.id === 'propertyImageUrl'){
+                  } else if (cell.column.id === 'propertyImageUrl') {
                     data = (
-                        <Image src={cell.value}>
+                        <Image src={cell.value}
+                        height={"auto"}>
                         </Image>
                     );
-                  }
-                  else if(cell.column.id === 'propertyDocumentUrl'){
+                  } else if (cell.column.id === 'propertyDocumentUrl') {
                     data = (
                         <Link color={'brand.300'} href={cell.value}> Link here
                         </Link>
                     );
-                  }
-                  else if (cell.column.id === "isVerified") {
+                  } else if (cell.column.id === "isVerified") {
                     data = (
                         <Flex align='center'>
                           <Icon
@@ -416,9 +682,35 @@ export default function PropertiesTable(props) {
                           />
                         </Flex>
                     );
-                  }
-
-                  else {
+                  } else if (cell.column.id === "isListed") {
+                    data = (
+                        <Flex align='center'>
+                          <Icon
+                              w='24px'
+                              h='24px'
+                              me='5px'
+                              color={
+                                cell.value === '1'
+                                    ? "green.500"
+                                    : cell.value === '-1'
+                                        ? "red.500"
+                                        : cell.value === '0'
+                                            ? "orange.500"
+                                            : null
+                              }
+                              as={
+                                cell.value === '1'
+                                    ? MdCheckCircle
+                                    : cell.value === '-1'
+                                        ? MdCancel
+                                        : cell.value === '0'
+                                            ? MdOutlineError
+                                            : null
+                              }
+                          />
+                        </Flex>
+                    );
+                  } else {
                     data = (
                         <Text color={textColor} fontSize='sm' fontWeight='700'>
                           {cell.value}
@@ -426,14 +718,14 @@ export default function PropertiesTable(props) {
                     );
                   }
                   return (
-                    <Td
-                      {...cell.getCellProps()}
-                      key={index}
-                      fontSize={{ sm: "14px" }}
-                      minW={{ sm: "150px", md: "200px", lg: "auto" }}
-                      borderColor='transparent'>
-                      {data}
-                    </Td>
+                      <Td
+                          {...cell.getCellProps()}
+                          key={index}
+                          fontSize={{sm: "14px"}}
+                          minW={{sm: "150px", md: "200px", lg: "auto"}}
+                          borderColor='transparent'>
+                        {data}
+                      </Td>
                   );
                 })}
               </Tr>
@@ -447,7 +739,7 @@ export default function PropertiesTable(props) {
         </Text>
         <Flex align="center">
           <IconButton
-              icon={<ChevronLeftIcon />}
+              icon={<ChevronLeftIcon/>}
               onClick={previousPage}
               isDisabled={!canPreviousPage}
               aria-label="Previous Page"
@@ -456,7 +748,7 @@ export default function PropertiesTable(props) {
             Page {pageIndex + 1}
           </Text>
           <IconButton
-              icon={<ChevronRightIcon />}
+              icon={<ChevronRightIcon/>}
               onClick={nextPage}
               isDisabled={!canNextPage}
               aria-label="Next Page"
