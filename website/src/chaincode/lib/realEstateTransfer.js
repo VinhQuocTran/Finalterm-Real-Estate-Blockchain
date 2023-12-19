@@ -4,7 +4,7 @@ const { Contract } = require('fabric-contract-api');
 class RealEstateTransfer extends Contract {
     async initLedger(ctx) {
 
-        const iterations = Array.from({ length: 5 }, (_, i) => i + 1);
+        const iterations = Array.from({ length: 3 }, (_, i) => i + 1);
 
         await Promise.all(
             iterations.map(async (i) => {
@@ -14,7 +14,7 @@ class RealEstateTransfer extends Contract {
                 await this.createOffer(ctx, `OFFER_000${i}`, `ACCOUNT_000${i}`, `TOKEN_000${i}`, 50, 50, false,'2023-12-15T15:31:43.420Z');
             })
         );
-        await this.createOffer(ctx, 'OFFER_0006', 'ACCOUNT_0001', 'TOKEN_0002', 50, 50, true,'2023-12-15T15:31:43.420Z');
+        await this.createOffer(ctx, 'OFFER_0004', 'ACCOUNT_0001', 'TOKEN_0002', 50, 50, true,'2023-12-15T15:31:43.420Z');
     }
 
     async createUser(ctx, id, cash_balance, token_balance) {
@@ -170,7 +170,7 @@ async generateID(key,count){
         }
         let property = await this.getQueryResult(ctx,query);
         if (property.length === 0) {
-            throw new Error(`No property token owner found for user ID ${userId}`);
+            throw new Error(`No property token owner found for user ID ${user_id}`);
         }
         for (let element of property) {
             let token = await this.queryToken(ctx,element.token_id);
@@ -185,14 +185,14 @@ async generateID(key,count){
             user_id
         }
         let property = await this.getQueryResult(ctx,query);
-        if (!property||property.length === 0) {
-            return {};
+        if (property.length === 0) {
+            throw new Error(`No property token owner ID ${token_id} found for user ID ${user_id}`);
         }
         for (let element of property) {
             let token = await this.queryToken(ctx,element.token_id);
             element.token_price = token.token_price;
         }
-        return property[0];
+        return property;
     }
 
     async getTokenByListingPropertyId(ctx,listing_property_id){

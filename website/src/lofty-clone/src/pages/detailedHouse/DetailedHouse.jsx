@@ -9,7 +9,8 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
 import TokenModal from "../../components/tokenTransaction/TokenModal";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
 
 const DetailedHouse = () => {
   const { propertyId } = useParams();
@@ -21,8 +22,7 @@ const DetailedHouse = () => {
   const [isSellModalOpen, setSellModalOpen] = useState(false);
   const currentUser = useSelector(state => state.user)
   const jwt = currentUser.token;
-  const isLoggedIn = jwt!==null;
-
+  const isLoggedIn = jwt !== null;
   useEffect(() => {
     setLoading(true);
     const fetchProperty = async () => {
@@ -121,7 +121,7 @@ const DetailedHouse = () => {
             </div>
 
             <ProgressBar
-                completed={100}
+              completed={100}
             />
             <div className="boxHeaderBottom">
               <span>{loading ? <Skeleton /> : token?.quantity} tokens</span>
@@ -133,20 +133,32 @@ const DetailedHouse = () => {
               <button type="button" onClick={openSellModal}>Sell</button>
             </div>
 
-        <TokenModal
-          token={token}
-          isOpen={isBuyModalOpen}
-          onClose={closeBuyModal}
-          actionType="buy"
-        />
+            <TokenModal
+              token={token}
+              isOpen={isBuyModalOpen}
+              onClose={closeBuyModal}
+              actionType="buy"
+            />
 
-      {/* Conditionally render the Sell Modal if the user is logged in */}
-        <TokenModal
-          token={token}
-          isOpen={isSellModalOpen}
-          onClose={closeSellModal}
-          actionType="sell"
-        />
+            <TokenModal
+              token={token}
+              isOpen={isSellModalOpen}
+              onClose={closeSellModal}
+              actionType="sell"
+              toast={toast}
+            />
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
           </div>
         </div>
       </ContentWrapper>

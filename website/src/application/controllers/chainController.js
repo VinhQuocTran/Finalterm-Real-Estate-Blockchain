@@ -19,7 +19,10 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
 ""
-    const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId","ACCOUNT_0003");
+    // const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId","ACCOUNT_0003");
+    // const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByTokenAndUserId","TOKEN_0003","ACCOUNT_0003");
+    const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
+
     // const queryResult = {
     //     "selector":{
     //         "docType": "token"
