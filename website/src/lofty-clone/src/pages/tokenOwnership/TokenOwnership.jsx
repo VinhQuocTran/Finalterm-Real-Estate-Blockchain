@@ -2,8 +2,29 @@ import { FaRegQuestionCircle } from "react-icons/fa";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import "./tokenOwnership.scss";
 import { TokenCard } from "../../components/imports";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "../../utils/api";
 
 const TokenOwnership = () => {
+  const [tokenOwnership, setTokenOwnership] = useState(null);
+  const currentUser = useSelector(state => state.user);
+
+  useEffect(() => {
+    const fetchTokenOwnership = async () => {
+      try {
+        const response = await axios.get(BASE_URL + `/chains/${currentUser.user.id}/tokenOwnership`);
+        setTokenOwnership(JSON.parse(response.data.data));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchTokenOwnership();
+  }, [currentUser?.user]);
+
+  console.log(tokenOwnership);
+    
   return (
     <div className="tokenOwnership">
       <ContentWrapper>
@@ -18,15 +39,7 @@ const TokenOwnership = () => {
           </div>
         </div>
         <div className="items">
-          <TokenCard />
-          <TokenCard />
-          <TokenCard />
-          <TokenCard />
-          <TokenCard />
-          <TokenCard />
-          <TokenCard />
-          <TokenCard />
-          <TokenCard />
+          {tokenOwnership && tokenOwnership?.map((item, index) => <TokenCard key={index} token={item} />)}
         </div>
       </ContentWrapper>
     </div>
