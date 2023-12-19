@@ -36,7 +36,7 @@ const FilterItem = ({ title, isFilterItemOpen, setIsFilterItemOpen, items, input
                 <div
                     className={`input-box ${isFilterItemOpen ? "open" : ""}`}
                     ref={itemInputBox}
-                    onClick={() =>
+                    onClick={() => isNotChange ? null :
                         handleClick(isFilterItemOpen, setIsFilterItemOpen, itemListRef, itemInputBox)
                     }
                 >

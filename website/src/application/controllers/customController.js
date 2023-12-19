@@ -220,19 +220,19 @@ module.exports = {
                 createdDate: submitPropertyListing.createdDate,
                 backgroundCheck: {
                     serviceUsed: backgroundCheckService.name,
-                    serviceUserdId: backgroundCheckService.id,
+                    serviceUsedId: backgroundCheckService.id,
                     costOfService: backgroundCheckService.feePerTime,
                     result: listingBackgroundCheck.isPass
                 },
                 houseInspection: {
                     serviceUsed: propertyInspectionService.name,
-                    serviceUserdId: propertyInspectionService.id,
+                    serviceUsedId: propertyInspectionService.id,
                     costOfService: propertyInspectionService.feePerTime,
                     result: listingPropertyInspection.isPass
                 },
                 houseValuation: {
                     serviceUsed: propertyValuationService.name,
-                    serviceUserdId: propertyValuationService.id,
+                    serviceUsedId: propertyValuationService.id,
                     costOfService: propertyValuationService.feePerTime,
                     valuationAmount: listingPropertyValuation.valuationAmount,
                     result: listingPropertyValuation.isPass
@@ -313,6 +313,7 @@ module.exports = {
         const property = await Property.findOne({
             where: { id: req.params.propertyId }
         });
+
         property.isListed = isPassUpdated;
         await property.save();
 

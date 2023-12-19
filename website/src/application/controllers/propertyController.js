@@ -4,14 +4,15 @@ const fileUploader = require('../utils/fileUploader');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { uploadFile } = require('../utils/cloudinaryStorage');
-const SubmitListingProperty = require("../models/SubmitPropertyListing");
+const SubmitPropertyListing = require("../models/SubmitPropertyListing");
 const ListingProperty = require("../models/ListingProperty");
 const HyperLedgerService = require('../utils/hyperLedgerService/hyperLedgerService');
 const fabricService = new HyperLedgerService();
+
 const getOneProperty = catchAsync(async (req, res, next) => {
     const property = await Property.findOne({ Id: req.params.id });
-    const submitListingProperty = await SubmitListingProperty.findOne({ propertyId: property.id });
-    const listingProperty = await ListingProperty.findOne({ submitListingPropertyId: submitListingProperty.id });
+    const submitPropertyListing = await SubmitPropertyListing.findOne({ propertyId: property.id });
+    const listingProperty = await ListingProperty.findOne({ submitListingPropertyId: submitPropertyListing.id });
     await fabricService.initialize();
     await fabricService.connect();
     let result  = await fabricService.evaluateTransaction("getTokenByListingPropertyId",listingProperty.id);
@@ -31,7 +32,7 @@ const getOneProperty = catchAsync(async (req, res, next) => {
 
 
 module.exports = {
-    getProperty: factory.getOne(Property),
+    getProperty: getOneProperty,
     getAllProperties: factory.getAll(Property),    
     uploadImage: catchAsync(async (req, res, next) => {
         if (!req.file) return next(new AppError('There is no image file to upload.', 400));
