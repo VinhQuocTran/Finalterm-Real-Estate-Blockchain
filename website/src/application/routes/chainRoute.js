@@ -6,6 +6,7 @@ router.get('/', chainController.getChain);
 router.get('/users', chainController.getAllUsers);
 router.post('/users', chainController.createUser);
 router.get('/users/:id', chainController.getUserById);
+router.get('/:id/tokenOwnership', chainController.getOwnPropertyTokenByUserId);
 
 router.use(protect);
 

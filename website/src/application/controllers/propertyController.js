@@ -32,7 +32,8 @@ const getOneProperty = catchAsync(async (req, res, next) => {
 
 
 module.exports = {
-    getProperty: getOneProperty,
+    getDetailProperty: getOneProperty,
+    getProperty: factory.getOne(Property),
     getAllProperties: factory.getAll(Property),    
     uploadImage: catchAsync(async (req, res, next) => {
         if (!req.file) return next(new AppError('There is no image file to upload.', 400));
