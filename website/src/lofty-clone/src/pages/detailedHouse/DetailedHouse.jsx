@@ -66,7 +66,7 @@ const DetailedHouse = () => {
           </div>
           <div className="title">
             <h1>{loading ? <Skeleton /> : property?.address}</h1>
-            <span>{loading ? <Skeleton /> : property?.district + " District, HCM City"}</span>
+            <span>{loading ? <Skeleton /> : property?.propertyDistrict + " District, HCM City"}</span>
           </div>
           <ul className="navItems">
             <li>

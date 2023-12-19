@@ -27,7 +27,7 @@ const PropertyCard = ({ property, onClick, onEditModalClick, onListingPropertyCl
       <div className="boxBottom">
         <div className="checkBoxes">
           <div className="checkBox">
-            <input type="checkbox" defaultChecked={property.isVerified === "1"} disabled={property.isVerified === "1"} />
+            <input type="checkbox" defaultChecked={property.isVerified === "1"} disabled={property.isVerified === "-1" || property.isVerified === "1"} />
             <label>Is verified</label>
           </div>
           <button disabled={property.isVerified === "0" || property.isVerified === "1"} data-id={property.id} type="button" onClick={onClick}>{property.isVerified === "-1" ? "Verify Property" : property.isVerified === "0" ? "Pending..." : "Accepted"}</button>

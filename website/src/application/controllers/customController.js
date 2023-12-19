@@ -219,19 +219,19 @@ module.exports = {
                 createdDate: submitPropertyListing.createdDate,
                 backgroundCheck: {
                     serviceUsed: backgroundCheckService.name,
-                    serviceUserdId: backgroundCheckService.id,
+                    serviceUsedId: backgroundCheckService.id,
                     costOfService: backgroundCheckService.feePerTime,
                     result: listingBackgroundCheck.isPass
                 },
                 houseInspection: {
                     serviceUsed: propertyInspectionService.name,
-                    serviceUserdId: propertyInspectionService.id,
+                    serviceUsedId: propertyInspectionService.id,
                     costOfService: propertyInspectionService.feePerTime,
                     result: listingPropertyInspection.isPass
                 },
                 houseValuation: {
                     serviceUsed: propertyValuationService.name,
-                    serviceUserdId: propertyValuationService.id,
+                    serviceUsedId: propertyValuationService.id,
                     costOfService: propertyValuationService.feePerTime,
                     valuationAmount: listingPropertyValuation.valuationAmount,
                     result: listingPropertyValuation.isPass
@@ -310,6 +310,11 @@ module.exports = {
         await Property.update({ isListed: isPassUpdated }, {
             where: { id: req.params.propertyId }
         });
+
+        // convert to token if isLised was passes
+        if (isPassUpdated === "1") {
+            // create listing
+        }
 
         res.status(200).json({
             status: 'success',

@@ -215,8 +215,6 @@ const MyProperty = () => {
         }
       });
 
-      console.log(response.data);
-
       dispatch(updateUserProperties(response.data.data));
       toast.success('Create new property successfully', {
         position: "top-right",
