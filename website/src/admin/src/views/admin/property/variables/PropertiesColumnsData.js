@@ -9,7 +9,7 @@ const columnsDataProperty = [
   },
   {
     Header: "Dístrict",
-    accessor: "district",
+    accessor: "propertyDistrict",
   },
   {
     Header: "Address",
@@ -20,20 +20,12 @@ const columnsDataProperty = [
     accessor: "area",
   },
   {
+    Header: "Is Listed",
+    accessor: "isListed",
+  },
+  {
     Header: "Is Verified",
     accessor: "isVerified",
-  },
-  {
-    Header: "N.o Bedrooms",
-    accessor: "numOfBedroom",
-  },
-  {
-    Header: "N,o Bathrooms",
-    accessor: "numOfWc",
-  },
-  {
-    Header: "Total Floors",
-    accessor: "totalFloor",
   },
   {
     Header: "Document",

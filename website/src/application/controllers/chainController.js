@@ -15,18 +15,17 @@ const getChain =  catchAsync(async (req, res, next) => {
     });
 });
 
-
 const getAllUsers = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
-
-    // const result  = await fabricService.evaluateTransaction("getAllByEntity","user");
-    const queryResult = {
-        "selector":{
-            "docType": "token"
-        }
-    }
-    const result  = await fabricService.evaluateTransaction("getQueryResultV2",JSON.stringify(queryResult));
+""
+    const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId","ACCOUNT_0003");
+    // const queryResult = {
+    //     "selector":{
+    //         "docType": "token"
+    //     }
+    // }
+    // const result  = await fabricService.evaluateTransaction("getQueryResultV2",JSON.stringify(queryResult));
 
     const users = JSON.parse(result);
     res.status(200).json({
@@ -49,12 +48,21 @@ const createUser = catchAsync(async (req, res, next) => {
 });
 
 const createOffer = catchAsync(async (req, res, next) => {
+
     await fabricService.initialize();
     await fabricService.connect();
     let now = new Date();
-    const offer_id = "OFFER_00009";
-    await fabricService.submitTransaction("createOffer",offer_id,req.user.id,
-        req.body.token_id,req.body.quantity,req.body.is_buy,now);
+    const offer_id = "OFFER_"+now.toISOString();
+    const account = fabricService.evaluateTransaction("queryUser",req.user.id);
+    if(req.body.is_buy && account.cash_balance < req.body.quantity*req.body.at_price){
+        res.status(200).json({
+            status: 'failed',
+            data: "Your cash balance not enough"
+        })
+        return;
+    }
+    await fabricService.submitTransaction("createOffer",`${offer_id}`,`${req.user.id}`,
+    `${req.body.token_id}`,`${req.body.quantity}`,`${req.body.at_price}`,`${req.body.is_buy}`,`${now}`);
     await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
@@ -91,7 +99,6 @@ const getWithDrawByUserId = catchAsync(async (req, res, next) => {
         data: user
     })
 });
-
 const getOwnPropertyTokenByUserId = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
