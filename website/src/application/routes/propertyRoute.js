@@ -4,10 +4,12 @@ const { protect, restrictTo } = require('../controllers/authController');
 
 router.get('/', propertyController.getAllProperties);
 router.get('/:id', propertyController.getProperty);
+router.get('/detail/:id', propertyController.getDetailProperty);
 
 // Protect all routes after this middleware
 router.use(protect);
 router.use(restrictTo('user'))
+
 
 router.post('/', propertyController.createProperty);
 router.patch('/:id', propertyController.updateProperty);

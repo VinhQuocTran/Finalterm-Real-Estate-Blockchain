@@ -9,6 +9,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
 import TokenModal from "../../components/tokenTransaction/TokenModal";
+import {useSelector} from "react-redux";
 
 const DetailedHouse = () => {
   const { propertyId } = useParams();
@@ -18,11 +19,15 @@ const DetailedHouse = () => {
   const [loading, setLoading] = useState(false);
   const [isBuyModalOpen, setBuyModalOpen] = useState(false);
   const [isSellModalOpen, setSellModalOpen] = useState(false);
+  const currentUser = useSelector(state => state.user)
+  const jwt = currentUser.token;
+  const isLoggedIn = jwt!==null;
+
   useEffect(() => {
     setLoading(true);
     const fetchProperty = async () => {
       try {
-        let response = await axios.get(BASE_URL + `/properties/${propertyId}`);
+        let response = await axios.get(BASE_URL + `/properties/detail/${propertyId}`);
         setProperty(response.data.data.property);
         setToken(response.data.data.token);
         console.log(response.data.data)
@@ -66,7 +71,7 @@ const DetailedHouse = () => {
           </div>
           <div className="title">
             <h1>{loading ? <Skeleton /> : property?.address}</h1>
-            <span>{loading ? <Skeleton /> : property?.district + " District, HCM City"}</span>
+            <span>{loading ? <Skeleton /> : property?.propertyDistrict + " District, HCM City"}</span>
           </div>
           <ul className="navItems">
             <li>
@@ -106,7 +111,7 @@ const DetailedHouse = () => {
           <div className="boxHeader">
             <div className="title">
               <div className="titleLeft">
-                <span>% your tokens:</span>
+                <span>% Total tokens:</span>
                 <FaCircleExclamation />
               </div>
               <div className="titleRight">
@@ -128,19 +133,20 @@ const DetailedHouse = () => {
               <button type="button" onClick={openSellModal}>Sell</button>
             </div>
 
-            <TokenModal
-                token = {token}
-                isOpen={isBuyModalOpen}
-                onClose={closeBuyModal}
-                actionType="buy"
-            />
+        <TokenModal
+          token={token}
+          isOpen={isBuyModalOpen}
+          onClose={closeBuyModal}
+          actionType="buy"
+        />
 
-            <TokenModal
-                token = {token}
-                isOpen={isSellModalOpen}
-                onClose={closeSellModal}
-                actionType="sell"
-            />
+      {/* Conditionally render the Sell Modal if the user is logged in */}
+        <TokenModal
+          token={token}
+          isOpen={isSellModalOpen}
+          onClose={closeSellModal}
+          actionType="sell"
+        />
           </div>
         </div>
       </ContentWrapper>
