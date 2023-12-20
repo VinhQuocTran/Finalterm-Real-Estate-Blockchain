@@ -10,12 +10,9 @@ import TokenModal from "../../components/tokenTransaction/TokenModal";
 import { useSelector } from "react-redux";
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
-import TokenModal from "../../components/tokenTransaction/TokenModal";
-import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 const DetailedHouse = () => {
-  const currentUser = useSelector(state => state.user);
   const navigate = useNavigate();
   const { propertyId } = useParams();
   const [property, setProperty] = useState(null);

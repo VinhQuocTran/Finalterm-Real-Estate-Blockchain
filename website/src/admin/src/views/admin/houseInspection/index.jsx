@@ -1,12 +1,12 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
-    SubmitListingPropertyColumnsData
-} from "./variables/SubmitListingPropertyColumnsData";
+    HouseInspectionColumnsData
+} from "./variables/HouseInspectionColumnsData";
 import config from '../../../config.json';
-import ListingPropertiesTable from "./components/SubmitListingPropertyTable";
+import HouseInspectionTable  from "./components/HouseInspectionTable";
 function fetchListingPropertyData() {
-    return fetch(config.API_URL+"submitPropertyListings")
+    return fetch(config.API_URL+"propertyInspectionServices")
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -73,8 +73,8 @@ export default function PropertyManager() {
         mb='20px'
         columns={{ sm: 0, md: 0 }}
         spacing={{ base: "20px", xl: "20px" }}>
-        <ListingPropertiesTable
-          columnsData={SubmitListingPropertyColumnsData}
+        <HouseInspectionTable
+          columnsData={HouseInspectionColumnsData}
           tableData={propertyData}
           optionManager={optionManagers}
           reloadParent = {reloadParent}

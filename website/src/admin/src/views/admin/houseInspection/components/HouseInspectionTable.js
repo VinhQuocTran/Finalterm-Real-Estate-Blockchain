@@ -33,7 +33,7 @@ import config from "../../../../config.json";
 import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
 
 function fetchSubmitListingPropertyByIdData(id) {
-  return fetch(config.API_URL+"backgroundCheckServices/"+id)
+  return fetch(config.API_URL+"propertyInspectionServices/"+id)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -50,7 +50,7 @@ function fetchSubmitListingPropertyByIdData(id) {
       });
 }
 
-export default function BackgroundCheckTable(props) {
+export default function HouseInspectionTable(props) {
   const { columnsData, tableData,optionManager, reloadParent } = props;
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
