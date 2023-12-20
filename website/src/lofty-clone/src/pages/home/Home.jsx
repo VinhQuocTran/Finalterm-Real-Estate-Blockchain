@@ -15,8 +15,8 @@ const Home = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get(BASE_URL + '/properties?isVerified=1' +
-          `${districts !== "All districts" ? '&district=' + districts : ''}` +
+        const response = await axios.get(BASE_URL + '/properties?isListed=1' +
+          `${districts !== "All districts" ? '&propertyDistrict=' + districts : ''}` +
           `${areaValue !== 0 ? '&area[lte]=' + areaValue : ''}`
         );
         setProperties(response.data.data);

@@ -36,6 +36,7 @@ const Header = () => {
       await axios.get(BASE_URL + "/accounts/signout");
       dispatch(logout);
       localStorage.removeItem('user');
+      document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       window.location.reload();
     } catch (err) {
       console.log(err);

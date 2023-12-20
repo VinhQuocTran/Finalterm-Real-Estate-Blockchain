@@ -3,6 +3,7 @@ const propertyController = require('../controllers/propertyController');
 const { protect, restrictTo } = require('../controllers/authController');
 
 router.get('/', propertyController.getAllProperties);
+router.get('/:id/detailProperty', propertyController.getDetailProperty);
 router.get('/:id', propertyController.getProperty);
 router.get('/detail/:id', propertyController.getDetailProperty);
 
