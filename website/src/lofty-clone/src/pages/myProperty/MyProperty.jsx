@@ -10,6 +10,7 @@ import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPrope
 import { BASE_URL } from "../../utils/api";
 import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus, updateProperty, updateListingPropertyStatus } from "../../redux/userPropertiesSlice";
 import FilterItem from "../../components/filterItem/FilterItem";
+import {setLightTheme} from "../../redux/themeSlice";
 import "./myproperty.scss";
 
 const MyProperty = () => {
@@ -372,6 +373,10 @@ const MyProperty = () => {
   }
 
   useEffect(() => {
+    dispatch(setLightTheme());
+  }, []);
+
+  useEffect(() => {
     const fetchInspectionServices = async () => {
       const response = await axios.get(BASE_URL + "/propertyInspectionServices");
       setInspectionServices(response.data.data);
@@ -410,7 +415,7 @@ const MyProperty = () => {
   }, [currentUser]);
 
   return (
-    <div className="myProperty">
+    <div className={`myProperty`}>
       <ContentWrapper>
         <div className="buttons">
           <button type="button" onClick={handleNewPropertyModalClick}>Create new property</button>

@@ -9,6 +9,16 @@
   align-items: center;
   z-index: 2;
 
+  &.darkTheme {
+    .nav-item {
+      color: #fff!important;
+    }
+
+    .logo span {
+      color: #fff!important;
+    }
+  }
+
   @include md {
     margin-top: 32px;
   }
@@ -21,6 +31,12 @@
 
   .logo {
     cursor: pointer;
+
+    span {
+      font-size: 40px;
+      font-weight: 900;
+      color: var(--dark-blue);
+    }
 
     img {
       width: 140px;

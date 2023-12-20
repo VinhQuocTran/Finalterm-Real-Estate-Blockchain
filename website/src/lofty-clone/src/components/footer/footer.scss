@@ -2,7 +2,16 @@
 
 .footer {
   padding: 60px 0;
-  background-color: var(--dark);
+  background: linear-gradient(172deg, #9383ff 0.99%, #08165d 100%);
+
+  &.darkTheme {
+    background: unset;
+    background-color: var(--dark);
+
+    .logo span {
+      color: #fff;
+    }
+  }
 
   .contentWrapper {
     display: flex;
@@ -23,6 +32,12 @@
   .logo {
     margin-bottom: 16px;
     cursor: pointer;
+
+    span {
+      font-size: 40px;
+      font-weight: 900;
+      color: var(--dark-blue);
+    }
 
     @include md {
       margin-bottom: unset;
