@@ -27,6 +27,8 @@ const customRoute = require('./routes/customRoute');
 const AppError = require('./utils/appError');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
+
+const {startMatchingOffersTask,startPaymentDailyRentTask,getMatchingOffers,getPaymentDailyRent} = require('./controllers/customController');
 const app = express();
 
 // Body parser, reading data from body into req.body
@@ -61,6 +63,9 @@ app.use('/api/dailyReplenishTransactions', dailyReplenishTransactionRoute);
 app.use('/api/custom', customRoute);
 
 
+// set schedulers
+startMatchingOffersTask(getMatchingOffers);
+startPaymentDailyRentTask(getPaymentDailyRent);
 app.use('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
