@@ -6,22 +6,23 @@ import "./App.scss";
 
 function App() {
   const currentUser = useSelector((state) => state.user);
+  const appTheme = useSelector((state) => state.theme);
 
   return (
-    <>
+    <div className={`app ${appTheme.themeColor === 'light' ? '' : 'darkTheme' }`}>
       <BrowserRouter>
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/properties/:propertyId" element={<DetailedHouse />} />
           <Route path="/my-property" element={currentUser.user ? <MyProperty /> : <Signin />} />
-          <Route path="/token-ownership" element={<TokenOwnership />} />
+          <Route path="/token-ownership-and-rental-income" element={<TokenOwnership />} />
           <Route path="/sign-up" element={currentUser.user ? <Home /> : <Signup />} />
           <Route path="/sign-in" element={currentUser.user ? <Home /> : <Signin />} />
         </Routes>
         <Footer />
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 

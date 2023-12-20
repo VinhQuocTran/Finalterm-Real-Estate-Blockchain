@@ -5,12 +5,18 @@
 }
 
 body {
-  background-color: var(--grey-light);
   scroll-behavior: smooth;
 
-  #root {
+  .app {
+    background-color: var(--grey-light);  
     display: flex;
     flex-direction: column;    
+    height: 100%;
+    min-height: 100vh;
+
+    &.darkTheme {
+      background-color: var(--dark);
+    }
   }
 }
 

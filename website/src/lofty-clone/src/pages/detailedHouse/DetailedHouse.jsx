@@ -8,6 +8,7 @@ import { BASE_URL } from "../../utils/api";
 import Skeleton from 'react-loading-skeleton'
 import TokenModal from "../../components/tokenTransaction/TokenModal";
 import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
 import { ToastContainer, toast } from "react-toastify";
@@ -24,6 +25,7 @@ const DetailedHouse = () => {
   const currentUser = useSelector(state => state.user)
   const jwt = currentUser.token;
   const isLoggedIn = jwt !== null;
+
   useEffect(() => {
     setLoading(true);
     const fetchProperty = async () => {
