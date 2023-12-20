@@ -138,6 +138,7 @@ const DetailedHouse = () => {
               isOpen={isBuyModalOpen}
               onClose={closeBuyModal}
               actionType="buy"
+              toast={toast}
             />
 
             <TokenModal

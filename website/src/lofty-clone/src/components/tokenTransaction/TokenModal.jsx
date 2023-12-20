@@ -109,6 +109,12 @@ const TokenModal = ({ isOpen, onClose, actionType, token,toast }) => {
     const handleFormSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.target)
+        if (actionType === "buy") {
+            data.append("is_buy", true);
+        }
+        else{
+            data.append("is_buy", false);
+        }
         console.log(Object.fromEntries(data));
         try {
             const response = await axios.post(BASE_URL + "/chains/offers", Object.fromEntries(data), {
