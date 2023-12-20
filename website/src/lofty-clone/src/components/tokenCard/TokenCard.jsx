@@ -48,7 +48,11 @@ const TokenCard = ({ token }) => {
           <div className="infoLeft">
             <div className="infoDetail">
               <h3>Token owned</h3>
-              <p>${token?.total_earned !== null && token?.total_earned !== undefined ? token.total_earned : <Skeleton />} <span>of {token?.token_supply} ({(token?.total_earned / token?.token_supply) * 100}%)</span></p>
+              <p>{token?.own_number + ` of ${token?.token_supply}` || <Skeleton />}
+                <span>
+                  ({((Number(token?.own_number) / token?.token_supply) * 100).toFixed(2)}%)
+                </span>
+              </p>
             </div>
             <div className="infoDetail">
               <h3>Price per token</h3>
@@ -56,17 +60,17 @@ const TokenCard = ({ token }) => {
             </div>
             <div className="infoDetail">
               <h3>Token balance</h3>
-              <p>${token?.total_earned * token?.token_price} <span>of {blockchainUser?.token_balance || <Skeleton />} ({(token?.total_earned * token?.token_price / blockchainUser?.token_balance) * 100}%)</span></p>
+              <p>${(Number(token?.own_number) * token?.token_price)} <span>of {blockchainUser?.token_balance || <Skeleton />} ({((token?.own_number * token?.token_price / blockchainUser?.token_balance) * 100).toFixed(2)}%)</span></p>
             </div>
           </div>
           <div className="infoRight">
             <div className="infoDetail">
               <h3>Current rent balance</h3>
-              <p>$</p>
+              <p>${token?.total_current_balance.toFixed(2) || <Skeleton />}</p>
             </div>
             <div className="infoDetail">
               <h3>Total rent earned</h3>
-              <p>$</p>
+              <p>${token?.total_earned.toFixed(2) || <Skeleton />}</p>
             </div>
           </div>
         </div>

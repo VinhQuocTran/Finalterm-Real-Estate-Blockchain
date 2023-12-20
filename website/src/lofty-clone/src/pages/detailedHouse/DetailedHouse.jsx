@@ -11,7 +11,6 @@ import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
-import { ToastContainer, toast } from "react-toastify";
 
 const DetailedHouse = () => {
   const navigate = useNavigate();

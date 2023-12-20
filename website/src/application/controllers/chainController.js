@@ -24,7 +24,7 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     // await fabricService.submitTransaction("matchingOffers",`${now.toISOString()}`);
     // await fabricService.submitTransaction("getPaymentRentDaily","LP_0001",3000);
     
-    const result  = await fabricService.evaluateTransaction("getAllByEntity","rentalIncomeWallet");
+    const result  = await fabricService.evaluateTransaction("getAllByEntity","tokenTransaction");
     // const queryResult = {
     //     "selector":{
     //         "docType": "token"
@@ -75,6 +75,7 @@ const createOffer = catchAsync(async (req, res, next) => {
         data: "create offer successful"
     })
 });
+
 const getUserById = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
@@ -84,6 +85,7 @@ const getUserById = catchAsync(async (req, res, next) => {
         data: user
     })
 });
+
 const getDepositByUserId = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();

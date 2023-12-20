@@ -1,0 +1,16 @@
+.w3-container {
+    padding-left: 0;
+    padding-right: 0;
+
+    .searchBox {
+        text-align: end;
+        margin-bottom: 4px;
+    }
+
+    .buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 4px;
+    }
+}
