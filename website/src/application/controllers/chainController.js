@@ -23,7 +23,7 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     // const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByTokenAndUserId","TOKEN_0003","ACCOUNT_0003");
     const now = new Date();
     // await fabricService.submitTransaction("matchingOffers",`${now.toISOString()}`);
-    await fabricService.submitTransaction("getPaymentRentDaily","LP_0001",3000);
+    // await fabricService.submitTransaction("getPaymentRentDaily","LP_0001",3000);
     
     const result  = await fabricService.evaluateTransaction("getAllByEntity","rentalIncomeWallet");
     // const queryResult = {

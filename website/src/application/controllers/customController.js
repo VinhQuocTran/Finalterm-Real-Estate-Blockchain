@@ -1,5 +1,4 @@
 const HyperLedgerService = require('../utils/hyperLedgerService/hyperLedgerService');
-const Account = require('../models/Account');
 const Property = require('../models/Property');
 const SubmitPropertyListing = require('../models/SubmitPropertyListing');
 const ListingBackgroundCheck = require('../models/ListingBackgroundCheck');
@@ -12,8 +11,8 @@ const PropertyValuationService = require('../models/PropertyValuationService');
 const ListingProperty = require('../models/ListingProperty');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-
 const fabricService = new HyperLedgerService();
+const cron = require('node-cron');
 
 module.exports = {
     requestVerify: catchAsync(async (req, res, next) => {
@@ -359,4 +358,50 @@ module.exports = {
             }
         });
     }),    
+
+    // get matching offers
+    getMatchingOffers: catchAsync(async (req, res, next) => {
+        const transaction_date = new Date().toISOString();
+        await fabricService.initialize();
+        await fabricService.connect();
+        await fabricService.submitTransaction("matchingOffers",`${transaction_date}`);
+        await fabricService.disconnect();
+    }),
+    // get payment daily rent
+    getPaymentDailyRent: catchAsync(async (req, res, next) => {
+            const transaction_date = new Date().toISOString();
+            const getAllListingProperties = await ListingProperty.findAll();
+            for(const listingProperty of getAllListingProperties){
+                let listing_property_id = listingProperty.id;
+                let monthly_rent = listingProperty.monthlyRent;
+                await fabricService.initialize();
+                await fabricService.connect();
+                await fabricService.submitTransaction("getPaymentRentDaily",listing_property_id,monthly_rent,`${transaction_date}`);
+                await fabricService.disconnect();
+            }
+    }),
+    startMatchingOffersTask: (getMatchingOffers) => {
+        cron.schedule('*/30 * * * * *', async () => {
+            console.log('Running rent payment task every 30 seconds...');
+            try {
+                await getMatchingOffers();
+                console.log('Rent payment task completed successfully.');
+            } catch (error) {
+                console.error('Error in rent payment task:', error);
+            }
+        });
+    },
+    startPaymentDailyRentTask: (getPaymentDailyRent) => {
+        // 0 0 * * * 1 day
+        // */30 * * * * * 30 seconds
+        cron.schedule('*/30 * * * * *', async () => {
+            console.log('Running daily rent payment task...');
+            try {
+                await getPaymentDailyRent();
+                console.log('Daily rent payment task completed successfully.');
+            } catch (error) {
+                console.error('Error in daily rent payment task:', error);
+            }
+        });
+    }
 };
