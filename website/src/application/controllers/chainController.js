@@ -69,7 +69,7 @@ const createOffer = catchAsync(async (req, res, next) => {
     }
     console.log(req.body.is_buy);
     await fabricService.submitTransaction("createOffer",`${offer_id}`,`${req.user.id}`,
-    `${req.body.token_id}`,`${req.body.quantity}`,`${req.body.at_price}`,`${req.body.is_buy}`,`${now}`);
+    `${req.body.token_id}`,req.body.quantity,req.body.at_price,`${req.body.is_buy}`,`${now}`);
     await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
