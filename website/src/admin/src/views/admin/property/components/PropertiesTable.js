@@ -208,12 +208,15 @@ export default function PropertiesTable(props) {
       console.log('Listing action with data:', selectedBackgroundCheck,selectedHouseInspection,selectedHouseValuation);
       try {
         const jwtToken = localStorage.getItem("jwt");
+        console.log("@34242",listingData.backgroundCheck.serviceUsedId);
+        console.log("@34242",listingData.houseInspection.serviceUsedId);
+        console.log("@34242",listingData.houseValuation.serviceUsedId);
         let prop ={
-          backgroundCheckServiceId: listingData.backgroundCheck.serviceUserdId,
+          backgroundCheckServiceId: listingData.backgroundCheck.serviceUsedId,
           isPassListingBackgroundCheck: selectedBackgroundCheck,
-          propertyInspectionServiceId: listingData.houseInspection.serviceUserdId,
+          propertyInspectionServiceId: listingData.houseInspection.serviceUsedId,
           isPassListingPropertyInspection: selectedHouseInspection,
-          propertyValuationServiceId: listingData.houseValuation.serviceUserdId,
+          propertyValuationServiceId: listingData.houseValuation.serviceUsedId,
           isPassListingPropertyValuation: selectedHouseValuation,
           valuationAmount: valuationAmount,
           monthlyRent: monthlyRent,
@@ -636,7 +639,11 @@ export default function PropertiesTable(props) {
                           Verify
                         </Button>
                         <Button onClick={() => onOpen('listing', {id: row.original.id})}
-                                isDisabled={(row.original.isListed === '1' && row.original.isVerified === '1')||(row.original.isListed === '0' && row.original.isVerified === '0')}
+                                isDisabled={(row.original.isListed === '1' && row.original.isVerified === '1')
+                                    ||(row.original.isListed === '0' && row.original.isVerified === '0')
+                                    ||(row.original.isListed === '-1' && row.original.isVerified === '0')
+                                    ||(row.original.isListed === '-1' && row.original.isVerified === '1')
+                        }
                                 colorScheme="green" size="sm" marginLeft="1">
                           Listing
                         </Button>

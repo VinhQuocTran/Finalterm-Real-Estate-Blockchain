@@ -5,7 +5,7 @@ const ListingPropertyColumnsData = [
   },
   {
     Header: "Submit Listing Property",
-    accessor: "submitListingPropertyId",
+    accessor: "submitPropertyListingId",
   },
   {
     Header: "Monthly Rent",
