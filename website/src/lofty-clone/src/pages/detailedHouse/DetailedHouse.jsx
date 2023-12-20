@@ -10,6 +10,9 @@ import TokenModal from "../../components/tokenTransaction/TokenModal";
 import { useSelector } from "react-redux";
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
+import TokenModal from "../../components/tokenTransaction/TokenModal";
+import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
 
 const DetailedHouse = () => {
   const currentUser = useSelector(state => state.user);
@@ -21,11 +24,14 @@ const DetailedHouse = () => {
   const [loading, setLoading] = useState(false);
   const [isBuyModalOpen, setBuyModalOpen] = useState(false);
   const [isSellModalOpen, setSellModalOpen] = useState(false);
+  const currentUser = useSelector(state => state.user)
+  const jwt = currentUser.token;
+  const isLoggedIn = jwt !== null;
   useEffect(() => {
     setLoading(true);
     const fetchProperty = async () => {
       try {
-        let response = await axios.get(BASE_URL + `/properties/${propertyId}/detailProperty`);
+        let response = await axios.get(BASE_URL + `/properties/detail/${propertyId}`);
         setProperty(response.data.data.property);
         setToken(response.data.data.token);
         console.log(response.data.data)
@@ -113,7 +119,7 @@ const DetailedHouse = () => {
           <div className="boxHeader">
             <div className="title">
               <div className="titleLeft">
-                <span>% your tokens:</span>
+                <span>% Total tokens:</span>
                 <FaCircleExclamation />
               </div>
               <div className="titleRight">
@@ -123,7 +129,7 @@ const DetailedHouse = () => {
             </div>
 
             <ProgressBar
-                completed={100}
+              completed={100}
             />
             <div className="boxHeaderBottom">
               <span>{loading ? <Skeleton /> : token?.quantity} tokens</span>
@@ -136,17 +142,31 @@ const DetailedHouse = () => {
             </div>
 
             <TokenModal
-                token = {token}
-                isOpen={isBuyModalOpen}
-                onClose={closeBuyModal}
-                actionType="buy"
+              token={token}
+              isOpen={isBuyModalOpen}
+              onClose={closeBuyModal}
+              actionType="buy"
+              toast={toast}
             />
 
             <TokenModal
-                token = {token}
-                isOpen={isSellModalOpen}
-                onClose={closeSellModal}
-                actionType="sell"
+              token={token}
+              isOpen={isSellModalOpen}
+              onClose={closeSellModal}
+              actionType="sell"
+              toast={toast}
+            />
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
             />
           </div>
         </div>

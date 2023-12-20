@@ -19,7 +19,13 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
 ""
-    const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId","ACCOUNT_0003");
+    // const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId","ACCOUNT_0003");
+    // const result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByTokenAndUserId","TOKEN_0003","ACCOUNT_0003");
+    const now = new Date();
+    // await fabricService.submitTransaction("matchingOffers",`${now.toISOString()}`);
+    await fabricService.submitTransaction("getPaymentRentDaily","LP_0001",3000);
+    
+    const result  = await fabricService.evaluateTransaction("getAllByEntity","rentalIncomeWallet");
     // const queryResult = {
     //     "selector":{
     //         "docType": "token"
@@ -61,6 +67,7 @@ const createOffer = catchAsync(async (req, res, next) => {
         })
         return;
     }
+    console.log(req.body.is_buy);
     await fabricService.submitTransaction("createOffer",`${offer_id}`,`${req.user.id}`,
     `${req.body.token_id}`,`${req.body.quantity}`,`${req.body.at_price}`,`${req.body.is_buy}`,`${now}`);
     await fabricService.disconnect();

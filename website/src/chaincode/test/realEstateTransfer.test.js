@@ -2,14 +2,12 @@
 
 const sinon = require('sinon');
 const chai = require('chai');
-const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 
 const { Context } = require('fabric-contract-api');
 const { ChaincodeStub } = require('fabric-shim');
 
 const RealEstateTransfer = require('../lib/realEstateTransfer');
-const {json} = require("mocha/lib/reporters");
 
 describe('RealEstateTransfer Smart Contract', () => {
     let contract;
@@ -86,6 +84,8 @@ describe('RealEstateTransfer Smart Contract', () => {
             //        "docType":"123"
             //    }
             // }
+            const teest = await contract.getOwnPropertyTokenByTokenAndUserId(ctx,"TOKEN_0004","ACCOUNT_0004");
+            console.log(teest);
         });
     });
 

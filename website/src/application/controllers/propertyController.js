@@ -17,21 +17,35 @@ const getOneProperty = catchAsync(async (req, res, next) => {
     await fabricService.connect();
     let result  = await fabricService.evaluateTransaction("getTokenByListingPropertyId",listingProperty.id);
     const token = JSON.parse(result);
-    result = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId",property.accountId);
-    const tokenOwnerShip = JSON.parse(result);
+    // result = await fabricService.evaluateTransaction("getOwnPropertyTokenByTokenAndUserId",);
+    // const tokenOwnerShip = JSON.parse(result);
     await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
         data: {
             property:property,
             token: token,
-            tokenOwnerShip: tokenOwnerShip
+            tokenOwnerShip: "tokenOwnerShip"
+        }
+    })
+});
+const getTokenOwnerShip = catchAsync(async (req, res, next) => {
+    await fabricService.initialize();
+    await fabricService.connect();
+    let result  = await fabricService.evaluateTransaction("getOwnPropertyTokenByTokenAndUserId",req.params.token_id, req.params.user_id);
+    const tokenOwnerShip = JSON.parse(result);
+    console.log(tokenOwnerShip);
+    await fabricService.disconnect();
+    res.status(200).json({
+        status: 'success',
+        data: {
+            tokenOwnerShip: tokenOwnerShip[0]
         }
     })
 });
 
-
 module.exports = {
+    getTokenOwnerShip: getTokenOwnerShip,
     getDetailProperty: getOneProperty,
     getProperty: factory.getOne(Property),
     getAllProperties: factory.getAll(Property),    
