@@ -33,7 +33,7 @@ const TokenOwnership = ({darkTheme}) => {
   console.log(tokenOwnership);
     
   return (
-    <div className={`tokenOwnership ${darkTheme ? 'darkTheme' : ""}`}>
+    <div className={`tokenOwnership ${appTheme.themeColor === 'dark' ? 'darkTheme' : ""}`}>
       <ContentWrapper>
         <div className="box">
           <div className="boxLeft">

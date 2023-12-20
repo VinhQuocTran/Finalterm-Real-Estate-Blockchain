@@ -16,7 +16,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/properties/:propertyId" element={<DetailedHouse />} />
           <Route path="/my-property" element={currentUser.user ? <MyProperty /> : <Signin />} />
-          <Route path="/token-ownership-and-rental-income" element={<TokenOwnership />} />
+          <Route path="/token-ownership-and-rental-income" element={currentUser.user ? <TokenOwnership /> : <Signin />} />
           <Route path="/sign-up" element={currentUser.user ? <Home /> : <Signup />} />
           <Route path="/sign-in" element={currentUser.user ? <Home /> : <Signin />} />
         </Routes>
