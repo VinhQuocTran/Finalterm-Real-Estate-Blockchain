@@ -3,7 +3,7 @@ import ProgressBar from "@ramonak/react-progress-bar";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../../utils/api";
 import Skeleton from 'react-loading-skeleton'
 import TokenModal from "../../components/tokenTransaction/TokenModal";
@@ -11,20 +11,20 @@ import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
-import { ToastContainer, toast } from "react-toastify";
 
 const DetailedHouse = () => {
   const navigate = useNavigate();
   const { propertyId } = useParams();
   const [property, setProperty] = useState(null);
   const [token, setToken] = useState(null);
-  // const [tokenOwnerShip, setTokenOwnerShip] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isBuyModalOpen, setBuyModalOpen] = useState(false);
   const [isSellModalOpen, setSellModalOpen] = useState(false);
   const currentUser = useSelector(state => state.user)
-  const jwt = currentUser.token;
-  const isLoggedIn = jwt !== null;
+  const [activeTab, setActiveTab] = useState('details');
+  const detailsRef = useRef(null);
+  const documentsRef = useRef(null);
+  const orderBookRef = useRef(null);
 
   useEffect(() => {
     setLoading(true);
@@ -34,7 +34,6 @@ const DetailedHouse = () => {
         setProperty(response.data.data.property);
         setToken(response.data.data.token);
         console.log(response.data.data)
-        // setTokenOwnerShip(response.data.data.tokenOwnerShip[0]);
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -63,6 +62,18 @@ const DetailedHouse = () => {
     setSellModalOpen(false);
   };
 
+  const handleTabClick = (tabName, tabRef) => {
+    setActiveTab(tabName);
+
+    // Remove 'isClicked' class from all tabs
+    detailsRef.current.classList.remove('isClicked');
+    documentsRef.current.classList.remove('isClicked');
+    orderBookRef.current.classList.remove('isClicked');
+
+    // Add 'isClicked' class to the clicked tab
+    tabRef.current.classList.add('isClicked');
+  };
+
   return (
     <div className="detailedHouse">
       <div className="imgContainer">
@@ -82,14 +93,17 @@ const DetailedHouse = () => {
           </div>
           <ul className="navItems">
             <li>
-              <span>Details</span>
+              <span ref={detailsRef} className={activeTab === 'details' ? 'isClicked' : ""} onClick={() => handleTabClick('details', detailsRef)}>Details</span>
             </li>
             <li>
-              <span>Documents</span>
+              <span ref={documentsRef} className={activeTab === 'documents' ? 'isClicked' : ""} onClick={() => handleTabClick('documents', documentsRef)}>Documents</span>
+            </li>
+            <li>
+              <span ref={orderBookRef} className={activeTab === 'orderBook' ? 'isClicked' : ""} onClick={() => handleTabClick('orderBook', orderBookRef)}>Order book</span>
             </li>
           </ul>
           <div className="line"></div>
-          <div className="infoItems">
+          <div style={{display: activeTab === 'details' ? 'flex' : 'none'}} className="infoItems">
             <div className="infoItem">
               <span>{loading ? <Skeleton /> : property?.area} m<sup>2</sup></span>
             </div>
@@ -103,8 +117,52 @@ const DetailedHouse = () => {
               <span>{loading ? <Skeleton /> : property?.numOfWc} wc</span>
             </div>
           </div>
+          <div style={{display: activeTab === 'documents' ? 'flex' : 'none'}}  className="documents">
+            <a href={property?.propertyDocumentUrl}>{property?.propertyDocumentUrl}</a>
+          </div>
+          <div style={{display: activeTab === 'orderBook' ? 'flex' : 'none'}} className="orderBook">
+            <h3>Open orders</h3>
+            <div className="items">
+              <div className="item">
+                <h4>Price (USD)</h4>
+                <span>50.13</span>
+                <span>50.13</span>
+                <span>50.13</span>
+                <span>50.13</span>
+                <span>50.13</span>
+                <span>50.13</span>
+              </div>
+              <div className="item">
+                <h4>Buy order</h4>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+              </div>
+              <div className="item">
+                <h4>Price (USD)</h4>
+                <span>50.13</span>
+                <span>50.13</span>
+                <span>50.13</span>
+                <span>50.13</span>
+                <span>50.13</span>
+                <span>50.13</span>
+              </div>
+              <div className="item">
+                <h4>Sell order</h4>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+                <span>5 Tokens</span>
+              </div>
+            </div>
+          </div>
           <div className="description">
-            <h3>About the Property</h3>
+            <h3>About the property</h3>
             <div className="line"></div>
             <div className="content">
               <p>

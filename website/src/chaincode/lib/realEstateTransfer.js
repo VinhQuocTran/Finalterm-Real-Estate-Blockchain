@@ -9,8 +9,8 @@ class RealEstateTransfer extends Contract {
         await Promise.all(
             iterations.map(async (i) => {
                 await this.createUser(ctx, `ACCOUNT_000${i}`, 1000000 + i * 1000, 500 * 50);
-                await this.createToken(ctx, `TOKEN_000${i}`, `LP_000${i}`, 500);
-                await this.createPropertyTokenOwner(ctx, `PTO_000${i}`, 500, `TOKEN_000${i}`, `ACCOUNT_000${i}`);
+                // await this.createToken(ctx, `TOKEN_000${i}`, `LP_000${i}`, 500);
+                // await this.createPropertyTokenOwner(ctx, `PTO_000${i}`, 500, `TOKEN_000${i}`, `ACCOUNT_000${i}`);
             })
         );
     }

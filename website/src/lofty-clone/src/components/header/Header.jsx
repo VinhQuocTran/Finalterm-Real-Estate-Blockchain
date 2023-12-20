@@ -77,6 +77,7 @@ const Header = () => {
             <li className="nav-item" onClick={() => navigate("/")}>Marketplace</li>
             <li className="nav-item" onClick={() => navigate("/token-ownership-and-rental-income")}>Token Ownership and Rental Income</li>
             <li className="nav-item" onClick={() => navigate("/my-property")}>My Property</li>
+            <li className="nav-item" onClick={() => navigate("/my-order")}>My Order</li>
             {currentUser.user ?
               <li className="nav-item" onClick={handleProfileModalClick}>{currentUser.user.username}</li> :
               <li className="nav-item" onClick={() => navigate("/sign-in")}>Sign In</li>
