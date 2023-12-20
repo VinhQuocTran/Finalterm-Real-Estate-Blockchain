@@ -145,6 +145,7 @@ const getTokenizeProperty = catchAsync(async (req, res, next) => {
         data: result
     })
 });
+
 module.exports = {
     getChain,
     getAllUsers,
