@@ -43,6 +43,39 @@ class RealEstateTransfer extends Contract {
         await ctx.stub.putState(`rentalIncomeWallet:${user_id}`, Buffer.from(JSON.stringify(rentalIncomeWallet)));
     }
 
+    async createRentalDailyIncomeTransaction(ctx, id, income_amount, is_withdrawn, rental_income_wallet_id,listing_property_id, transaction_date) {
+        const exists = await ctx.stub.getState(`rentalDailyIncomeTransaction:${id}`);
+       if (exists && exists.length>0) {
+            throw new Error(`The rentalDailyIncomeTransaction ${id} already exists`);
+        }
+        const rentalDailyIncomeTransaction = {
+            docType: "rentalDailyIncomeTransaction",
+            id,
+            income_amount,
+            is_withdrawn,
+            rental_income_wallet_id,
+            listing_property_id,
+            transaction_date
+        };
+        await ctx.stub.putState(`rentalDailyIncomeTransaction:${id}`, Buffer.from(JSON.stringify(rentalDailyIncomeTransaction)));
+    }
+
+    async createWithdrawIncome(ctx, id, withdraw_amount, withdraw_type_option,rental_income_wallet_id, withdraw_date) {
+        const exists = await ctx.stub.getState(`withdrawIncome:${id}`);
+       if (exists && exists.length>0) {
+            throw new Error(`The WithdrawIncome ${id} already exists`);
+        }
+        const withdrawIncome = {
+            docType: "withdrawIncome",
+            id,
+            withdraw_amount,
+            withdraw_type_option,
+            rental_income_wallet_id,
+            withdraw_date
+        };
+        await ctx.stub.putState(`withdrawIncome:${id}`, Buffer.from(JSON.stringify(withdrawIncome)));
+    }
+
     async createPropertyTokenOwner(ctx, id, own_number, token_id, user_id) {
         const exists = await ctx.stub.getState(`propertyTokenOwner:${id}`);
        if (exists && exists.length>0) {
@@ -172,7 +205,25 @@ async generateID(key,count){
         }
         for (let element of property) {
             let token = await this.queryToken(ctx,element.token_id);
+            let query = {
+                docType:"rentalDailyIncomeTransaction",
+                rental_income_wallet_id:user_id,
+                listing_property_id:token.listing_property_id
+            }
+            let rentalDailyIncomeTransaction = await this.getQueryResult(ctx,query);
+            let total_earned = rentalDailyIncomeTransaction.reduce((total,element)=>{
+                return total+element.income_amount;
+            }, 0);
+            let total_current_balance = rentalDailyIncomeTransaction.reduce((total, element) => {
+                if (!element.is_withdrawn) {
+                    return total + element.income_amount;
+                }
+                return total;
+            }, 0);
             element.token_price = token.token_price;
+            element.total_current_balance = total_current_balance;
+            element.total_earned = total_earned;
+            element.token_supply = token.quantity;
         }
         return property;
     }
@@ -215,7 +266,42 @@ async generateID(key,count){
         user.cash_balance -= money;
         await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
     }
-    async getPaymentRentDaily(ctx,listing_property_id,monthly_rent){
+    async getWithDrawRentalIncome(ctx,user_id, withdraw_date){
+        let user = await this.queryUser(ctx, user_id);
+        let query = {
+            docType:"rentalDailyIncomeTransaction",
+            rental_income_wallet_id:user_id
+
+        }
+        let rentalDailyIncomeTransaction = await this.getQueryResult(ctx,query);
+        let total_current_balance = rentalDailyIncomeTransaction.reduce((total, element) => {
+            if (!element.is_withdrawn) {
+                return total + element.income_amount;
+            }
+            return total;
+        },0);
+        user.cash_balance += total_current_balance;
+        await ctx.stub.putState(`user:${user.id}`, Buffer.from(JSON.stringify(user)));
+
+        // update status rentalDailyIncomeTransaction
+        for (const element of rentalDailyIncomeTransaction) {
+            element.is_withdrawn = true;
+            await ctx.stub.putState(`rentalDailyIncomeTransaction:${element.id}`, Buffer.from(JSON.stringify(element)));
+        }
+        // create withdraw income
+        let withdrawIncome = {
+            docType: "withdrawIncome", 
+            id: "WITHDRAW_RI_"+user_id+"_"+withdraw_date,
+            withdraw_amount: total_current_balance,
+            withdraw_type_option: "CASH",
+            rental_income_wallet_id: user_id,
+            withdraw_date
+        }
+        await ctx.stub.putState(`withdrawIncome:${withdrawIncome.id}`, Buffer.from(JSON.stringify(withdrawIncome)));
+        console.log(`Withdraw rental income for user ID: ${user_id} successful`);
+    }
+
+    async getPaymentRentDaily(ctx,listing_property_id,monthly_rent, transaction_date){
         const daily_rent = monthly_rent/30.0;
        // query find token by listing_property_id
         let query = {
@@ -235,6 +321,20 @@ async generateID(key,count){
         const propertyTokenOwner = await this.getQueryResult(ctx,query);
         // payment rent daily
         for (const property of propertyTokenOwner){
+            // create transaction
+            let transactionId = "TRANSACTION_RDIT"+property.user_id+"_"+property.id+"_"+transaction_date;
+            let rentalDailyIncomeTransaction = {
+                docType: "rentalDailyIncomeTransaction",
+                id: transactionId,
+                income_amount: (daily_rent * property.own_number) / token.quantity,
+                is_withdrawn: false,
+                rental_income_wallet_id: property.user_id,
+                listing_property_id,
+                transaction_date
+            };
+            await ctx.stub.putState(`rentalDailyIncomeTransaction:${rentalDailyIncomeTransaction.id}`, Buffer.from(JSON.stringify(rentalDailyIncomeTransaction)));
+
+            // update rental income wallet
             let rentalIncomeWallet = await this.queryRentalIncomeWallet(ctx, property.user_id)
             rentalIncomeWallet.total_current_balance = parseFloat(rentalIncomeWallet.total_current_balance) +
                 ((daily_rent * property.own_number) / token.quantity);
@@ -410,25 +510,20 @@ async generateID(key,count){
             return true;
         });
     }
-    async getQueryResultV2(ctx,queryString) {
-        const iterator = await ctx.stub.getQueryResult(JSON.parse(queryString));
-        const documents = [];
-        while (true) {
-            const result = await iterator.next();
-
-            if (result.value && result.value.value.toString()) {
-                const document = JSON.parse(result.value.value.toString('utf8'));
-                documents.push(document);
-            }
-
-            if (result.done) {
-                await iterator.close();
-                break;
-            }
+    async getQueryResultV2(ctx,queryString){
+        const query = JSON.parse(queryString);
+            const allEntity = await this.getAllByEntity(ctx,query.docType);
+            return allEntity.filter(obj => {
+                for (const key in query) {
+                    if (query.hasOwnProperty(key)) {
+                        if (obj[key] !== query[key]) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            });
         }
-
-        return Buffer.from(JSON.stringify(documents));
     }
-}
 
 module.exports = RealEstateTransfer;

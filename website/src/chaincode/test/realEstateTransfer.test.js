@@ -84,8 +84,14 @@ describe('RealEstateTransfer Smart Contract', () => {
             //        "docType":"123"
             //    }
             // }
-            const teest = await contract.getOwnPropertyTokenByTokenAndUserId(ctx,"TOKEN_0004","ACCOUNT_0004");
-            console.log(teest);
+            await contract.getPaymentRentDaily(ctx,"LP_0001",3000,new Date());
+            const test1 =  await contract.queryUser(ctx,"ACCOUNT_0001");
+            console.log(test1);
+            await contract.getWithDrawRentalIncome(ctx,"ACCOUNT_0001", new Date());
+            const test =  await contract.queryUser(ctx,"ACCOUNT_0001");
+            console.log(test);
+            const x = await contract.getOwnPropertyTokenByUserId(ctx,"ACCOUNT_0001");
+            console.log(x);
         });
     });
 
