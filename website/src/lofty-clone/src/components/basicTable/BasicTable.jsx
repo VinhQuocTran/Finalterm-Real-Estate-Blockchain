@@ -7,6 +7,7 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 import { useState } from 'react'
+import "./w3.css";
 import "./basicTable.scss";
 
 export default function BasicTable({ data, columns }) {

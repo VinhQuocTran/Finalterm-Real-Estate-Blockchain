@@ -12,7 +12,8 @@
 
   .boxContainer {
     margin-top: 30px;
-    h1 {
+    
+    .boxTitle {
       color: #fff;
       border-bottom: 2px solid rgb(255, 102, 0);
       margin-bottom: 16px;
@@ -41,6 +42,7 @@
       display: flex;
       flex-direction: column;
       color: #fff;
+      gap: 24px;
 
       h2 {
         color: var(--grey-medium);

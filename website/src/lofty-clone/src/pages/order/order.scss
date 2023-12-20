@@ -1,0 +1,10 @@
+@import "../../mixins.scss";
+
+.order {
+    // margin: 30px 0;
+    flex: 1;
+
+    @include md {
+        margin-top: 60px;
+    }
+}

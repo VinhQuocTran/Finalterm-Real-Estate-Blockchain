@@ -68,7 +68,7 @@ const TokenOwnership = () => {
     <div className={`tokenOwnership ${appTheme.themeColor === 'dark' ? 'darkTheme' : ""}`}>
       <ContentWrapper>
         <div className="boxContainer">
-          <h1>Withdraw History</h1>
+          <h1 className="boxTitle">Withdraw History</h1>
           <div className="box">
             <div className="boxLeft">
               <h2>Current Rent Balance (USD)</h2>
@@ -83,7 +83,7 @@ const TokenOwnership = () => {
           </div>
         </div>
         <div className="boxContainer">
-          <h1>Token Ownership</h1>
+          <h1 className="boxTitle">Token Ownership</h1>
           <div className="items">
             {tokenOwnership && tokenOwnership?.map((item, index) => <TokenCard key={index} token={item} />)}
           </div>

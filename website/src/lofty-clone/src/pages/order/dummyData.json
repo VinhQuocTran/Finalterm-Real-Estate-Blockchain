@@ -1,0 +1,92 @@
+[
+    {
+        "createdDate": "15/06/2022",
+        "houseName": "Hotel ABC",
+        "url": "https://link-to-house.com/house/123",
+        "quantity": 5,
+        "price": 52,
+        "status": "Completed",
+        "type": "Buy",
+        "delete": false
+    },
+    {
+        "createdDate": "18/06/2022",
+        "houseName": "Resort XYZ",
+        "url": "https://link-to-house.com/house/456",
+        "quantity": 10,
+        "price": 75,
+        "status": "Active",
+        "type": "Sell",
+        "delete": false
+    },
+    {
+        "createdDate": "21/06/2022",
+        "houseName": "Cottage PQR",
+        "url": "https://link-to-house.com/house/789",
+        "quantity": 8,
+        "price": 60,
+        "status": "Completed",
+        "type": "Buy",
+        "delete": false
+    },
+    {
+        "createdDate": "15/06/2022",
+        "houseName": "Hotel ABC",
+        "url": "https://link-to-house.com/house/123",
+        "quantity": 5,
+        "price": 52,
+        "status": "Completed",
+        "type": "Buy",
+        "delete": false
+    },
+    {
+        "createdDate": "18/06/2022",
+        "houseName": "Resort XYZ",
+        "url": "https://link-to-house.com/house/456",
+        "quantity": 10,
+        "price": 75,
+        "status": "Active",
+        "type": "Sell",
+        "delete": false
+    },
+    {
+        "createdDate": "21/06/2022",
+        "houseName": "Cottage PQR",
+        "url": "https://link-to-house.com/house/789",
+        "quantity": 8,
+        "price": 60,
+        "status": "Completed",
+        "type": "Buy",
+        "delete": false
+    },
+    {
+        "createdDate": "15/06/2022",
+        "houseName": "Hotel ABC",
+        "url": "https://link-to-house.com/house/123",
+        "quantity": 5,
+        "price": 52,
+        "status": "Completed",
+        "type": "Buy",
+        "delete": false
+    },
+    {
+        "createdDate": "18/06/2022",
+        "houseName": "Resort XYZ",
+        "url": "https://link-to-house.com/house/456",
+        "quantity": 10,
+        "price": 75,
+        "status": "Active",
+        "type": "Sell",
+        "delete": false
+    },
+    {
+        "createdDate": "21/06/2022",
+        "houseName": "Cottage PQR",
+        "url": "https://link-to-house.com/house/789",
+        "quantity": 8,
+        "price": 60,
+        "status": "Completed",
+        "type": "Buy",
+        "delete": false
+    }
+]
