@@ -2,15 +2,18 @@ import axios from "axios";
 import ProgressBar from "@ramonak/react-progress-bar";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../utils/api";
 import Skeleton from 'react-loading-skeleton'
+import TokenModal from "../../components/tokenTransaction/TokenModal";
+import { useSelector } from "react-redux";
 import 'react-loading-skeleton/dist/skeleton.css'
 import "./detailedHouse.scss";
-import TokenModal from "../../components/tokenTransaction/TokenModal";
 
 const DetailedHouse = () => {
+  const currentUser = useSelector(state => state.user);
+  const navigate = useNavigate();
   const { propertyId } = useParams();
   const [property, setProperty] = useState(null);
   const [token, setToken] = useState(null);
@@ -22,7 +25,7 @@ const DetailedHouse = () => {
     setLoading(true);
     const fetchProperty = async () => {
       try {
-        let response = await axios.get(BASE_URL + `/properties/${propertyId}`);
+        let response = await axios.get(BASE_URL + `/properties/${propertyId}/detailProperty`);
         setProperty(response.data.data.property);
         setToken(response.data.data.token);
         console.log(response.data.data)
@@ -37,6 +40,9 @@ const DetailedHouse = () => {
   }, [propertyId]);
 
   const openBuyModal = () => {
+    if (!currentUser.user) {
+      navigate("/sign-in");
+    }
     setBuyModalOpen(true);
   };
 
@@ -51,6 +57,7 @@ const DetailedHouse = () => {
   const closeSellModal = () => {
     setSellModalOpen(false);
   };
+
   return (
     <div className="detailedHouse">
       <div className="imgContainer">
@@ -125,7 +132,7 @@ const DetailedHouse = () => {
           <div className="boxBody">
             <div className="bodyItem">
               <button type="button" onClick={openBuyModal}>Buy</button>
-              <button type="button" onClick={openSellModal}>Sell</button>
+              <button disabled={!currentUser.user} type="button" onClick={openSellModal}>Sell</button>
             </div>
 
             <TokenModal

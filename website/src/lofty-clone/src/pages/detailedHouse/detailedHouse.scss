@@ -293,7 +293,7 @@
           padding: 16px 20px;
           outline: none;
           border: none;
-          cursor: pointer;
+          cursor: pointer;         
 
           &:first-child {
             background-color: var(--blue-dark);
@@ -302,9 +302,15 @@
           }
 
           &:last-child {
-            background-color: var(--grey);
-            color: var(--grey-medium);
-            margin-left: 8px
+            background-color: var(--green);
+            color: #fff;
+            margin-left: 8px;
+
+            &:disabled {
+              background-color: var(--grey);
+              color: var(--grey-medium);
+              cursor: unset;
+            }
           }
         }
       }

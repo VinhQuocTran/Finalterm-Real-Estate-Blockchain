@@ -102,7 +102,7 @@ const getWithDrawByUserId = catchAsync(async (req, res, next) => {
 const getOwnPropertyTokenByUserId = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
-    const ownPropertyToken = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId",req.body.id,req.body.money);
+    const ownPropertyToken = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId",req.params.id);
     res.status(200).json({
         status: 'success',
         data: ownPropertyToken
