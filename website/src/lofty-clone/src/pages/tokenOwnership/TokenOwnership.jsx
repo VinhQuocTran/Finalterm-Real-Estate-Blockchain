@@ -1,15 +1,22 @@
 import { FaRegQuestionCircle } from "react-icons/fa";
 import ContentWrapper from "../../components/contentWrapper/ContentWrapper";
-import "./tokenOwnership.scss";
 import { TokenCard } from "../../components/imports";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../utils/api";
+import { setDarkTheme } from "../../redux/themeSlice";
+import "./tokenOwnership.scss";
 
-const TokenOwnership = () => {
+const TokenOwnership = ({darkTheme}) => {
   const [tokenOwnership, setTokenOwnership] = useState(null);
   const currentUser = useSelector(state => state.user);
+  const appTheme = useSelector(state => state.theme);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setDarkTheme());
+  }, []);
 
   useEffect(() => {
     const fetchTokenOwnership = async () => {
@@ -26,7 +33,7 @@ const TokenOwnership = () => {
   console.log(tokenOwnership);
     
   return (
-    <div className="tokenOwnership">
+    <div className={`tokenOwnership ${darkTheme ? 'darkTheme' : ""}`}>
       <ContentWrapper>
         <div className="box">
           <div className="boxLeft">

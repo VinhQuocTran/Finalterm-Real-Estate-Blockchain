@@ -19,6 +19,7 @@ const Header = () => {
   const profileModalRef = useRef();
   const [isProfileModalOpened, setIsProfileModalOpened] = useState(false);
   const navigate = useNavigate();
+  const appTheme = useSelector(state => state.theme);
 
   const mobileMenuClickHandler = () => {
     setOpenMobileMenu(!openMobileMenu);
@@ -65,15 +66,16 @@ const Header = () => {
   });
 
   return (
-    <header className="header">
+    <header className={`header ${appTheme.themeColor === 'dark' ? 'darkTheme' : ''}`}>
       <ContentWrapper>
         <div className="logo" onClick={() => navigate("/")}>
-          <img src="https://www.lofty.ai/static/media/logo-light.ff9fcbf0916e664961e966b23ce0dcc5.svg?__cf_chl_tk=Ikxz1stAGrjbZdu6FcAGd13.pCoDP1rb67ddLlwlSD8-1701791342-0-gaNycGzNEyU" alt="" />
+          {/* <img src="https://www.lofty.ai/static/media/logo-light.ff9fcbf0916e664961e966b23ce0dcc5.svg?__cf_chl_tk=Ikxz1stAGrjbZdu6FcAGd13.pCoDP1rb67ddLlwlSD8-1701791342-0-gaNycGzNEyU" alt="" /> */}
+          <span>Lofty</span>
         </div>
         <div className={`rightHeader ${openMobileMenu && width < 1024 ? 'mobileView' : ''}`} ref={mobileViewRef}>
           <ul className="nav-items">
             <li className="nav-item" onClick={() => navigate("/")}>Marketplace</li>
-            <li className="nav-item" onClick={() => navigate("/token-ownership")}>Token Ownership</li>
+            <li className="nav-item" onClick={() => navigate("/token-ownership-and-rental-income")}>Token Ownership and Rental Income</li>
             <li className="nav-item" onClick={() => navigate("/my-property")}>My Property</li>
             {currentUser.user ?
               <li className="nav-item" onClick={handleProfileModalClick}>{currentUser.user.username}</li> :

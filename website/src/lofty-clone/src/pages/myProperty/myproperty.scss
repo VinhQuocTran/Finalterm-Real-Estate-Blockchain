@@ -3,6 +3,11 @@
 .myProperty {
   position: relative;
   margin: 64px 0;
+  flex: 1;
+
+  // &.darkTheme {
+
+  // }
 
   .buttons {
     button {
