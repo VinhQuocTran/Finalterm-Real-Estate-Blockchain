@@ -10,10 +10,11 @@ import BasicTable from "../../components/basicTable/BasicTable";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import "./tokenOwnership.scss";
-import { decreaseCashBalance } from "../../redux/userSlice";
+import { increaseCashBalance, updateUser } from "../../redux/userSlice";
 
 const TokenOwnership = () => {
   const [tokenOwnership, setTokenOwnership] = useState(null);
+  const [historyWithdraws, setHistoryWithdraws] = useState([]);
   const [totalCurrentEarned, setTotalCurrentEarned] = useState(0);
   const currentUser = useSelector(state => state.user);
   const appTheme = useSelector(state => state.theme);
@@ -23,23 +24,19 @@ const TokenOwnership = () => {
     {
       header: 'Withdraw ID',
       accessorKey: 'id',
-      footer: 'Withdraw ID',
     },
     {
       header: 'Amount',
-      accessorKey: 'amount',
-      footer: 'Amount',
+      accessorKey: 'withdraw_amount',
 
     },
     {
       header: 'Date time',
-      accessorKey: 'datetime',
-      footer: 'Date time',
+      accessorKey: 'withdraw_date',
     },
     {
       header: 'Type',
-      accessorKey: 'type',
-      footer: 'Type',
+      accessorKey: 'withdraw_type_option',
     }
   ];
 
@@ -51,7 +48,8 @@ const TokenOwnership = () => {
         }
       });
 
-      dispatch(decreaseCashBalance(totalCurrentEarned));
+      dispatch(increaseCashBalance(totalCurrentEarned));
+      // dispatch(updateUser(currentUser.user));
 
       toast.success('Withdraw successfully', {
         position: "top-right",
@@ -102,7 +100,22 @@ const TokenOwnership = () => {
     setTotalCurrentEarned(value?.toFixed(2));
   }, [tokenOwnership]);
 
-  console.log(tokenOwnership);
+  useEffect(() => {
+    const fetchHistoryWithdraw = async () => {
+      try {
+        const response = await axios.get(BASE_URL + `/chains/${currentUser.user.id}/withdrawIncome`, {
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`
+          }
+        });
+        console.log(response);
+        setHistoryWithdraws(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchHistoryWithdraw();
+  }, [currentUser?.user]);
 
   return (
     <div className={`tokenOwnership ${appTheme.themeColor === 'dark' ? 'darkTheme' : ""}`}>
@@ -119,7 +132,7 @@ const TokenOwnership = () => {
             </div>
           </div>
           <div className="widthdrawHistoryList">
-            <BasicTable data={withdrawHistoryList} columns={columns} />
+            <BasicTable data={historyWithdraws} columns={columns} />
           </div>
         </div>
         <div className="boxContainer">

@@ -13,6 +13,7 @@ router.get('/offers', chainController.getAllOffers);
 
 router.use(protect);
 
+router.get('/:userId/withdrawIncome', chainController.withdrawIncome);
 router.get('/:userId/getWithDrawRentalIncome', chainController.getWithDrawRentalIncome);
 router.put('/users/deposit',chainController.getDepositByUserId)
 router.put('/users/withdraw',chainController.getWithDrawByUserId)

@@ -144,6 +144,9 @@ const TokenModal = ({ isOpen, onClose, actionType, token,toast }) => {
                 is_buy: true
             });
             onClose();
+            setTimeout(() => {
+                window.location.reload();
+            }, 5000);
         }
         catch (err) {
             toast.error('Create offer failed!', {

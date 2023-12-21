@@ -489,6 +489,14 @@ class RealEstateTransfer extends Contract {
         return JSON.parse(tokenAsBytes.toString());
     }
 
+    async queryOffer(ctx, id) {
+        const userAsBytes = await ctx.stub.getState(`offer:${id}`);
+        if (!userAsBytes || userAsBytes.length === 0) {
+            throw new Error(`Offer with ID ${id} does not exist`);
+        }
+        return JSON.parse(userAsBytes.toString());
+    }
+
     async getAllByEntity(ctx, entity) {
         const iterator = await ctx.stub.getStateByRange('', '');
         const allEntity = [];
@@ -519,6 +527,7 @@ class RealEstateTransfer extends Contract {
             return true;
         });
     }
+
     async getQueryResultV2(ctx, queryString) {
         const query = JSON.parse(queryString);
         const allEntity = await this.getAllByEntity(ctx, query.docType);
@@ -532,6 +541,13 @@ class RealEstateTransfer extends Contract {
             }
             return true;
         });
+    }
+
+    async updateOffer(ctx, offer_id) {
+        let offer = await this.queryOffer(ctx, offer_id);
+        offer.is_active = false;
+        offer.is_finished = true;
+        await ctx.stub.putState(`offer:${id}`, Buffer.from(JSON.stringify(offer)));        
     }
 }
 
