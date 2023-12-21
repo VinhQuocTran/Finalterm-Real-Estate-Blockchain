@@ -7,7 +7,10 @@ import { BASE_URL } from "../../utils/api";
 import { setDarkTheme } from "../../redux/themeSlice";
 import withdrawHistoryList from "./dummyData.json";
 import BasicTable from "../../components/basicTable/BasicTable";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import "./tokenOwnership.scss";
+import { decreaseCashBalance } from "../../redux/userSlice";
 
 const TokenOwnership = () => {
   const [tokenOwnership, setTokenOwnership] = useState(null);
@@ -40,6 +43,41 @@ const TokenOwnership = () => {
     }
   ];
 
+  const handleWithdrawClick = async () => {
+    try {
+      await axios.get(BASE_URL + `/chains/${currentUser.user.id}/getWithDrawRentalIncome`, {
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`
+        }
+      });
+
+      dispatch(decreaseCashBalance(totalCurrentEarned));
+
+      toast.success('Withdraw successfully', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error('Something went wrong!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  };
+
   useEffect(() => {
     dispatch(setDarkTheme());
   }, []);
@@ -57,12 +95,14 @@ const TokenOwnership = () => {
   }, [currentUser?.user]);
 
   useEffect(() => {
-    const value = tokenOwnership?.reduce((accumulator, { total_earned }) => {
-      return accumulator + total_earned;
+    const value = tokenOwnership?.reduce((accumulator, tokenOwnership) => {
+      return accumulator + tokenOwnership.total_current_balance;
     }, 0);
     console.log(value);
     setTotalCurrentEarned(value?.toFixed(2));
   }, [tokenOwnership]);
+
+  console.log(tokenOwnership);
 
   return (
     <div className={`tokenOwnership ${appTheme.themeColor === 'dark' ? 'darkTheme' : ""}`}>
@@ -75,7 +115,7 @@ const TokenOwnership = () => {
               <span>${totalCurrentEarned}</span>
             </div>
             <div className="boxRight">
-              <button type="button">Withdraw</button>
+              <button type="button" onClick={handleWithdrawClick}>Withdraw</button>
             </div>
           </div>
           <div className="widthdrawHistoryList">
@@ -89,6 +129,7 @@ const TokenOwnership = () => {
           </div>
         </div>
       </ContentWrapper>
+      <ToastContainer />
     </div>
   )
 }

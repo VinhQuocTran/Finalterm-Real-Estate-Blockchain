@@ -24,7 +24,7 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     // await fabricService.submitTransaction("matchingOffers",`${now.toISOString()}`);
     // await fabricService.submitTransaction("getPaymentRentDaily","LP_0001",3000);
     
-    const result  = await fabricService.evaluateTransaction("getAllByEntity","tokenTransaction");
+    const result  = await fabricService.evaluateTransaction("getAllByEntity","rentalIncomeWallet");
     // const queryResult = {
     //     "selector":{
     //         "docType": "token"
@@ -46,6 +46,8 @@ const createUser = catchAsync(async (req, res, next) => {
     await fabricService.connect();
     await fabricService.submitTransaction("createUser",req.body.user_id,0,0);
     const user = await fabricService.evaluateTransaction("queryUser",req.body.user_id);
+    await fabricService.disconnect();
+
     res.status(200).json({
         status: 'success',
         data: user
@@ -80,6 +82,7 @@ const getUserById = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
     const user = await fabricService.evaluateTransaction("queryUser",req.params.id);
+    await fabricService.disconnect();
     res.status(200).json({
         status: 'success',
         data: user
@@ -102,6 +105,8 @@ const getWithDrawByUserId = catchAsync(async (req, res, next) => {
     await fabricService.connect();
     await fabricService.submitTransaction("getWithDrawByUserId",req.body.user_id,req.body.money);
     const user = await fabricService.evaluateTransaction("queryUser",req.body.user_id);
+    await fabricService.disconnect();
+
         res.status(200).json({
         status: 'success',
         data: user
@@ -111,6 +116,8 @@ const getOwnPropertyTokenByUserId = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
     const ownPropertyToken = await fabricService.evaluateTransaction("getOwnPropertyTokenByUserId",req.params.id);
+    await fabricService.disconnect();
+
     res.status(200).json({
         status: 'success',
         data: ownPropertyToken
@@ -148,6 +155,18 @@ const getTokenizeProperty = catchAsync(async (req, res, next) => {
     })
 });
 
+const getWithDrawRentalIncome = catchAsync(async (req, res, next) => {
+    await fabricService.initialize();
+    await fabricService.connect();
+    await fabricService.submitTransaction("getWithDrawRentalIncome", req.params.userId, `${new Date()}`);
+    await fabricService.disconnect();
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Withdraw successfully'
+    });
+});
+
 module.exports = {
     getChain,
     getAllUsers,
@@ -158,5 +177,6 @@ module.exports = {
     getTokenizeProperty,
     createUser,
     createOffer,
-    getAllOffers
+    getAllOffers,
+    getWithDrawRentalIncome
 };

@@ -25,6 +25,7 @@ const DetailedHouse = () => {
   const detailsRef = useRef(null);
   const documentsRef = useRef(null);
   const orderBookRef = useRef(null);
+  const [tokenOffers, setTokenOffers] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -42,6 +43,20 @@ const DetailedHouse = () => {
 
     fetchProperty();
   }, [propertyId]);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const response = await axios.get(BASE_URL + `/chains/offers`);
+        const currentOffers = response.data.data.filter(offer => offer.token_id === token.id && offer.is_active);
+        setTokenOffers(currentOffers);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchOffers();
+  }, [token]);
 
   const openBuyModal = () => {
     if (!currentUser.user) {
@@ -125,39 +140,43 @@ const DetailedHouse = () => {
             <div className="items">
               <div className="item">
                 <h4>Price (USD)</h4>
+                {tokenOffers && tokenOffers.map(offer => offer.is_buy && <span>{Number(offer.at_price).toFixed(2)}</span>)}
+                {/* <span>50.13</span>
                 <span>50.13</span>
                 <span>50.13</span>
                 <span>50.13</span>
                 <span>50.13</span>
-                <span>50.13</span>
-                <span>50.13</span>
+                <span>50.13</span> */}
               </div>
               <div className="item">
                 <h4>Buy order</h4>
+                {tokenOffers && tokenOffers.map(offer => offer.is_buy && <span>{offer.quantity}</span>)}                
+                {/* <span>5 Tokens</span>
                 <span>5 Tokens</span>
                 <span>5 Tokens</span>
                 <span>5 Tokens</span>
                 <span>5 Tokens</span>
-                <span>5 Tokens</span>
-                <span>5 Tokens</span>
+                <span>5 Tokens</span> */}
               </div>
               <div className="item">
                 <h4>Price (USD)</h4>
+                {tokenOffers && tokenOffers.map(offer => !offer.is_buy && <span>{Number(offer.at_price).toFixed(2)}</span>)}
+                {/* <span>50.13</span>
                 <span>50.13</span>
                 <span>50.13</span>
                 <span>50.13</span>
                 <span>50.13</span>
-                <span>50.13</span>
-                <span>50.13</span>
+                <span>50.13</span> */}
               </div>
               <div className="item">
                 <h4>Sell order</h4>
+                {tokenOffers && tokenOffers.map(offer => !offer.is_buy && <span>{offer.quantity}</span>)}                                
+                {/* <span>5 Tokens</span>
                 <span>5 Tokens</span>
                 <span>5 Tokens</span>
                 <span>5 Tokens</span>
                 <span>5 Tokens</span>
-                <span>5 Tokens</span>
-                <span>5 Tokens</span>
+                <span>5 Tokens</span> */}
               </div>
             </div>
           </div>
