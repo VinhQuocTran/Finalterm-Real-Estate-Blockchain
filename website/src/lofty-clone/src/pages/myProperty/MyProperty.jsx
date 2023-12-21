@@ -10,7 +10,8 @@ import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPrope
 import { BASE_URL } from "../../utils/api";
 import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus, updateProperty, updateListingPropertyStatus } from "../../redux/userPropertiesSlice";
 import FilterItem from "../../components/filterItem/FilterItem";
-import {setLightTheme} from "../../redux/themeSlice";
+import { setLightTheme } from "../../redux/themeSlice";
+import { updateCashBalance, updateUser } from "../../redux/userSlice";
 import "./myproperty.scss";
 
 const MyProperty = () => {
@@ -338,7 +339,13 @@ const MyProperty = () => {
       });
       console.log(response.data);
       if (response.data.status === "success") {
+        console.log(response.data.data);
+        const { updatedUser } = response.data.data;
+        console.log(JSON.parse(updatedUser));;
+        console.log(JSON.parse(updatedUser).cash_balance);
         dispatch(updateListingPropertyStatus(listingPropertyId));
+        dispatch(updateUser({ cashBalance: JSON.parse(updatedUser).cash_balance }));
+        console.log(currentUser);
       }
       setListingPropertyId(null);
 

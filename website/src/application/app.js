@@ -29,6 +29,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
 
 const {startMatchingOffersTask,startPaymentDailyRentTask,getMatchingOffers,getPaymentDailyRent} = require('./controllers/customController');
+const catchAsync = require('./utils/catchAsync');
 const app = express();
 
 // Body parser, reading data from body into req.body
@@ -36,6 +37,10 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 app.use(cors());
+
+// set schedulers
+startMatchingOffersTask(getMatchingOffers);
+startPaymentDailyRentTask(getPaymentDailyRent);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // blockchain
@@ -62,10 +67,6 @@ app.use('/api/dailyReplenishTransactions', dailyReplenishTransactionRoute);
 // custom - related to multiple-table
 app.use('/api/custom', customRoute);
 
-
-// set schedulers
-startMatchingOffersTask(getMatchingOffers);
-startPaymentDailyRentTask(getPaymentDailyRent);
 app.use('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });

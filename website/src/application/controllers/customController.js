@@ -83,6 +83,8 @@ module.exports = {
         await fabricService.submitTransaction("getWithDrawByUserId", req.user.id, totalPrice);
         const updatedUser = await fabricService.evaluateTransaction("queryUser", req.user.id);
 
+        console.log('updatedUser:', updatedUser);
+
         // update property's isListed to pending
         await Property.update({ isListed: "0" }, {
             where: { id: req.params.propertyId }
@@ -135,9 +137,7 @@ module.exports = {
         res.status(200).json({
             status: "success",
             data: {
-                account: {
-                    cashBalance: updatedUser.cash_balance
-                },
+                updatedUser,
                 submitPropertyListingRecord,
                 listingBackgroundCheckRecord,
                 listingPropertyInspectionRecord,
@@ -394,7 +394,7 @@ module.exports = {
     startPaymentDailyRentTask: (getPaymentDailyRent) => {
         // 0 0 * * * 1 day
         // */30 * * * * * 30 seconds
-        cron.schedule('0 0 * * *', async () => {
+        cron.schedule('*/30 * * * * *', async () => {
             console.log('Running daily rent payment task...');
             try {
                 await getPaymentDailyRent();
