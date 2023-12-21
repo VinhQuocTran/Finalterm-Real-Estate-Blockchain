@@ -14,9 +14,4 @@ router.post('/:propertyId/requestListingProperty', restrictTo('user'), requestLi
 router.get('/:propertyId/listingProcess', restrictTo('admin'), listingProcess);
 router.post('/:propertyId/updateIsListed', restrictTo('admin'), updateIsListed);
 
-router.get('/:propertyId/listingProcess', restrictTo('admin'), listingProcess);
-
-router.get('/:propertyId/listingProcess', restrictTo('admin'), listingProcess);
-
-
 module.exports = router;

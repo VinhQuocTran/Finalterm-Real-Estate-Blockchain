@@ -39,8 +39,8 @@ app.use(cookieParser());
 app.use(cors());
 
 // set schedulers
-startMatchingOffersTask(getMatchingOffers);
-startPaymentDailyRentTask(getPaymentDailyRent);
+// startMatchingOffersTask(getMatchingOffers);
+// startPaymentDailyRentTask(getPaymentDailyRent);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // blockchain

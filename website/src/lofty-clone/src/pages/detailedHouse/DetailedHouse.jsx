@@ -50,6 +50,7 @@ const DetailedHouse = () => {
         const response = await axios.get(BASE_URL + `/chains/offers`);
         const currentOffers = response.data.data.filter(offer => offer.token_id === token.id && offer.is_active);
         setTokenOffers(currentOffers);
+        console.log(currentOffers);
       } catch (err) {
         console.log(err);
       }
@@ -88,6 +89,7 @@ const DetailedHouse = () => {
     // Add 'isClicked' class to the clicked tab
     tabRef.current.classList.add('isClicked');
   };
+
 
   return (
     <div className="detailedHouse">
@@ -140,7 +142,7 @@ const DetailedHouse = () => {
             <div className="items">
               <div className="item">
                 <h4>Price (USD)</h4>
-                {tokenOffers && tokenOffers.map(offer => offer.is_buy && <span>{Number(offer.at_price).toFixed(2)}</span>)}
+                {tokenOffers && tokenOffers.map(offer => offer.is_buy==="true" && <span>{Number(offer.at_price).toFixed(2)}</span>)}
                 {/* <span>50.13</span>
                 <span>50.13</span>
                 <span>50.13</span>
@@ -150,7 +152,7 @@ const DetailedHouse = () => {
               </div>
               <div className="item">
                 <h4>Buy order</h4>
-                {tokenOffers && tokenOffers.map(offer => offer.is_buy && <span>{offer.quantity}</span>)}                
+                {tokenOffers && tokenOffers.map(offer => offer.is_buy==="true" && <span>{offer.quantity}</span>)}                
                 {/* <span>5 Tokens</span>
                 <span>5 Tokens</span>
                 <span>5 Tokens</span>
@@ -160,7 +162,7 @@ const DetailedHouse = () => {
               </div>
               <div className="item">
                 <h4>Price (USD)</h4>
-                {tokenOffers && tokenOffers.map(offer => !offer.is_buy && <span>{Number(offer.at_price).toFixed(2)}</span>)}
+                {tokenOffers && tokenOffers.map(offer => offer.is_buy==="false" && <span>{Number(offer.at_price).toFixed(2)}</span>)}
                 {/* <span>50.13</span>
                 <span>50.13</span>
                 <span>50.13</span>
@@ -170,7 +172,7 @@ const DetailedHouse = () => {
               </div>
               <div className="item">
                 <h4>Sell order</h4>
-                {tokenOffers && tokenOffers.map(offer => !offer.is_buy && <span>{offer.quantity}</span>)}                                
+                {tokenOffers && tokenOffers.map(offer => offer.is_buy==="false" && <span>{offer.quantity}</span>)}                                
                 {/* <span>5 Tokens</span>
                 <span>5 Tokens</span>
                 <span>5 Tokens</span>

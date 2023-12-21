@@ -44,19 +44,23 @@ const userSlice = createSlice({
     },
     decreaseCashBalance: (state, action) => {
       state.user.cashBalance -= action.payload;
+    },
+    increaseCashBalance: (state, action) => {
+      state.user.cashBalance += action.payload;
     }
   }
 });
 
-export const { 
-  loginStart, 
-  loginSuccess, 
-  loginFailure, 
-  logout, 
-  updateUser, 
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
+  updateUser,
   updateCashBalance,
   updateTokenBalance,
-  decreaseCashBalance
+  decreaseCashBalance,
+  increaseCashBalance
 } = userSlice.actions;
 
 export default userSlice.reducer;
