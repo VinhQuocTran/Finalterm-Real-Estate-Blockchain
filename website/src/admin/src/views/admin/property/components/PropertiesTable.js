@@ -180,8 +180,8 @@ export default function PropertiesTable(props) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if(name=="houseValuation") setValuationAmount(value);
-    else if(name=="monthlyRent") setMonthlyRent(value);
+    if(name==="houseValuation") setValuationAmount(value);
+    else if(name==="monthlyRent") setMonthlyRent(value);
   }
 
   const handleModalAction = async () => {
@@ -208,9 +208,6 @@ export default function PropertiesTable(props) {
       console.log('Listing action with data:', selectedBackgroundCheck,selectedHouseInspection,selectedHouseValuation);
       try {
         const jwtToken = localStorage.getItem("jwt");
-        console.log("@34242",listingData.backgroundCheck.serviceUsedId);
-        console.log("@34242",listingData.houseInspection.serviceUsedId);
-        console.log("@34242",listingData.houseValuation.serviceUsedId);
         let prop ={
           backgroundCheckServiceId: listingData.backgroundCheck.serviceUsedId,
           isPassListingBackgroundCheck: selectedBackgroundCheck,
@@ -221,7 +218,6 @@ export default function PropertiesTable(props) {
           valuationAmount: valuationAmount,
           monthlyRent: monthlyRent,
         }
-        console.log(prop);;
         const response = await axios.post(config.API_URL + `custom/` + listingData.propertyId+'/updateIsListed', prop, {
           headers: {
             'Content-Type': 'application/json',

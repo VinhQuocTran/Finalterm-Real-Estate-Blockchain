@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Flex, Grid, Icon, IconButton, Image, Input, Link, Select,
+  Flex, FormControl, FormLabel, Grid, Icon, IconButton, Image, Input, Link, Select,
   Table,
   Tbody,
   Td,
@@ -32,25 +32,6 @@ import {
 import config from "../../../../config.json";
 import axios from 'axios';
 import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
-
-function fetchPropertyByIdData(id) {
-  return fetch(config.API_URL+"properties/"+id)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log('Properties data:', data);
-        return data;
-      })
-      .catch((error) => {
-        console.error('Error fetching properties data:', error);
-        throw error;
-      });
-}
-
 
 export default function ListingPropertyTable(props) {
   const { columnsData, tableData, reloadParent } = props;
@@ -88,92 +69,63 @@ export default function ListingPropertyTable(props) {
   const { globalFilter } = state;
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
-  const [size, setSize] = React.useState('full')
+  const [size, setSize] = React.useState('xl')
   const [isOpen, setIsOpen] = useState(false);
   const [modalAction, setModalAction] = useState(null);
-  const [modalData, setModalData] = useState(null);
-  const [propertyData, setPropertyData] = useState({});
-  const [selectedOption, setSelectedOption] = useState("");
-  const options = [
-    { value: 1, label: "Success" },
-    { value: 0, label: "In Progress" },
-    { value: -1, label: "Failed" },
-  ];
-  useEffect(() => {
-    if (modalAction === 'details'|| modalAction==="update") {
-      const fetchData = async () => {
-        try {
-          const data = await fetchPropertyByIdData(modalData.id);
-          setPropertyData(data.data);
-          setSelectedOption(propertyData.isVerified);
-        } catch (error) {
-          console.error('Error in component:', error);
-        }
-      };
-      fetchData();
-    }
-  }, [modalAction, modalData,propertyData.isVerified]);
+  const [modalData, setModalData] = useState({
+    listingPropertyId:0,
+    valuationAmount:0,
+    monthlyRent:0
+  });
 
   const onOpen = (action, dataInput) => {
     setModalAction(action);
     setModalData(dataInput);
-    if (action === 'update') {
-      setSize('xl');
-    }
-    else {
-      setSize('full');
-    }
-      setIsOpen(true);
+    console.log(dataInput);
+    setIsOpen(true);
   };
 
   const onClose = () => {
     setIsOpen(false);
     setModalAction(null);
     setModalData(null);
-    setSelectedOption(null);
   };
-
-  const handleModalAction = async () => {
-    if (modalAction === 'update') {
-      console.log('Update action with data:', selectedOption);
-      try {
-        const jwtToken = localStorage.getItem("jwt");
-        let prop = propertyData;
-        prop.isVerified = selectedOption;
-        await axios.patch(config.API_URL + `properties/` + propertyData.id+'/updateIsVerified', prop, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwtToken}`,
-          },
-        });
-        console.log('Property updated successfully!');
-        let now = new Date();
-        let resultDate = new Date();
-
-        const submitListingProperty = {
-          createdAt: now,
-          propertyId: propertyData.id,
-          result: false,
-          resultDate:resultDate.setDate(now.getDate()+7),
-          submittedDate:now,
-          updatedAt:now
-        }
-        console.log(submitListingProperty);
-        if(selectedOption===1){
-          const s = await axios.post(config.API_URL + `submitListingProperties/`, submitListingProperty, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${jwtToken}`,
-            },
-          });
-          console.log('Create submitListingProperty successfully!');
-        }
-        reloadParent();
-      } catch (error) {
-        console.error('Error updating property:', error);
-      }
-      onClose();
+  const handleInputChange =(event) =>{
+    const { name, value} = event.target;
+    if(name ==="valuationAmount" && value<20000){
+      setModalData({
+        ...modalData,
+        [name]: 20000,
+      })
     }
+    else if(name ==="monthlyRent" && value<0) {
+      setModalData({
+        ...modalData,
+        [name]: 0,
+      })
+    }
+    else{
+        setModalData({
+          ...modalData,
+          [name]: value,
+        });
+    }
+  }
+  const handleModalAction = async () => {
+    try {
+      const jwtToken = localStorage.getItem("jwt");
+      await axios.post(config.API_URL + `chains/updateToken`, modalData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+      });
+      console.log('Listing property updated successfully!');
+      reloadParent();
+    } catch (error) {
+      console.error('Error updating listing property:', error);
+    }
+      onClose();
   };
 
   return (
@@ -234,61 +186,62 @@ export default function ListingPropertyTable(props) {
                   if (cell.column.id === 'actions') {
                     data = (
                       <Flex justifyContent="space-center" alignItems="center">
-                        <Button onClick={() => onOpen('details', {id:row.original.id})} colorScheme="teal" size="sm" marginLeft="1">
-                          Details
-                        </Button>
                         <Modal isOpen={isOpen} size={size} onClose={onClose}>
                           <ModalOverlay />
-                          <ModalContent>
-                            <ModalHeader>{modalAction === 'details' ? 'Details Property' : 'Verify Property'}</ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody>
-                              {/* Conditionally render content based on modalAction and modalData */}
-                              {modalAction === 'details' && modalData && (
-                                  <Card>
-                                    <Box>
-                                      {Object.entries(propertyData).map(([key, value]) => (
-                                          (
-                                              // Additional condition for 'someOtherKey'
-                                              <Box key={key} display="flex" flexDirection="row" mb={2}>
-                                                <Text fontWeight="bold" flex="0 0 30%" pr={2}>
-                                                  {key}
-                                                </Text>
-                                                <Text flex="1">{value}</Text>
-                                              </Box>
-                                          )
-                                      ))}
-                                    </Box>
-                                  </Card>
-                              )}
-                              {/* Other content for different modalAction or no modalData */}
-                              {modalAction === 'update' && (
-                                  <Select
-                                      placeholder="Select an option"
-                                      value={selectedOption}
-                                      onChange={(e) => setSelectedOption(e.target.value)}
-                                      defaultValue={parseInt(propertyData.isVerified)}>
-                                    {options.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                          {option.label}
-                                        </option>
-                                    ))}
-                                  </Select>
-                              )}
-
-                              {modalAction === 'details' && !propertyData && <p>Loading...</p>}
-                            </ModalBody>
-                            <ModalFooter>
-                              <Button colorScheme='blue' mr={3} onClick={onClose}>
-                                Close
-                              </Button>
-                              <Button variant='ghost' onClick={handleModalAction}>
-                                {modalAction === 'details' ? 'Details Action' : 'Verify Action'}
-                              </Button>
-                            </ModalFooter>
-                          </ModalContent>
+                          <form>
+                            <ModalContent>
+                              <ModalHeader>Update Listing Property</ModalHeader>
+                              <ModalCloseButton />
+                              <ModalBody>
+                                <FormControl>
+                                  <FormLabel htmlFor="houseValuation">House Valuation</FormLabel>
+                                  <Input
+                                      isRequired={true}
+                                      fontSize='sm'
+                                      ms={{ base: "0px", md: "0px" }}
+                                      type='number'
+                                      color={textColor}
+                                      placeholder='Enter house valuation'
+                                      mb='24px'
+                                      fontWeight='500'
+                                      size='lg'
+                                      name={"valuationAmount"}
+                                      id="houseValuation"
+                                      onChange={handleInputChange}
+                                      value={modalData?.valuationAmount}
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <FormLabel htmlFor="monthlyRent">Monthly Rent</FormLabel>
+                                  <Input
+                                      isRequired={true}
+                                      fontSize='sm'
+                                      ms={{ base: "0px", md: "0px" }}
+                                      type='number'
+                                      color={textColor}
+                                      placeholder='Enter monthly rent'
+                                      mb='24px'
+                                      fontWeight='500'
+                                      size='lg'
+                                      name={"monthlyRent"}
+                                      id="monthlyRent"
+                                      onChange={handleInputChange}
+                                      value={modalData?.monthlyRent}
+                                  />
+                                </FormControl>
+                              </ModalBody>
+                              <ModalFooter>
+                                <Button colorScheme='blue' mr={3} onClick={onClose}>
+                                  Close
+                                </Button>
+                                <Button variant='ghost' onClick={handleModalAction}>
+                                  Update
+                                </Button>
+                              </ModalFooter>
+                            </ModalContent>
+                          </form>
                         </Modal>
-                        <Button onClick={() => onOpen('update', {id:row.original.id})} colorScheme="green" size="sm" marginLeft="1">
+                        <Button onClick={() => onOpen('update', {listingPropertyId:row.original.id,valuationAmount:row.original.propertyValuation, monthlyRent:row.original.monthlyRent})} colorScheme="green" size="sm" marginLeft="1">
                           Update
                         </Button>
                       </Flex>

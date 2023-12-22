@@ -9,7 +9,7 @@ class RealEstateTransfer extends Contract {
         await Promise.all(
             iterations.map(async (i) => {
                 await this.createUser(ctx, `ACCOUNT_000${i}`, 500000, 0);
-                // await this.createToken(ctx, `TOKEN_000${i}`, `LP_000${i}`, 500);
+                // await this.createToken(ctx, `TOKEN_000${i}`, `LP_000${i}`, 3500);
                 // await this.createPropertyTokenOwner(ctx, `PTO_000${i}`, 500, `TOKEN_000${i}`, `ACCOUNT_000${i}`);
             })
         );
@@ -108,6 +108,18 @@ class RealEstateTransfer extends Contract {
             token_price: 50
         };
         await ctx.stub.putState(`token:${id}`, Buffer.from(JSON.stringify(token)));
+    }
+
+    async updateToken(ctx, listing_property_id, house_price) {
+
+        const query={
+            docType: "token",
+            listing_property_id
+        }
+        const tokens = await this.getQueryResult(ctx,query);
+        let token = tokens[0];
+        token.token_price = Number((house_price / token.quantity).toFixed(2));
+        await ctx.stub.putState(`token:${token.id}`, Buffer.from(JSON.stringify(token)));
     }
 
     async createTokenTransaction(ctx, id, quantity, at_price, seller_id, buyer_id, token_id, transaction_date) {
