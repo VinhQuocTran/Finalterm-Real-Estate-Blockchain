@@ -592,6 +592,7 @@ export default function PropertiesTable(props) {
                                               fontSize='sm'
                                               ms={{ base: "0px", md: "0px" }}
                                               type='number'
+                                              color={textColor}
                                               placeholder='house valuation'
                                               mb='24px'
                                               fontWeight='500'
@@ -605,6 +606,7 @@ export default function PropertiesTable(props) {
                                             <Input
                                               isRequired={true}
                                               fontSize='sm'
+                                              color={textColor}
                                               ms={{ base: "0px", md: "0px" }}
                                               type='number'
                                               placeholder='monthly rent'
