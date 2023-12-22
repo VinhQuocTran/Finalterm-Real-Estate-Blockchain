@@ -132,6 +132,28 @@ const getOwnPropertyTokenByUserId = catchAsync(async (req, res, next) => {
     })
 });
 
+const updateTokenByListingPropertyId = catchAsync(async (req, res, next) => {
+    //update listing property
+    let listingProperty = await ListingProperty.findOne({
+        where: {
+            id: req.body.listingPropertyId
+        }
+    });
+    listingProperty.monthlyRent = req.body.monthlyRent;
+    listingProperty.propertyValuation = req.body.valuationAmount;
+    await listingProperty.save();
+    // update token in chaincode
+    await fabricService.initialize();
+    await fabricService.connect();
+    await fabricService.submitTransaction("updateToken", req.body.listingPropertyId,req.body.valuationAmount);
+    await fabricService.disconnect();
+
+    res.status(200).json({
+        status: 'success',
+        data: "update token successfully"
+    })
+});
+
 const getAllOffers = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
     await fabricService.connect();
@@ -268,6 +290,7 @@ module.exports = {
     getWithDrawByUserId,
     getOwnPropertyTokenByUserId,
     getTokenizeProperty,
+    updateTokenByListingPropertyId,
     createUser,
     createOffer,
     getAllOffers,

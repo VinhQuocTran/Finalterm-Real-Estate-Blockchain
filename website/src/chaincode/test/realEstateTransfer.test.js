@@ -72,25 +72,12 @@ describe('RealEstateTransfer Smart Contract', () => {
     describe('initLedger', () => {
         it('should initialize the ledger with sample data', async () => {
             await contract.initLedger(ctx);
-            await contract.matchingOffers(ctx,new Date());
-            // console.log(await contract.getAllByEntity(ctx,"token"))
-            // await contract.getTokenizeProperty(ctx,"ACCOUNT_0001","cccc",2000);
-            // await contract.createUser(ctx,"ACCOUNT_0001",2342,23424);
-            // await contract.createToken(ctx,"TOKEN_00010","LP_0001",23424);
-            // const test= await contract.getTokenByListingPropertyId(ctx,"LP_0001");
-            // console.log(test);
-            // const query = {
-            //    "selector":{
-            //        "docType":"123"
-            //    }
-            // }
-            await contract.getPaymentRentDaily(ctx,"LP_0001",3000,new Date());
-            const test1 =  await contract.queryUser(ctx,"ACCOUNT_0001");
-            console.log(test1);
-            await contract.getWithDrawRentalIncome(ctx,"ACCOUNT_0001", new Date());
-            const test =  await contract.queryUser(ctx,"ACCOUNT_0001");
-            console.log(test);
-            const x = await contract.getOwnPropertyTokenByUserId(ctx,"ACCOUNT_0001");
+            // await contract.matchingOffers(ctx,new Date());
+            // updateToken
+            await contract.updateToken(ctx,"LP_0001",79000);
+            const x = await contract.getAllByEntity(ctx,"token")
+            await contract.updateToken(ctx,"LP_0001",80000);
+
             console.log(x);
         });
     });
