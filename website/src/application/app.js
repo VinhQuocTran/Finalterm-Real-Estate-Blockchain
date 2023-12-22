@@ -29,7 +29,6 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
 
 const {startMatchingOffersTask,startPaymentDailyRentTask,getMatchingOffers,getPaymentDailyRent} = require('./controllers/customController');
-const catchAsync = require('./utils/catchAsync');
 const app = express();
 
 // Body parser, reading data from body into req.body
@@ -39,7 +38,7 @@ app.use(cookieParser());
 app.use(cors());
 
 // set schedulers
-// startMatchingOffersTask(getMatchingOffers);
+startMatchingOffersTask(getMatchingOffers);
 // startPaymentDailyRentTask(getPaymentDailyRent);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

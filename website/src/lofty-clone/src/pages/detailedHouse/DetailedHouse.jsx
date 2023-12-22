@@ -182,7 +182,7 @@ const DetailedHouse = () => {
               </div>
             </div>
           </div>
-          <div className="description">
+          <div style={{display: activeTab === 'details' ? '' : 'none'}}  className="description">
             <h3>About the property</h3>
             <div className="line"></div>
             <div className="content">

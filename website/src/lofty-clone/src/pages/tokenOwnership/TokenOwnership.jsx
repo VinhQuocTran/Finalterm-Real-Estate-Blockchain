@@ -29,7 +29,7 @@ const TokenOwnership = () => {
     {
       header: 'Amount',
       accessorKey: 'withdraw_amount',
-
+      cell: (info) => Number(info.getValue()).toFixed(2)
     },
     {
       header: 'Date time',
