@@ -18,6 +18,7 @@ const MyProperty = () => {
   const [verifyPropertyId, setVerifyPropertyId] = useState(null);
   const [listingPropertyId, setListingPropertyId] = useState(null);
   const currentUser = useSelector((state) => state.user);
+  const [cashBalance, setCashBalance] = useState(currentUser.user.cashBalance);
   const currentUserProperties = useSelector((state) => state.userProperties);
   const dispatch = useDispatch();
   const newPropertyModalRef = useRef();
@@ -341,11 +342,13 @@ const MyProperty = () => {
       if (response.data.status === "success") {
         console.log(response.data.data);
         const { updatedUser } = response.data.data;
-        console.log(JSON.parse(updatedUser));;
-        console.log(JSON.parse(updatedUser).cash_balance);
+
+        let user = localStorage.getItem('user');
+        user = JSON.parse(user);
+        user.cashBalance = JSON.parse(updatedUser).cash_balance;
+        localStorage.setItem('user', JSON.stringify(user));
         dispatch(updateListingPropertyStatus(listingPropertyId));
-        dispatch(updateUser({ cashBalance: JSON.parse(updatedUser).cash_balance }));
-        console.log(currentUser);
+        
       }
       setListingPropertyId(null);
 

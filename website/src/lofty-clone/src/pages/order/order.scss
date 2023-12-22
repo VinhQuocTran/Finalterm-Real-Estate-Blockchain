@@ -7,4 +7,14 @@
     @include md {
         margin-top: 60px;
     }
+
+    .cancelBtn {
+        color: red;
+        cursor: pointer;
+
+        &.disabled {
+            cursor: unset;
+            color: var(--grey-medium);
+        }
+    }
 }

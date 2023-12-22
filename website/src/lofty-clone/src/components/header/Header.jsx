@@ -30,6 +30,8 @@ const Header = () => {
     profileModalRef.current.style.opacity = !isProfileModalOpened ? 1 : 0;
     if (isProfileModalOpened) e.stopPropagation();
     setIsProfileModalOpened(prevState => !prevState);
+    const tempUser = JSON.parse(localStorage.getItem('user'));
+    setUser(tempUser);
   };
 
   const handleLogoutBtnClick = async () => {
@@ -98,31 +100,31 @@ const Header = () => {
           </div>
           <div className="inputForm">
             <label htmlFor="username">Username</label>
-            <input id="username" type="text" defaultValue={currentUser.user?.username} onChange={(e) => setUser((prev) => ({ ...prev, username: e.target.value }))} />
+            <input id="username" type="text" value={user?.username} onChange={(e) => setUser((prev) => ({ ...prev, username: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" defaultValue={currentUser.user?.email} readOnly />
+            <input id="email" type="email" value={user?.email} readOnly />
           </div>
           <div className="inputForm">
             <label htmlFor="address">Address</label>
-            <input id="address" type="text" defaultValue={currentUser.user?.address} onChange={(e) => setUser((prev) => ({ ...prev, address: e.target.value }))} />
+            <input id="address" type="text" value={user?.address} onChange={(e) => setUser((prev) => ({ ...prev, address: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="phoneNumber">Phone number</label>
-            <input id="phoneNumber" type="text" defaultValue={currentUser.user?.phoneNumber} onChange={(e) => setUser((prev) => ({ ...prev, phoneNumber: e.target.value }))} />
+            <input id="phoneNumber" type="text" value={user?.phoneNumber} onChange={(e) => setUser((prev) => ({ ...prev, phoneNumber: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="residentId">Resident ID</label>
-            <input id="residentId" type="text" defaultValue={currentUser.user?.residentId} onChange={(e) => setUser((prev) => ({ ...prev, residentId: e.target.value }))} />
+            <input id="residentId" type="text" value={user?.residentId} onChange={(e) => setUser((prev) => ({ ...prev, residentId: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="cashBalance">Cash balance</label>
-            <input id="cashBalance" type="number" min={0} defaultValue={currentUser.user?.cashBalance} onChange={(e) => setUser((prev) => ({ ...prev, cashBalance: e.target.value }))} />
+            <input id="cashBalance" type="number" min={0} value={user?.cashBalance} onChange={(e) => setUser((prev) => ({ ...prev, cashBalance: e.target.value }))} />
           </div>
           <div className="inputForm">
             <label htmlFor="tokenBalance">Token balance</label>
-            <input id="tokenBalance" type="number" min={0} defaultValue={currentUser.user?.tokenBalance} onChange={(e) => setUser((prev) => ({ ...prev, tokenBalance: e.target.value }))} />
+            <input id="tokenBalance" type="number" min={0} value={user?.tokenBalance} onChange={(e) => setUser((prev) => ({ ...prev, tokenBalance: e.target.value }))} />
           </div>
           <div className="submitBtns">
             <button type="button" onClick={updateProfileClick}>Save changes</button>

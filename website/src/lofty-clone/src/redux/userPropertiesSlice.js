@@ -16,7 +16,7 @@ const userPropertiesSlice = createSlice({
       state.loading = false;
     },
     fetchUserPropertiesFailure: (state) => {
-      state.loading = true;
+      state.loading = false;
       state.error = true;
     },
     updateUserProperties: (state, action) => {

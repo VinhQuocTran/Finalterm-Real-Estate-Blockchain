@@ -5,12 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../../utils/api";
 import { setDarkTheme } from "../../redux/themeSlice";
-import withdrawHistoryList from "./dummyData.json";
 import BasicTable from "../../components/basicTable/BasicTable";
 import { toast, ToastContainer } from "react-toastify";
+import { increaseCashBalance, updateUser } from "../../redux/userSlice";
+import { DateTime } from "luxon";
 import 'react-toastify/dist/ReactToastify.css';
 import "./tokenOwnership.scss";
-import { increaseCashBalance, updateUser } from "../../redux/userSlice";
+import Skeleton from "react-loading-skeleton";
 
 const TokenOwnership = () => {
   const [tokenOwnership, setTokenOwnership] = useState(null);
@@ -33,6 +34,11 @@ const TokenOwnership = () => {
     {
       header: 'Date time',
       accessorKey: 'withdraw_date',
+      cell: (info) => {
+        const dateTime = DateTime.fromMillis(Number(info.getValue()));
+        const formattedDateTime = dateTime.toFormat('dd/LL/yyyy HH:mm:ss');
+        return formattedDateTime;
+      }
     },
     {
       header: 'Type',
@@ -48,6 +54,10 @@ const TokenOwnership = () => {
         }
       });
 
+      let user = localStorage.getItem('user');
+      user = JSON.parse(user);
+      user.cashBalance += Number(totalCurrentEarned);
+      localStorage.setItem('user', JSON.stringify(user));
       dispatch(increaseCashBalance(totalCurrentEarned));
       // dispatch(updateUser(currentUser.user));
 
@@ -132,7 +142,7 @@ const TokenOwnership = () => {
             </div>
           </div>
           <div className="widthdrawHistoryList">
-            <BasicTable data={historyWithdraws} columns={columns} />
+            <BasicTable data={historyWithdraws || <Skeleton count={10} />} columns={columns} />
           </div>
         </div>
         <div className="boxContainer">
