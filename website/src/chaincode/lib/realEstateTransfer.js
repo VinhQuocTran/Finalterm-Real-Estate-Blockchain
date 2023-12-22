@@ -304,7 +304,7 @@ class RealEstateTransfer extends Contract {
             total_current_balance: 0            
         };
 
-        await ctx.stub.pubState(`rentalIncomeWaller:${rentalIncomeWallet.id}`, Buffer.from(JSON.stringify(rentalIncomeWallet)));
+        await ctx.stub.putState(`rentalIncomeWaller:${rentalIncomeWallet.id}`, Buffer.from(JSON.stringify(rentalIncomeWallet)));
 
         await ctx.stub.putState(`withdrawIncome:${withdrawIncome.id}`, Buffer.from(JSON.stringify(withdrawIncome)));
         console.log(`Withdraw rental income for user ID: ${user_id} successful`);

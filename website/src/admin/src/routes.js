@@ -7,7 +7,6 @@ import {
   MdLock,
   MdPeople,
   MdHouse,
-  MdManageAccounts,
   MdCheck,
   MdSafetyCheck,
   MdCheckCircle,
@@ -19,7 +18,6 @@ import MainDashboard from "views/admin/default";
 import Profile from "views/admin/profile";
 import User from "views/admin/user";
 import Property from "views/admin/property";
-import PropertyManager from "views/admin/propertyManager";
 import ListingProperty from "views/admin/listingProperty";
 import BackgroundCheckService from "views/admin/backgroundCheck";
 import HouseInspectionService from "views/admin/houseInspection";
@@ -43,13 +41,6 @@ const routes = [
     icon: <Icon as={MdPeople} width='20px' height='20px' color='inherit' />,
     path: "/user",
     component: User,
-  },
-  {
-    name: "Property Manager",
-    layout: "/admin",
-    icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
-    path: "/manager-property",
-    component: PropertyManager,
   },
   {
     name: "Property",
