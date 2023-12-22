@@ -161,6 +161,7 @@
       }
 
       .items {
+        position: relative;
         display: flex;
         align-items: flex-start;
         justify-content: center;
@@ -184,7 +185,20 @@
             font-size: 1rem;
             font-weight: 600;
             color: var(--grey-medium);
-          }         
+          }     
+          
+          &:nth-child(2n) {
+            margin-left: 50%;
+          }
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 50%;
+          border-left: 1px solid #ccc;
         }
       }
     }
