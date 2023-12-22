@@ -2,6 +2,9 @@ const HyperLedgerService = require('../utils/hyperLedgerService/hyperLedgerServi
 const catchAsync = require("../utils/catchAsync");
 const fabricService = new HyperLedgerService();
 const Property = require('../models/Property');
+const ListingProperty = require('../models/ListingProperty');
+const SubmitPropertyListing = require('../models/SubmitPropertyListing');
+const SubmitPropertyVerification = require('../models/SubmitPropertyVerification');
 
 const getChain = catchAsync(async (req, res, next) => {
     await fabricService.initialize();
@@ -148,10 +151,6 @@ const getTokenizeProperty = catchAsync(async (req, res, next) => {
         where: { id: req.body.propertyId }
     });
     await fabricService.submitTransaction("getTokenizeProperty", ownerProperty.account_id, req.body.listingPropertyId, req.body.propertyValuation);
-    const query = {
-        docType: "token",
-        listing_property_id: req.body.listingPropertyId
-    }
     const result = await fabricService.evaluateTransaction("getTokenByListingPropertyId", req.body.listingPropertyId);
     await fabricService.disconnect();
     res.status(200).json({
@@ -191,7 +190,77 @@ const withdrawIncome = catchAsync(async (req, res, next) => {
     });
 });
 
+const getAllOrders = catchAsync(async (req, res, next) => {
+    await fabricService.initialize();
+    await fabricService.connect();
+
+    const query = {
+        docType: "offer",
+        user_id: req.params.userId
+    };
+
+    let result = await fabricService.evaluateTransaction("getQueryResultV2", `${JSON.stringify(query)}`);
+
+
+    const offers = await Promise.all(JSON.parse(result).map(async (item) => {
+        const token = JSON.parse(await fabricService.evaluateTransaction("queryToken", item.token_id));
+
+        const listingProperty = await ListingProperty.findOne({
+            where: {
+                id: token.listing_property_id
+            }
+        });
+
+        const submitPropertyListing = await SubmitPropertyListing.findOne({
+            where: {
+                id: listingProperty.submitPropertyListingId
+            }
+        });
+
+        const submitPropertyVerification = await SubmitPropertyVerification.findOne({
+            where: {
+                id: submitPropertyListing.submitPropertyVerificationId,
+                isPass: '1'
+            }
+        });
+
+        const property = await Property.findOne({
+            where: {
+                id: submitPropertyVerification.propertyId
+            }
+        });
+
+        return {
+            item,
+            property
+        };
+    }));
+
+
+    await fabricService.disconnect();
+
+    res.status(200).json({
+        status: 'success',
+        data: offers
+    });
+});
+
+const deleteOrder = catchAsync(async (req, res, next) => {    
+    await fabricService.initialize();
+    await fabricService.connect();
+
+    // retrieve all offers of current user
+    await fabricService.submitTransaction("deleteOffer", req.params.orderId);
+
+    res.status(200).json({
+        status: 'success',
+        data: 'Cancel order successsfully'
+    });
+});
+
 module.exports = {
+    getAllOrders,
+    deleteOrder,
     getChain,
     getAllUsers,
     getUserById,
@@ -203,5 +272,5 @@ module.exports = {
     createOffer,
     getAllOffers,
     getWithDrawRentalIncome,
-    withdrawIncome
+    withdrawIncome,
 };

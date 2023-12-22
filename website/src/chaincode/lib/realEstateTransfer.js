@@ -304,7 +304,7 @@ class RealEstateTransfer extends Contract {
             total_current_balance: 0            
         };
 
-        await ctx.stub.pubState(`rentalIncomeWaller:${rentalIncomeWallet.id}`, Buffer.from(JSON.stringify(rentalIncomeWallet)));
+        await ctx.stub.putState(`rentalIncomeWaller:${rentalIncomeWallet.id}`, Buffer.from(JSON.stringify(rentalIncomeWallet)));
 
         await ctx.stub.putState(`withdrawIncome:${withdrawIncome.id}`, Buffer.from(JSON.stringify(withdrawIncome)));
         console.log(`Withdraw rental income for user ID: ${user_id} successful`);
@@ -543,11 +543,10 @@ class RealEstateTransfer extends Contract {
         });
     }
 
-    async updateOffer(ctx, offer_id) {
+    async deleteOffer(ctx, offer_id) {
         let offer = await this.queryOffer(ctx, offer_id);
         offer.is_active = false;
-        offer.is_finished = true;
-        await ctx.stub.putState(`offer:${id}`, Buffer.from(JSON.stringify(offer)));        
+        await ctx.stub.putState(`offer:${offer_id}`, Buffer.from(JSON.stringify(offer)));        
     }
 }
 

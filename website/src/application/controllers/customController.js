@@ -381,7 +381,7 @@ module.exports = {
             }
     }),
     startMatchingOffersTask: (getMatchingOffers) => {
-        cron.schedule('*/30 * * * * *', async () => {
+        cron.schedule('*/45 * * * * *', async () => {
             console.log('Running rent payment task every 30 seconds...');
             try {
                 await getMatchingOffers();
