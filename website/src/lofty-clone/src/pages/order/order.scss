@@ -1,0 +1,20 @@
+@import "../../mixins.scss";
+
+.order {
+    // margin: 30px 0;
+    flex: 1;
+
+    @include md {
+        margin-top: 60px;
+    }
+
+    .cancelBtn {
+        color: red;
+        cursor: pointer;
+
+        &.disabled {
+            cursor: unset;
+            color: var(--grey-medium);
+        }
+    }
+}

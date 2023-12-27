@@ -20,12 +20,12 @@ const columnsDataProperty = [
     accessor: "area",
   },
   {
-    Header: "Is Listed",
-    accessor: "isListed",
-  },
-  {
     Header: "Is Verified",
     accessor: "isVerified",
+  },
+  {
+    Header: "Is Listed",
+    accessor: "isListed",
   },
   {
     Header: "Document",

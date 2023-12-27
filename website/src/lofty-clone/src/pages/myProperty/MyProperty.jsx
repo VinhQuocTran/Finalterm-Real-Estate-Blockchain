@@ -10,12 +10,15 @@ import NewPropertyFormInput from "../../components/newPropertyFormInput/NewPrope
 import { BASE_URL } from "../../utils/api";
 import { fetchUserPropertiesFailure, fetchUserPropertiesStart, fetchUserPropertiesSuccess, updateUserProperties, updateVerifiedPropertyStatus, updateProperty, updateListingPropertyStatus } from "../../redux/userPropertiesSlice";
 import FilterItem from "../../components/filterItem/FilterItem";
+import { setLightTheme } from "../../redux/themeSlice";
+import { updateCashBalance, updateUser } from "../../redux/userSlice";
 import "./myproperty.scss";
 
 const MyProperty = () => {
   const [verifyPropertyId, setVerifyPropertyId] = useState(null);
   const [listingPropertyId, setListingPropertyId] = useState(null);
   const currentUser = useSelector((state) => state.user);
+  const [cashBalance, setCashBalance] = useState(currentUser.user.cashBalance);
   const currentUserProperties = useSelector((state) => state.userProperties);
   const dispatch = useDispatch();
   const newPropertyModalRef = useRef();
@@ -337,7 +340,15 @@ const MyProperty = () => {
       });
       console.log(response.data);
       if (response.data.status === "success") {
+        console.log(response.data.data);
+        const { updatedUser } = response.data.data;
+
+        let user = localStorage.getItem('user');
+        user = JSON.parse(user);
+        user.cashBalance = JSON.parse(updatedUser).cash_balance;
+        localStorage.setItem('user', JSON.stringify(user));
         dispatch(updateListingPropertyStatus(listingPropertyId));
+        
       }
       setListingPropertyId(null);
 
@@ -370,6 +381,10 @@ const MyProperty = () => {
       console.log(err);
     }
   }
+
+  useEffect(() => {
+    dispatch(setLightTheme());
+  }, []);
 
   useEffect(() => {
     const fetchInspectionServices = async () => {
@@ -410,7 +425,7 @@ const MyProperty = () => {
   }, [currentUser]);
 
   return (
-    <div className="myProperty">
+    <div className={`myProperty`}>
       <ContentWrapper>
         <div className="buttons">
           <button type="button" onClick={handleNewPropertyModalClick}>Create new property</button>

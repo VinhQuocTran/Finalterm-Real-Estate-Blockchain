@@ -7,12 +7,9 @@ import {
   MdLock,
   MdPeople,
   MdHouse,
-  MdManageAccounts,
-  MdSave,
   MdCheck,
-  MdChecklist,
   MdSafetyCheck,
-    MdCheckCircle,
+  MdCheckCircle,
   MdList
 } from "react-icons/md";
 
@@ -21,10 +18,10 @@ import MainDashboard from "views/admin/default";
 import Profile from "views/admin/profile";
 import User from "views/admin/user";
 import Property from "views/admin/property";
-import PropertyManager from "views/admin/propertyManager";
 import ListingProperty from "views/admin/listingProperty";
-import SubmitListingProperty from "views/admin/submitListingProperty";
 import BackgroundCheckService from "views/admin/backgroundCheck";
+import HouseInspectionService from "views/admin/houseInspection";
+import HouseValuationService from "views/admin/houseValuation";
 
 
 // Auth Imports
@@ -46,25 +43,11 @@ const routes = [
     component: User,
   },
   {
-    name: "Property Manager",
-    layout: "/admin",
-    icon: <Icon as={MdManageAccounts} width='20px' height='20px' color='inherit' />,
-    path: "/manager-property",
-    component: PropertyManager,
-  },
-  {
     name: "Property",
     layout: "/admin",
     icon: <Icon as={MdHouse} width='20px' height='20px' color='inherit' />,
     path: "/property",
     component: Property,
-  },
-  {
-    name: "Listing Request",
-    layout: "/admin",
-    icon: <Icon as={MdSave} width='20px' height='20px' color='inherit' />,
-    path: "/submit-listing-property",
-    component: SubmitListingProperty,
   },
   {
     name: "Listing Property",
@@ -79,6 +62,20 @@ const routes = [
     icon: <Icon as={MdCheckCircle} width='20px' height='20px' color='inherit' />,
     path: "/bg-check-service",
     component: BackgroundCheckService,
+  },
+  {
+    name: "House Inspection Services",
+    layout: "/admin",
+    icon: <Icon as={MdCheck} width='20px' height='20px' color='inherit' />,
+    path: "/inspection-service",
+    component: HouseInspectionService,
+  },
+  {
+    name: "House Valuation Services",
+    layout: "/admin",
+    icon: <Icon as={MdSafetyCheck} width='20px' height='20px' color='inherit' />,
+    path: "/valuation-service",
+    component: HouseValuationService,
   },
   {
     name: "Profile",

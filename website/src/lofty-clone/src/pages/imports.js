@@ -5,6 +5,7 @@ import Signin from "./signin/Signin";
 import Account from "./account/Account";
 import MyProperty from "./myProperty/MyProperty";
 import TokenOwnership from "./tokenOwnership/TokenOwnership";
+import Order from "./order/Order";
 
 export {
   Home,
@@ -13,5 +14,6 @@ export {
   Signin,
   Account,
   MyProperty,
-  TokenOwnership
+  TokenOwnership,
+  Order
 };

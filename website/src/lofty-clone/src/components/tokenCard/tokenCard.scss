@@ -120,11 +120,11 @@
         flex-direction: column;
         width: 100%;
         justify-content: space-between;
-
+        
         @include lg {
           width: 60%;
           flex-direction: row;
-          align-items: center;
+          align-items: flex-start;
         }
       }
 
@@ -136,6 +136,7 @@
           width: 50%;
           flex-direction: row;
           align-items: center;
+          margin-bottom: 18px;
         }
       }
 
@@ -156,10 +157,14 @@
 
         h3 {
           font-weight: 400;
-          color: var(--grey-medium);
+          color: rgb(255, 102, 0);
         }
 
         p {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
           color: #fff;
           font-weight: 700;
 

@@ -3,14 +3,28 @@
 .tokenOwnership {
   margin-top: 30px;
   background-color: var(--dark);
+  flex: 1;
 
   .contentWrapper {
     display: flex;
     flex-direction: column;
   }
 
-  .box {
+  .boxContainer {
     margin-top: 30px;
+    
+    .boxTitle {
+      color: #fff;
+      border-bottom: 2px solid rgb(255, 102, 0);
+      margin-bottom: 16px;
+    }    
+
+    .widthdrawHistoryList {
+      margin: 16px 0;
+    }
+  }
+
+  .box {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -27,12 +41,8 @@
     .boxLeft {
       display: flex;
       flex-direction: column;
-      gap: 12px;
       color: #fff;
-
-      @include md {
-        gap: 24px;
-      }
+      gap: 24px;
 
       h2 {
         color: var(--grey-medium);
@@ -79,12 +89,18 @@
         font-size: 16px;
         font-weight: 600;
         border-radius: 5px;
+        cursor: pointer;
+        transition: opacity 0.2s ease-out;
+
+        &:hover {
+          opacity: 0.75;
+        }
       }
     }
   }
 
   .items {
-    margin: 30px 0;
+    margin-bottom: 30px;
     display: flex;
     flex-direction: column;
     padding: 16px;

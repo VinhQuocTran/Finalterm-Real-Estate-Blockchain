@@ -30,10 +30,45 @@ const userSlice = createSlice({
       state.error = false;
     },
     updateUser: (state, action) => {
-      state.user = {...state.user, ...action.payload}
+      console.log('before update:', state.user.cashBalance);
+
+      // Create a new user object with updated properties
+      const updatedUser = { ...state.user, ...action.payload };
+
+      // Update the state with the new user object
+      state.user = updatedUser;
+
+      console.log('after update:', state.user.cashBalance);
+    },
+    updateCashBalance: (state, action) => {
+      if (state.user) {
+        state.user.cashBalance = action.payload;
+      }
+    },
+    updateTokenBalance: (state, action) => {
+      if (state.user) {
+        state.user.tokenBalance = action.payload;
+      }
+    },
+    decreaseCashBalance: (state, action) => {
+      state.user.cashBalance -= action.payload;
+    },
+    increaseCashBalance: (state, action) => {
+      state.user.cashBalance += action.payload;
     }
   }
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, updateUser } = userSlice.actions;
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  logout,
+  updateUser,
+  updateCashBalance,
+  updateTokenBalance,
+  decreaseCashBalance,
+  increaseCashBalance
+} = userSlice.actions;
+
 export default userSlice.reducer;

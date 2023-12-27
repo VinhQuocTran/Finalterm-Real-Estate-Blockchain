@@ -180,8 +180,8 @@ export default function PropertiesTable(props) {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if(name=="houseValuation") setValuationAmount(value);
-    else if(name=="monthlyRent") setMonthlyRent(value);
+    if(name==="houseValuation") setValuationAmount(value);
+    else if(name==="monthlyRent") setMonthlyRent(value);
   }
 
   const handleModalAction = async () => {
@@ -209,16 +209,15 @@ export default function PropertiesTable(props) {
       try {
         const jwtToken = localStorage.getItem("jwt");
         let prop ={
-          backgroundCheckServiceId: listingData.backgroundCheck.serviceUserdId,
+          backgroundCheckServiceId: listingData.backgroundCheck.serviceUsedId,
           isPassListingBackgroundCheck: selectedBackgroundCheck,
-          propertyInspectionServiceId: listingData.houseInspection.serviceUserdId,
+          propertyInspectionServiceId: listingData.houseInspection.serviceUsedId,
           isPassListingPropertyInspection: selectedHouseInspection,
-          propertyValuationServiceId: listingData.houseValuation.serviceUserdId,
+          propertyValuationServiceId: listingData.houseValuation.serviceUsedId,
           isPassListingPropertyValuation: selectedHouseValuation,
           valuationAmount: valuationAmount,
           monthlyRent: monthlyRent,
         }
-        console.log(prop);;
         const response = await axios.post(config.API_URL + `custom/` + listingData.propertyId+'/updateIsListed', prop, {
           headers: {
             'Content-Type': 'application/json',
@@ -589,6 +588,7 @@ export default function PropertiesTable(props) {
                                               fontSize='sm'
                                               ms={{ base: "0px", md: "0px" }}
                                               type='number'
+                                              color={textColor}
                                               placeholder='house valuation'
                                               mb='24px'
                                               fontWeight='500'
@@ -602,6 +602,7 @@ export default function PropertiesTable(props) {
                                             <Input
                                               isRequired={true}
                                               fontSize='sm'
+                                              color={textColor}
                                               ms={{ base: "0px", md: "0px" }}
                                               type='number'
                                               placeholder='monthly rent'
@@ -636,7 +637,11 @@ export default function PropertiesTable(props) {
                           Verify
                         </Button>
                         <Button onClick={() => onOpen('listing', {id: row.original.id})}
-                                isDisabled={(row.original.isListed === '1' && row.original.isVerified === '1')||(row.original.isListed === '0' && row.original.isVerified === '0')}
+                                isDisabled={(row.original.isListed === '1' && row.original.isVerified === '1')
+                                    ||(row.original.isListed === '0' && row.original.isVerified === '0')
+                                    ||(row.original.isListed === '-1' && row.original.isVerified === '0')
+                                    ||(row.original.isListed === '-1' && row.original.isVerified === '1')
+                        }
                                 colorScheme="green" size="sm" marginLeft="1">
                           Listing
                         </Button>
