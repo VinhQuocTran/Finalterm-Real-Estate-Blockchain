@@ -148,7 +148,7 @@ const FilterSection = ({districts, setDistricts, areaValue, setAreaValue, tokenV
                   </div>
                 </div>
               </div>
-              <div className="filterItem">
+              {/* <div className="filterItem">
                 <span className="filterItemTitle">Token of property</span>
                 <span className="filterItemTitle">({tokenValue} )</span>
                 <div className="range">
@@ -162,7 +162,7 @@ const FilterSection = ({districts, setDistricts, areaValue, setAreaValue, tokenV
                     <span>2000</span>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>        

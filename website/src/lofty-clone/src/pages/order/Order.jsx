@@ -150,7 +150,7 @@ const Order = () => {
             header: 'Click to cancel',
             accessorKey: 'delete',
             cell: (info) => (
-                <a className={`cancelBtn ${!info.getValue().isActive ? "disabled" : ""}`} data-offer={info.getValue().orderId} onClick={handleCancelClick}>
+                <a className={`cancelBtn ${!info.getValue().isActive ? "disabled" : ""}`} data-offer={info.getValue().orderId} onClick={info.getValue().isActive && handleCancelClick}>
                     Cancel
                 </a>
             )

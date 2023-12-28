@@ -24,7 +24,8 @@ const Home = () => {
       try {
         const response = await axios.get(BASE_URL + '/properties?isListed=1' +
           `${districts !== "All districts" ? '&propertyDistrict=' + districts : ''}` +
-          `${areaValue !== 0 ? '&area[lte]=' + areaValue : ''}`
+          `${areaValue !== 0 ? '&area[lte]=' + areaValue : ''}` + 
+          `${tokenValue !== 0 ? '&tokenLTE=' + tokenValue : ''}`
         );
         setProperties(response.data.data);
       } catch (err) {
