@@ -38,7 +38,7 @@ app.use(cookieParser());
 app.use(cors());
 
 // set schedulers
-startMatchingOffersTask(getMatchingOffers);
+// startMatchingOffersTask(getMatchingOffers);
 // startPaymentDailyRentTask(getPaymentDailyRent);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

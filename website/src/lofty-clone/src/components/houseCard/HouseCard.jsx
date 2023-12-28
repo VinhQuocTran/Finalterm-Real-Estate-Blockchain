@@ -15,7 +15,7 @@ const HouseCard = ({property}) => {
         <h1>{property.address}</h1>
         <p>{property.propertyDistrict} District, HCM City</p>
         <h2>Area: {property.area} ({'m\u00B2'})</h2>
-        <h3>Token: </h3>
+        {/* <h3>Token: </h3> */}
       </div>
       <div className="textFooter">
         <span>Available: 12,709 tokens at $50</span>
